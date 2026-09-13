@@ -42,20 +42,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 a{color:inherit;text-decoration:none}
 ::selection{background:var(--fresh-mint);color:#fff}
 
-/* SCROLLBAR */
 .rail-scroll::-webkit-scrollbar{height:6px}
 .rail-scroll::-webkit-scrollbar-track{background:transparent}
 .rail-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .rail-scroll::-webkit-scrollbar-thumb:hover{background:var(--fresh-mint)}
 
-/* ICONS */
 .icon{width:20px;height:20px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .icon-sm{width:16px;height:16px}
 .icon-lg{width:24px;height:24px}
 .icon-xl{width:28px;height:28px}
 .icon-fill{fill:currentColor;stroke:none}
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{position:sticky;top:0;z-index:100;background:var(--soft-white);border-bottom:1px solid var(--border);transition:background .3s,box-shadow .3s}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:var(--nav-h);max-width:1400px;margin:0 auto;gap:16px}
 .header.scrolled{box-shadow:var(--shadow-sm)}
@@ -63,26 +61,25 @@ a{color:inherit;text-decoration:none}
 .logo span{color:var(--teal-green);font-weight:500}
 .logo svg{width:26px;height:26px}
 
-/* DESKTOP NAV */
 .nav-desktop{display:none;align-items:center;gap:4px;flex:1;justify-content:center}
 .nav-link{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:var(--r-sm);color:var(--text-mid);font-size:14px;font-weight:500;transition:all .18s;white-space:nowrap}
 .nav-link:hover{background:var(--light-green);color:var(--deep-teal)}
 .nav-link.active{background:var(--deep-teal);color:#fff}
 .nav-link.active .icon{stroke:#fff}
 
-/* HEADER ACTIONS */
 .header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .icon-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);color:var(--text-mid);transition:all .18s;position:relative}
 .icon-btn:hover{background:var(--light-green);color:var(--deep-teal)}
 .icon-btn:focus-visible{outline:2px solid var(--fresh-mint);outline-offset:2px}
+.icon-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--soft-white)}
 
-/* ===== MAIN ===== */
+/* MAIN */
 .main{max-width:1400px;margin:0 auto;min-height:60vh}
 .page{display:none}
 .page.active{display:block;animation:pageIn .35s ease}
 @keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ===== HERO ===== */
+/* HERO */
 .hero{position:relative;width:100%;min-height:420px;max-height:600px;overflow:hidden;background:var(--soft-mint)}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(20,40,34,.92) 0%,rgba(20,40,34,.75) 40%,rgba(20,40,34,.35) 75%,rgba(20,40,34,.5) 100%)}
@@ -116,15 +113,13 @@ a{color:inherit;text-decoration:none}
 .btn-sm{padding:8px 16px;font-size:13px}
 .btn-icon{padding:10px;border-radius:var(--r-sm)}
 
-/* ===== SECTION ===== */
+/* SECTION */
 .section{padding:32px 20px 8px;max-width:1400px;margin:0 auto}
 .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .section-title{font-size:clamp(18px,2.5vw,22px);font-weight:700;color:var(--text-dark);letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
 .section-title .icon{color:var(--teal-green)}
-.section-more{font-size:13px;font-weight:600;color:var(--teal-green);display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:var(--r-sm);transition:all .18s}
-.section-more:hover{background:var(--light-green);color:var(--deep-teal)}
 
-/* ===== RAIL ===== */
+/* RAIL */
 .rail-wrap{position:relative}
 .rail{display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;padding:4px 0 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
 .rail::-webkit-scrollbar{height:0}
@@ -138,7 +133,7 @@ a{color:inherit;text-decoration:none}
   .rail-wrap:hover .rail-arrow{opacity:1;pointer-events:auto}
 }
 
-/* ===== VIDEO CARD ===== */
+/* CARD */
 .card{flex:0 0 auto;width:200px;scroll-snap-align:start;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1);position:relative;outline:none}
 .card:focus-visible .card-thumb{outline:2px solid var(--fresh-mint);outline-offset:2px}
 .card-thumb{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--r-md);overflow:hidden;background:var(--light-green);box-shadow:var(--shadow-sm);transition:box-shadow .25s,transform .25s}
@@ -154,6 +149,7 @@ a{color:inherit;text-decoration:none}
 .badge-new{background:var(--deep-teal)}
 .badge-quality{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3)}
 .badge-feat{background:#c9a227}
+.badge-dl{background:#3a8a5f;display:flex;align-items:center;gap:3px}
 .card-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.25)}
 .card-progress-fill{height:100%;background:var(--fresh-mint);transition:width .3s}
 .card-info{padding:10px 2px 4px}
@@ -165,19 +161,20 @@ a{color:inherit;text-decoration:none}
 .card-action-btn{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;transition:all .18s;border:1px solid rgba(255,255,255,.2)}
 .card-action-btn:hover{background:var(--deep-teal);border-color:var(--deep-teal)}
 .card-action-btn.saved{background:var(--deep-teal);border-color:var(--deep-teal)}
+.card-action-btn.downloaded{background:#3a8a5f;border-color:#3a8a5f}
 
-/* ===== GRID ===== */
+/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px 14px}
 .grid .card{width:100%}
 
-/* ===== CHIPS / FILTERS ===== */
+/* CHIPS */
 .chips{display:flex;gap:8px;flex-wrap:wrap;padding:4px 0}
 .chip{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;background:var(--surface-2);color:var(--text-mid);border:1px solid var(--border);transition:all .18s;white-space:nowrap}
 .chip:hover{background:var(--light-green);color:var(--deep-teal);border-color:var(--fresh-mint)}
 .chip.active{background:var(--deep-teal);color:#fff;border-color:var(--deep-teal)}
 .chip:focus-visible{outline:2px solid var(--fresh-mint);outline-offset:2px}
 
-/* ===== SEARCH ===== */
+/* SEARCH */
 .search-hero{padding:32px 20px 16px;max-width:1400px;margin:0 auto}
 .search-box{display:flex;align-items:center;background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:4px 4px 4px 16px;max-width:720px;transition:all .2s;box-shadow:var(--shadow-sm)}
 .search-box:focus-within{border-color:var(--fresh-mint);box-shadow:0 0 0 4px rgba(154,210,183,.18)}
@@ -193,7 +190,6 @@ a{color:inherit;text-decoration:none}
 .suggestion:hover,.suggestion.active{background:var(--light-green);color:var(--deep-teal)}
 .suggestion mark{background:transparent;color:var(--deep-teal);font-weight:700}
 
-/* FILTER PANEL */
 .filter-toggle{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r-sm);font-size:13px;font-weight:600;color:var(--text-mid);border:1px solid var(--border);background:var(--surface);transition:all .18s}
 .filter-toggle:hover{border-color:var(--fresh-mint);color:var(--deep-teal)}
 .filter-toggle.active{background:var(--deep-teal);color:#fff;border-color:var(--deep-teal)}
@@ -205,23 +201,14 @@ a{color:inherit;text-decoration:none}
 .filter-row{display:flex;gap:8px;flex-wrap:wrap}
 .results-count{font-size:14px;color:var(--text-mid);font-weight:500;margin:16px 0 4px}
 
-/* ===== EMPTY STATE ===== */
+/* EMPTY */
 .empty{text-align:center;padding:64px 24px;max-width:440px;margin:0 auto}
 .empty-icon{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;background:var(--light-green);display:flex;align-items:center;justify-content:center;color:var(--teal-green)}
 .empty-icon .icon{width:32px;height:32px}
 .empty h3{font-size:19px;font-weight:700;color:var(--text-dark);margin-bottom:8px}
 .empty p{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:22px}
 
-/* ===== SKELETON ===== */
-.skel{background:linear-gradient(90deg,var(--surface-2) 25%,var(--light-green) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r-md)}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-card{width:200px;flex:0 0 auto}
-.skel-thumb{width:100%;aspect-ratio:16/9;border-radius:var(--r-md);margin-bottom:10px}
-.skel-line{height:12px;border-radius:4px;margin-bottom:6px}
-.skel-line.short{width:60%}
-.skel-hero{width:100%;height:420px;border-radius:0}
-
-/* ===== DETAIL PAGE ===== */
+/* DETAIL */
 .detail{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
 .detail.active{display:block;animation:detailIn .3s ease}
 @keyframes detailIn{from{opacity:0}to{opacity:1}}
@@ -248,7 +235,7 @@ a{color:inherit;text-decoration:none}
 .detail-info-item .label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 .detail-info-item .value{font-size:14px;font-weight:600;color:var(--text-dark)}
 
-/* ===== PLAYER ===== */
+/* PLAYER */
 .player{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
 .player.active{display:flex}
 .player-header{display:flex;align-items:center;gap:14px;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.85),transparent);position:absolute;top:0;left:0;right:0;z-index:10;transition:opacity .3s,transform .3s}
@@ -260,7 +247,6 @@ a{color:inherit;text-decoration:none}
 .player-body iframe{width:100%;height:100%;border:none;background:#000}
 .player-body video{width:100%;height:100%;background:#000;object-fit:contain}
 
-/* CUSTOM VIDEO CONTROLS */
 .video-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .video-wrap video{width:100%;height:100%;object-fit:contain;background:#000}
 .video-controls{position:absolute;bottom:0;left:0;right:0;padding:24px 20px 16px;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.4) 60%,transparent);transition:opacity .3s,transform .3s;z-index:5}
@@ -283,7 +269,7 @@ a{color:inherit;text-decoration:none}
 .vc-speed-item{display:block;width:100%;text-align:left;padding:9px 14px;color:#fff;font-size:13px;border-radius:6px;transition:background .15s}
 .vc-speed-item:hover,.vc-speed-item.active{background:var(--deep-teal)}
 .vc-menu-wrap{position:relative}
-.vc-menu{position:absolute;bottom:52px;right:0;background:rgba(20,30,26,.96);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-md);padding:6px;min-width:180px;display:none;box-shadow:var(--shadow-lg)}
+.vc-menu{position:absolute;bottom:52px;right:0;background:rgba(20,30,26,.96);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-md);padding:6px;min-width:200px;display:none;box-shadow:var(--shadow-lg)}
 .vc-menu.show{display:block;animation:pageIn .18s ease}
 .vc-menu-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 14px;color:#fff;font-size:13px;border-radius:6px;transition:background .15s}
 .vc-menu-item:hover{background:rgba(255,255,255,.1)}
@@ -299,7 +285,7 @@ a{color:inherit;text-decoration:none}
 .resume-banner .text strong{color:var(--fresh-mint)}
 .resume-banner button{padding:8px 16px;font-size:13px;border-radius:6px;font-weight:600;white-space:nowrap}
 
-/* ===== SETTINGS ===== */
+/* SETTINGS */
 .settings-list{max-width:720px;margin:0 auto}
 .setting-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
 .setting-item:last-child{border-bottom:none}
@@ -312,12 +298,11 @@ a{color:inherit;text-decoration:none}
 .toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .toggle input:checked + .toggle-track{background:var(--deep-teal)}
 .toggle input:checked + .toggle-track::after{transform:translateX(20px)}
-.toggle input:focus-visible + .toggle-track{outline:2px solid var(--fresh-mint);outline-offset:2px}
 .theme-seg{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px}
 .theme-seg button{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text-muted);transition:all .18s}
 .theme-seg button.active{background:var(--deep-teal);color:#fff}
 
-/* ===== BOTTOM NAV ===== */
+/* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--soft-white);border-top:1px solid var(--border);display:flex;height:calc(var(--bottom-h) + var(--safe-bottom));padding-bottom:var(--safe-bottom);transition:background .3s,transform .3s}
 .bottom-nav.hidden{transform:translateY(100%)}
 .bottom-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-muted);font-size:10px;font-weight:600;transition:color .18s;position:relative;min-width:0}
@@ -326,16 +311,17 @@ a{color:inherit;text-decoration:none}
 .bottom-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:var(--deep-teal);border-radius:0 0 3px 3px}
 .bottom-item:focus-visible{outline:2px solid var(--fresh-mint);outline-offset:-2px}
 
-/* ===== TOAST ===== */
+/* TOAST */
 .toast-wrap{position:fixed;bottom:calc(var(--bottom-h) + var(--safe-bottom) + 16px);left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:calc(100% - 32px);max-width:400px}
 .toast{background:var(--deep-teal);color:#fff;padding:13px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);animation:toastIn .3s ease;pointer-events:auto}
 .toast.error{background:#c4453f}
 .toast.warn{background:#c9a227;color:#2a3d36}
+.toast.success{background:#3a8a5f}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .toast.out{animation:toastOut .25s ease forwards}
 @keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
 
-/* ===== MODAL ===== */
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,30,26,.6);backdrop-filter:blur(4px);z-index:350;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.show{display:flex;animation:pageIn .2s ease}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;max-width:420px;width:100%;box-shadow:var(--shadow-lg)}
@@ -343,11 +329,28 @@ a{color:inherit;text-decoration:none}
 .modal p{font-size:14px;color:var(--text-mid);line-height:1.6;margin-bottom:22px}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 
-/* ===== OFFLINE ===== */
+/* OFFLINE BAR */
 .offline-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:#c9a227;color:#2a3d36;text-align:center;padding:8px;font-size:13px;font-weight:600;display:none;align-items:center;justify-content:center;gap:8px}
 .offline-bar.show{display:flex}
 
-/* ===== RESPONSIVE ===== */
+/* DOWNLOAD PROGRESS CARD */
+.dl-progress{position:fixed;bottom:calc(var(--bottom-h) + var(--safe-bottom) + 16px);right:16px;z-index:380;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;min-width:260px;max-width:320px;box-shadow:var(--shadow-lg);display:none}
+.dl-progress.show{display:block;animation:pageIn .25s ease}
+.dl-progress-title{font-size:13px;font-weight:600;color:var(--text-dark);margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
+.dl-progress-bar{height:5px;background:var(--light-green);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.dl-progress-fill{height:100%;background:var(--deep-teal);border-radius:3px;transition:width .3s}
+.dl-progress-status{font-size:11px;color:var(--text-muted)}
+
+/* NOTIFICATION PERMISSION BANNER */
+.notif-banner{position:fixed;bottom:calc(var(--bottom-h) + var(--safe-bottom) + 16px);left:16px;right:16px;z-index:390;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow-lg);display:none;align-items:center;gap:12px;max-width:440px;margin:0 auto}
+.notif-banner.show{display:flex;animation:pageIn .3s ease}
+.notif-banner .icon{color:var(--deep-teal);flex-shrink:0}
+.notif-banner-text{flex:1;min-width:0}
+.notif-banner-text h4{font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:2px}
+.notif-banner-text p{font-size:12px;color:var(--text-muted);line-height:1.4}
+.notif-banner button{padding:7px 12px;font-size:12px;font-weight:600;border-radius:6px;flex-shrink:0}
+
+/* RESPONSIVE */
 @media(min-width:601px){
   .card{width:220px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:22px 18px}
@@ -362,6 +365,8 @@ a{color:inherit;text-decoration:none}
   .detail-body{padding:0 32px 80px}
   .search-hero{padding:40px 32px 16px}
   .toast-wrap{bottom:24px}
+  .dl-progress{bottom:24px}
+  .notif-banner{bottom:24px;left:auto;right:16px;transform:none;margin:0}
 }
 @media(min-width:1025px){
   .card{width:240px}
@@ -380,10 +385,30 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 
-<!-- OFFLINE BAR -->
 <div class="offline-bar" id="offlineBar">
   <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55"/><path d="M5 12.55a10.94 10.94 0 015.17-2.39"/><path d="M10.71 5.05A16 16 0 0122.58 9"/><path d="M1.42 9a15.91 15.91 0 014.7-2.88"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
   You're offline — showing cached content
+</div>
+
+<!-- DOWNLOAD PROGRESS -->
+<div class="dl-progress" id="dlProgress">
+  <div class="dl-progress-title">
+    <span id="dlProgressTitle">Downloading...</span>
+    <span id="dlProgressPct">0%</span>
+  </div>
+  <div class="dl-progress-bar"><div class="dl-progress-fill" id="dlProgressFill"></div></div>
+  <div class="dl-progress-status" id="dlProgressStatus">Preparing...</div>
+</div>
+
+<!-- NOTIFICATION BANNER -->
+<div class="notif-banner" id="notifBanner">
+  <svg class="icon-lg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  <div class="notif-banner-text">
+    <h4>Get notified</h4>
+    <p>New videos uploaded on UPCODEZ OTT</p>
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="requestNotifPermission()">Enable</button>
+  <button class="btn btn-secondary btn-sm" onclick="dismissNotifBanner()">Later</button>
 </div>
 
 <!-- HEADER -->
@@ -410,6 +435,10 @@ a{color:inherit;text-decoration:none}
         <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         My List
       </a>
+      <a href="#downloads" class="nav-link" data-nav="downloads" onclick="navigate('downloads');return false">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+        Downloads
+      </a>
       <a href="#history" class="nav-link" data-nav="history" onclick="navigate('history');return false">
         <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         History
@@ -426,7 +455,6 @@ a{color:inherit;text-decoration:none}
   </div>
 </header>
 
-<!-- MAIN -->
 <main class="main" id="main">
 
   <!-- HOME -->
@@ -499,6 +527,21 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
 
+  <!-- DOWNLOADS -->
+  <div class="page" id="page-downloads">
+    <div class="section" style="padding-top:28px">
+      <div class="section-head">
+        <h1 class="section-title" style="font-size:24px">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+          Downloads
+        </h1>
+        <button class="btn btn-secondary btn-sm" onclick="confirmClearDownloads()" id="clearDownloadsBtn" style="display:none">Clear All</button>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px">Videos saved for offline viewing on this device.</p>
+      <div class="grid" id="downloadsGrid"></div>
+    </div>
+  </div>
+
   <!-- HISTORY -->
   <div class="page" id="page-history">
     <div class="section" style="padding-top:28px">
@@ -537,22 +580,30 @@ a{color:inherit;text-decoration:none}
           <label class="toggle"><input type="checkbox" id="continueToggle" onchange="toggleContinue(this.checked)" checked><span class="toggle-track"></span></label>
         </div>
         <div class="setting-item">
+          <div class="setting-info"><h4>Push Notifications</h4><p>Get notified when new videos are uploaded</p></div>
+          <button class="btn btn-secondary btn-sm" id="notifSettingBtn" onclick="requestNotifPermission()">Enable</button>
+        </div>
+        <div class="setting-item">
           <div class="setting-info"><h4>Clear Watch History</h4><p>Remove all watch history from this device</p></div>
           <button class="btn btn-secondary btn-sm" onclick="confirmClearHistory()">Clear</button>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info"><h4>Clear Downloads</h4><p>Remove all downloaded videos from this device</p></div>
+          <button class="btn btn-secondary btn-sm" onclick="confirmClearDownloads()">Clear</button>
         </div>
         <div class="setting-item">
           <div class="setting-info"><h4>Clear My List</h4><p>Remove all saved videos from this device</p></div>
           <button class="btn btn-secondary btn-sm" onclick="confirmClearMyList()">Clear</button>
         </div>
         <div class="setting-item">
-          <div class="setting-info"><h4>Clear All Local Data</h4><p>Reset theme, list, history and preferences</p></div>
+          <div class="setting-info"><h4>Clear All Local Data</h4><p>Reset theme, downloads, list, history and preferences</p></div>
           <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">Clear All</button>
         </div>
       </div>
 
       <div style="margin-top:32px;padding:22px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md)">
         <h3 style="font-size:16px;font-weight:700;color:var(--deep-teal);margin-bottom:8px">About UPCODEZ OTT</h3>
-        <p style="font-size:14px;color:var(--text-mid);line-height:1.7">UPCODEZ OTT is a premium streaming platform for watching movies, shows and more. Your watch history and My List are stored locally on this device — no account required.</p>
+        <p style="font-size:14px;color:var(--text-mid);line-height:1.7">UPCODEZ OTT is a premium streaming platform for watching movies, shows and more. Your watch history, downloads and My List are stored locally on this device — no account required.</p>
         <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap">
           <button class="read-more" onclick="showAboutModal('privacy')">Privacy Policy</button>
           <button class="read-more" onclick="showAboutModal('terms')">Terms of Use</button>
@@ -577,13 +628,13 @@ a{color:inherit;text-decoration:none}
     <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     Search
   </button>
+  <button class="bottom-item" data-nav="downloads" onclick="navigate('downloads')" aria-label="Downloads">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+    Downloads
+  </button>
   <button class="bottom-item" data-nav="mylist" onclick="navigate('mylist')" aria-label="My List">
     <svg class="icon" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
     My List
-  </button>
-  <button class="bottom-item" data-nav="history" onclick="navigate('history')" aria-label="History">
-    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-    History
   </button>
 </nav>
 
@@ -632,17 +683,12 @@ a{color:inherit;text-decoration:none}
   <div class="player-body" id="playerBody"></div>
 </div>
 
-<!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modalBox"></div>
-</div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalBox"></div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMI4Hx65V5yQjxlafsaLE6Z9ovH-UsUQ8",
@@ -665,13 +711,11 @@ let currentPage = 'home';
 let exploreFilter = 'all';
 let activeFilters = { genre:null, language:null, year:null, quality:null };
 let videoPlayer = null;
-let playerListeners = [];
 let progressTimer = null;
 let controlsTimer = null;
 let savedScrollY = 0;
-let heroAutoplayTimer = null;
-let currentHeroIndex = 0;
-let featuredList = [];
+let videoInitDone = false;
+const knownVideoIds = new Set();
 
 /* ===== STORAGE KEYS ===== */
 const K = {
@@ -679,21 +723,17 @@ const K = {
   myList:'upcodez_my_list',
   continue:'upcodez_continue_watching',
   history:'upcodez_watch_history',
+  downloads:'upcodez_downloads',
   settings:'upcodez_settings',
-  viewCooldown:'upcodez_view_cooldown'
+  viewCooldown:'upcodez_view_cooldown',
+  notifAsked:'upcodez_notif_asked'
 };
 
 /* ===== SAFE STORAGE ===== */
 function safeGet(key, fallback){
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return fallback;
-    return JSON.parse(raw);
-  }catch(e){ return fallback; }
+  try{ const raw = localStorage.getItem(key); if(!raw) return fallback; return JSON.parse(raw); }catch(e){ return fallback; }
 }
-function safeSet(key, val){
-  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
-}
+function safeSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
 
 /* ===== SETTINGS ===== */
 let settings = Object.assign({autoplay:true, continueWatching:true}, safeGet(K.settings, {}));
@@ -708,7 +748,7 @@ function normalizeVideo(raw){
   v.description = (v.description || '').toString();
   v.videoUrl = (v.videoUrl || '').toString();
   v.thumbnail = (v.thumbnail || '').toString();
-  v.category = (v.category || '').toString();
+  v.category = (v.category || '').toString().trim();
   v.genre = (v.genre || '').toString();
   v.language = (v.language || '').toString();
   v.year = (v.year || '').toString();
@@ -729,7 +769,7 @@ function isRecent(v){
   return (Date.now() - v.createdAt) < (14 * 24 * 60 * 60 * 1000);
 }
 
-/* ===== LOAD VIDEOS ===== */
+/* ===== LOAD VIDEOS + PUSH NOTIFICATIONS ===== */
 onValue(ref(db, 'videos'), (snapshot) => {
   const arr = [];
   snapshot.forEach((child) => {
@@ -738,6 +778,7 @@ onValue(ref(db, 'videos'), (snapshot) => {
   });
   arr.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
   allVideos = arr.filter(v => v.published !== false);
+  detectNewVideos(arr);
   onDataReady();
 }, (err) => {
   console.error('Firebase error', err);
@@ -745,13 +786,116 @@ onValue(ref(db, 'videos'), (snapshot) => {
   document.getElementById('heroContainer').innerHTML = '';
 });
 
+function detectNewVideos(arr){
+  // Skip notification check on very first load
+  if(!videoInitDone){
+    arr.forEach(v => knownVideoIds.add(v.id));
+    videoInitDone = true;
+    return;
+  }
+  // Detect newly added videos (compare with known set)
+  const newOnes = arr.filter(v => v.id && !knownVideoIds.has(v.id) && v.published !== false);
+  newOnes.forEach(v => {
+    knownVideoIds.add(v.id);
+    if(document.visibilityState === 'visible' || true){
+      // Show toast for new video
+      toast(`New video: ${v.title}`, 'success');
+      // Trigger browser push notification if permission granted
+      sendPushNotification(v);
+      // Refresh home
+      if(currentPage === 'home'){ renderHome(); }
+    }
+  });
+}
+
+/* ===== PUSH NOTIFICATIONS ===== */
+function sendPushNotification(v){
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'granted') return;
+  try{
+    const n = new Notification('UPCODEZ OTT — New Video', {
+      body: v.title,
+      icon: v.thumbnail || undefined,
+      tag: 'upcodez-' + v.id,
+      badge: v.thumbnail || undefined
+    });
+    n.onclick = () => {
+      window.focus();
+      if(v.id) openDetail(v.id);
+      n.close();
+    };
+  }catch(e){}
+}
+
+window.requestNotifPermission = async function(){
+  if(!('Notification' in window)){
+    toast('Notifications not supported on this browser', 'warn');
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    toast('Notifications already enabled');
+    updateNotifUI();
+    return;
+  }
+  if(Notification.permission === 'denied'){
+    toast('Notifications blocked. Enable in browser settings.', 'warn');
+    return;
+  }
+  try{
+    const result = await Notification.requestPermission();
+    if(result === 'granted'){
+      toast('Notifications enabled', 'success');
+      new Notification('UPCODEZ OTT', { body: 'You will now be notified about new videos.' });
+    } else {
+      toast('Notifications not enabled', 'warn');
+    }
+    updateNotifUI();
+    dismissNotifBanner();
+  }catch(e){}
+};
+
+window.dismissNotifBanner = function(){
+  document.getElementById('notifBanner').classList.remove('show');
+  safeSet(K.notifAsked, Date.now());
+};
+
+function updateNotifUI(){
+  const btn = document.getElementById('notifSettingBtn');
+  if(!btn) return;
+  if(!('Notification' in window)){
+    btn.textContent = 'Not supported';
+    btn.disabled = true;
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    btn.textContent = 'Enabled ✓';
+    btn.disabled = true;
+  } else if(Notification.permission === 'denied'){
+    btn.textContent = 'Blocked';
+    btn.disabled = true;
+  } else {
+    btn.textContent = 'Enable';
+    btn.disabled = false;
+  }
+}
+
+function maybeShowNotifBanner(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'default') return;
+  const asked = safeGet(K.notifAsked, 0);
+  if(asked && (Date.now() - asked) < 7 * 24 * 60 * 60 * 1000) return;
+  setTimeout(() => document.getElementById('notifBanner').classList.add('show'), 3500);
+}
+
 function onDataReady(){
   renderHome();
   if(currentPage === 'explore') renderExplore();
   if(currentPage === 'search') performSearch();
   if(currentPage === 'mylist') renderMyList();
+  if(currentPage === 'downloads') renderDownloads();
   if(currentPage === 'history') renderHistory();
   if(currentVideo) refreshDetail();
+  updateNotifUI();
 }
 
 function renderFirebaseError(){
@@ -780,6 +924,7 @@ function navigate(page, opts){
   if(page === 'explore') renderExplore();
   if(page === 'search'){ setTimeout(()=>document.getElementById('searchInput').focus(), 100); renderSearch(); }
   if(page === 'mylist') renderMyList();
+  if(page === 'downloads') renderDownloads();
   if(page === 'history') renderHistory();
   if(page === 'settings') updateSettingsUI();
   if(opts.resetScroll !== false) window.scrollTo(0, 0);
@@ -797,17 +942,9 @@ function applyTheme(t){
       : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
   }
 }
-function currentTheme(){
-  return document.documentElement.getAttribute('data-theme') || 'light';
-}
-window.toggleTheme = function(){
-  applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
-  updateSettingsUI();
-};
-window.setTheme = function(t){
-  applyTheme(t);
-  updateSettingsUI();
-};
+function currentTheme(){ return document.documentElement.getAttribute('data-theme') || 'light'; }
+window.toggleTheme = function(){ applyTheme(currentTheme() === 'dark' ? 'light' : 'dark'); updateSettingsUI(); };
+window.setTheme = function(t){ applyTheme(t); updateSettingsUI(); };
 applyTheme(safeGet(K.theme, 'light'));
 
 /* ===== ESCAPE ===== */
@@ -826,6 +963,7 @@ function imgFallback(el){ el.onerror = null; el.src = PLACEHOLDER; }
 function videoCardHTML(v, opts){
   if(!opts) opts = {};
   const inList = isInMyList(v.id);
+  const downloaded = isDownloaded(v.id);
   const progress = getWatchProgress(v.id);
   const showProgress = progress && progress.percentage > 0 && progress.percentage < 95;
   const recent = isRecent(v);
@@ -842,11 +980,14 @@ function videoCardHTML(v, opts){
       <div class="card-badges">
         ${recent ? '<span class="badge badge-new">NEW</span>' : ''}
         ${v.quality ? `<span class="badge badge-quality">${esc(v.quality)}</span>` : ''}
-        ${v.featured ? '<span class="badge badge-feat">Featured</span>' : ''}
+        ${downloaded ? '<span class="badge badge-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Saved</span>' : ''}
       </div>
       <div class="card-actions">
         <button class="card-action-btn ${inList?'saved':''}" onclick="event.stopPropagation();toggleMyList('${esc(v.id)}')" aria-label="${inList?'Remove from My List':'Add to My List'}" title="${inList?'In My List':'Add to My List'}">
           <svg class="icon icon-sm" viewBox="0 0 24 24" ${inList?'fill="currentColor"':''}><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>
+        <button class="card-action-btn ${downloaded?'downloaded':''}" onclick="event.stopPropagation();toggleDownload('${esc(v.id)}')" aria-label="${downloaded?'Remove download':'Download'}" title="${downloaded?'Remove download':'Download'}">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
         </button>
       </div>
       <div class="card-play">
@@ -880,12 +1021,8 @@ function selectFeatured(){
 
 function renderHero(){
   const container = document.getElementById('heroContainer');
-  featuredList = selectFeatured();
-  if(!featuredList.length){
-    container.innerHTML = '';
-    return;
-  }
-  currentHeroIndex = 0;
+  const featuredList = selectFeatured();
+  if(!featuredList.length){ container.innerHTML = ''; return; }
   renderHeroSlide(featuredList[0]);
 }
 
@@ -944,35 +1081,48 @@ function renderRails(){
   }
 
   const rails = [];
+
+  // Continue Watching
   const continueList = settings.continueWatching ? getContinueWatching() : [];
   if(continueList.length){
     const videos = continueList.map(c => published.find(v => v.id === c.id)).filter(Boolean);
     if(videos.length) rails.push({title:'Continue Watching', icon:'play', videos});
   }
 
+  // Trending
   const trending = published.filter(v => v.trending);
   if(trending.length) rails.push({title:'Trending Now', icon:'trend', videos:trending});
 
+  // New Releases
   const recent = published.filter(v => isRecent(v));
   if(recent.length && recent.length < published.length) rails.push({title:'New Releases', icon:'sparkle', videos:recent.slice(0,20)});
 
+  // Popular
   const popular = published.filter(v => v.popular || v.views > 0).sort((a,b) => (b.views||0)-(a.views||0));
   if(popular.length) rails.push({title:'Popular', icon:'fire', videos:popular.slice(0,20)});
 
+  // Recommended
   const recommended = getRecommendations(published);
   if(recommended.length) rails.push({title:'Recommended For You', icon:'star', videos:recommended});
 
-  const cats = groupBy(published, v => v.category).filter(g => g.items.length >= 2);
-  cats.slice(0,6).forEach(c => {
-    rails.push({title:c.key, icon:'grid', videos:c.items});
+  // ===== DYNAMIC CATEGORY RAILS =====
+  // This automatically creates a rail for every category that admin enters in the panel
+  const catGroups = groupBy(published, v => v.category);
+  catGroups.forEach(c => {
+    // Show a category rail if it has at least 1 video
+    if(c.key && c.items.length >= 1){
+      rails.push({title:c.key, icon:'grid', videos:c.items, isCategory:true});
+    }
   });
 
+  // Language rails
   const langs = groupBy(published, v => v.language).filter(g => g.items.length >= 2 && g.key);
   langs.slice(0,4).forEach(l => {
     rails.push({title:l.key, icon:'globe', videos:l.items});
   });
 
-  if(published.length >= 3) rails.push({title:'All Content', icon:'grid', videos:published});
+  // All Content
+  rails.push({title:'All Content', icon:'grid', videos:published});
 
   container.innerHTML = rails.map((r, i) => railHTML(r, i)).join('');
 }
@@ -1060,17 +1210,10 @@ function addToMyList(id){
   const list = getMyList();
   if(!list.includes(id)){ list.unshift(id); safeSet(K.myList, list); }
 }
-function removeFromMyList(id){
-  safeSet(K.myList, getMyList().filter(x => x !== id));
-}
+function removeFromMyList(id){ safeSet(K.myList, getMyList().filter(x => x !== id)); }
 window.toggleMyList = function(id, fromHero){
-  if(isInMyList(id)){
-    removeFromMyList(id);
-    toast('Removed from My List');
-  } else {
-    addToMyList(id);
-    toast('Added to My List');
-  }
+  if(isInMyList(id)){ removeFromMyList(id); toast('Removed from My List'); }
+  else { addToMyList(id); toast('Added to My List'); }
   syncListButtons(id);
   if(currentPage === 'mylist') renderMyList();
   if(currentVideo && currentVideo.id === id) refreshDetailActions();
@@ -1081,10 +1224,12 @@ window.toggleMyList = function(id, fromHero){
 };
 function syncListButtons(id){
   document.querySelectorAll(`.card[data-id="${id}"] .card-action-btn`).forEach(btn => {
-    const inList = isInMyList(id);
-    btn.classList.toggle('saved', inList);
-    btn.setAttribute('aria-label', inList ? 'Remove from My List' : 'Add to My List');
-    btn.querySelector('svg').setAttribute('fill', inList ? 'currentColor' : 'none');
+    if(btn.getAttribute('aria-label') && btn.getAttribute('aria-label').includes('List')){
+      const inList = isInMyList(id);
+      btn.classList.toggle('saved', inList);
+      btn.setAttribute('aria-label', inList ? 'Remove from My List' : 'Add to My List');
+      btn.querySelector('svg').setAttribute('fill', inList ? 'currentColor' : 'none');
+    }
   });
 }
 
@@ -1107,6 +1252,114 @@ function renderMyList(){
   }
   grid.outerHTML = `<div class="grid" id="myListGrid">${videos.map(v => videoCardHTML(v)).join('')}</div>`;
 }
+
+/* ===== DOWNLOADS ===== */
+function getDownloads(){ return safeGet(K.downloads, {}); }
+function isDownloaded(id){ return !!getDownloads()[id]; }
+function renderDownloads(){
+  const grid = document.getElementById('downloadsGrid');
+  const clearBtn = document.getElementById('clearDownloadsBtn');
+  const downloads = getDownloads();
+  const ids = Object.keys(downloads);
+
+  if(!ids.length){
+    if(clearBtn) clearBtn.style.display = 'none';
+    grid.outerHTML = `<div class="empty" id="downloadsGrid">
+      <div class="empty-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <h3>No downloads yet</h3>
+      <p>Save videos to watch them offline anytime.</p>
+      <button class="btn btn-primary" onclick="navigate('explore')">Browse Content</button>
+    </div>`;
+    return;
+  }
+
+  if(clearBtn) clearBtn.style.display = '';
+  const videos = ids.map(id => {
+    const v = allVideos.find(x => x.id === id);
+    if(!v) return null;
+    return {...v, _downloadedAt: downloads[id].downloadedAt};
+  }).filter(Boolean).sort((a,b) => (b._downloadedAt||0) - (a._downloadedAt||0));
+
+  if(!videos.length){
+    grid.outerHTML = `<div class="empty" id="downloadsGrid"><h3>No downloads available</h3><p>Downloaded videos are no longer in the library.</p></div>`;
+    return;
+  }
+
+  grid.outerHTML = `<div class="grid" id="downloadsGrid">
+    ${videos.map(v => videoCardHTML(v)).join('')}
+  </div>`;
+}
+
+window.toggleDownload = function(id){
+  if(isDownloaded(id)){
+    removeDownload(id);
+    toast('Removed from Downloads');
+  } else {
+    addDownload(id);
+    toast('Added to Downloads');
+  }
+  syncDownloadButtons(id);
+  if(currentPage === 'downloads') renderDownloads();
+  if(currentVideo && currentVideo.id === id) refreshDetailActions();
+};
+
+function addDownload(id){
+  const v = allVideos.find(x => x.id === id);
+  if(!v) return;
+  const downloads = getDownloads();
+  downloads[id] = {
+    downloadedAt: Date.now(),
+    title: v.title,
+    thumbnail: v.thumbnail,
+    videoUrl: v.videoUrl,
+    // Cache metadata so it works offline
+    cached: {
+      title: v.title,
+      description: v.description,
+      thumbnail: v.thumbnail,
+      videoUrl: v.videoUrl,
+      category: v.category,
+      genre: v.genre,
+      language: v.language,
+      year: v.year,
+      duration: v.duration,
+      quality: v.quality
+    }
+  };
+  safeSet(K.downloads, downloads);
+}
+
+function removeDownload(id){
+  const downloads = getDownloads();
+  delete downloads[id];
+  safeSet(K.downloads, downloads);
+}
+
+function syncDownloadButtons(id){
+  document.querySelectorAll(`.card[data-id="${id}"] .card-action-btn`).forEach(btn => {
+    if(btn.getAttribute('aria-label') && (btn.getAttribute('aria-label').includes('ownload'))){
+      const dl = isDownloaded(id);
+      btn.classList.toggle('downloaded', dl);
+      btn.setAttribute('aria-label', dl ? 'Remove download' : 'Download');
+      btn.setAttribute('title', dl ? 'Remove download' : 'Download');
+    }
+  });
+}
+
+window.confirmClearDownloads = function(){
+  if(!Object.keys(getDownloads()).length){ toast('Downloads already empty', 'warn'); return; }
+  showModal({
+    title:'Clear all downloads?',
+    message:'This removes all downloaded videos from this device. This cannot be undone.',
+    confirmText:'Clear All',
+    danger:true,
+    onConfirm: () => {
+      safeSet(K.downloads, {});
+      renderDownloads();
+      toast('Downloads cleared');
+    }
+  });
+};
 
 /* ===== CONTINUE WATCHING ===== */
 function getContinueWatching(){
@@ -1212,19 +1465,9 @@ function applyExploreFilters(pool){
   grid.outerHTML = `<div class="grid" id="exploreGrid">${list.map(v => videoCardHTML(v)).join('')}</div>`;
 }
 
-window.setExploreFilter = function(val){
-  exploreFilter = val;
-  renderExplore();
-};
-window.setFilter = function(field, val){
-  activeFilters[field] = activeFilters[field] === val ? null : val;
-  renderExplore();
-};
-window.clearFilters = function(){
-  activeFilters = { genre:null, language:null, year:null, quality:null };
-  exploreFilter = 'all';
-  renderExplore();
-};
+window.setExploreFilter = function(val){ exploreFilter = val; renderExplore(); };
+window.setFilter = function(field, val){ activeFilters[field] = activeFilters[field] === val ? null : val; renderExplore(); };
+window.clearFilters = function(){ activeFilters = { genre:null, language:null, year:null, quality:null }; exploreFilter = 'all'; renderExplore(); };
 window.toggleFilters = function(){
   const panel = document.getElementById('filterPanel');
   const btn = document.getElementById('filterToggle');
@@ -1310,7 +1553,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
   clearTimeout(searchDebounce);
   const val = e.target.value;
   searchDebounce = setTimeout(() => {
-    if(currentPage !== 'search') navigate('search', {force:true, skipHash:false});
+    if(currentPage !== 'search') navigate('search', {force:true});
     renderSearch();
     showSuggestions(val);
   }, 180);
@@ -1394,6 +1637,7 @@ function refreshDetailActions(){
   const progress = getWatchProgress(v.id);
   const resume = progress && progress.percentage > 5 && progress.percentage < 95;
   const inList = isInMyList(v.id);
+  const downloaded = isDownloaded(v.id);
   document.getElementById('detailActions').innerHTML = `
     <button class="btn btn-primary" onclick="playVideo(${resume ? 'true' : 'false'})">
       <svg class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
@@ -1403,6 +1647,10 @@ function refreshDetailActions(){
     <button class="btn btn-secondary" onclick="toggleMyList('${esc(v.id)}')" id="detailListBtn">
       <svg class="icon icon-sm" viewBox="0 0 24 24" ${inList?'fill="currentColor"':''}><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       ${inList ? 'In My List' : 'Add to My List'}
+    </button>
+    <button class="btn ${downloaded?'btn-primary':'btn-secondary'}" onclick="toggleDownload('${esc(v.id)}')" id="detailDownloadBtn">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+      ${downloaded ? 'Downloaded ✓' : 'Download'}
     </button>
   `;
 }
@@ -1488,14 +1736,7 @@ window.playVideo = function(resume, startOver){
     playNativeVideo(source, resume && !startOver, startOver);
   } else {
     body.innerHTML = `<iframe src="${esc(source.src)}" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>`;
-    const startTime = Date.now();
-    const check = setInterval(() => {
-      if(!document.getElementById('playerModal').classList.contains('active')){ clearInterval(check); return; }
-      if(Date.now() - startTime > 8000){
-        clearInterval(check);
-        markWatched(currentVideo.id);
-      }
-    }, 1000);
+    markWatched(currentVideo.id);
   }
 };
 
@@ -1541,6 +1782,10 @@ function playNativeVideo(source, shouldResume, startOver){
                 <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><rect x="12" y="12" width="8" height="6"/></svg>
                 Picture in Picture
               </button>
+              <button class="vc-menu-item" onclick="quickDownloadCurrent()">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+                Save to Downloads
+              </button>
             </div>
           </div>
           <button class="vc-btn" id="fullscreenBtn" aria-label="Fullscreen">
@@ -1577,15 +1822,8 @@ function playNativeVideo(source, shouldResume, startOver){
     updateTimeDisplay();
   });
 
-  video.addEventListener('error', () => {
-    body.innerHTML = renderPlayerError();
-  });
-
-  video.addEventListener('timeupdate', () => {
-    updateProgressUI();
-    updateTimeDisplay();
-  });
-
+  video.addEventListener('error', () => { body.innerHTML = renderPlayerError(); });
+  video.addEventListener('timeupdate', () => { updateProgressUI(); updateTimeDisplay(); });
   video.addEventListener('progress', () => {
     if(video.buffered.length){
       const buffered = (video.buffered.end(video.buffered.length-1) / video.duration) * 100;
@@ -1593,20 +1831,9 @@ function playNativeVideo(source, shouldResume, startOver){
       if(bufEl) bufEl.style.width = buffered + '%';
     }
   });
-
-  video.addEventListener('play', () => {
-    updatePlayPauseIcon(true);
-    startProgressSaving();
-  });
-  video.addEventListener('pause', () => {
-    updatePlayPauseIcon(false);
-    saveCurrentProgress();
-    stopProgressSaving();
-  });
-  video.addEventListener('ended', () => {
-    saveCurrentProgress(true);
-    markWatched(v.id);
-  });
+  video.addEventListener('play', () => { updatePlayPauseIcon(true); startProgressSaving(); });
+  video.addEventListener('pause', () => { updatePlayPauseIcon(false); saveCurrentProgress(); stopProgressSaving(); });
+  video.addEventListener('ended', () => { saveCurrentProgress(true); markWatched(v.id); });
 
   document.getElementById('playPauseBtn').addEventListener('click', () => {
     if(video.paused) video.play().catch(()=>{}); else video.pause();
@@ -1645,6 +1872,19 @@ function playNativeVideo(source, shouldResume, startOver){
   markWatched(v.id);
 }
 
+window.quickDownloadCurrent = function(){
+  if(currentVideo){
+    if(!isDownloaded(currentVideo.id)){
+      addDownload(currentVideo.id);
+      toast('Added to Downloads', 'success');
+      refreshDetailActions();
+    } else {
+      toast('Already in Downloads');
+    }
+    document.getElementById('moreMenu').classList.remove('show');
+  }
+};
+
 window.doResume = function(t){
   if(videoPlayer){ videoPlayer.currentTime = t; videoPlayer.play().catch(()=>{}); }
   const banner = document.getElementById('resumeBanner');
@@ -1671,9 +1911,7 @@ function updateMuteIcon(){
 function updateProgressUI(){
   if(!videoPlayer) return;
   const fill = document.getElementById('videoProgressFill');
-  if(fill && videoPlayer.duration){
-    fill.style.width = (videoPlayer.currentTime / videoPlayer.duration * 100) + '%';
-  }
+  if(fill && videoPlayer.duration) fill.style.width = (videoPlayer.currentTime / videoPlayer.duration * 100) + '%';
 }
 
 function updateTimeDisplay(){
@@ -1728,7 +1966,6 @@ function startProgressSaving(){
   stopProgressSaving();
   progressTimer = setInterval(saveCurrentProgress, 5000);
 }
-
 function stopProgressSaving(){
   if(progressTimer){ clearInterval(progressTimer); progressTimer = null; }
 }
@@ -1748,14 +1985,7 @@ function saveCurrentProgress(ended){
   }
 }
 
-function markWatched(id){
-  addToHistory(id);
-  const cooldown = safeGet(K.viewCooldown, {});
-  const now = Date.now();
-  if(cooldown[id] && (now - cooldown[id]) < 6 * 60 * 60 * 1000) return;
-  cooldown[id] = now;
-  safeSet(K.viewCooldown, cooldown);
-}
+function markWatched(id){ addToHistory(id); }
 
 function renderPlayerError(){
   return `<div class="player-error">
@@ -1774,9 +2004,7 @@ window.closePlayer = function(){
   stopProgressSaving();
   clearTimeout(controlsTimer);
   const body = document.getElementById('playerBody');
-  if(videoPlayer){
-    try{ videoPlayer.pause(); }catch(e){}
-  }
+  if(videoPlayer){ try{ videoPlayer.pause(); }catch(e){} }
   videoPlayer = null;
   body.innerHTML = '';
   document.getElementById('playerModal').classList.remove('active');
@@ -1826,11 +2054,7 @@ window.confirmClearHistory = function(){
     message:'This will remove all watch history from this device. This cannot be undone.',
     confirmText:'Clear',
     danger:true,
-    onConfirm:() => {
-      safeSet(K.history, []);
-      renderHistory();
-      toast('History cleared');
-    }
+    onConfirm:() => { safeSet(K.history, []); renderHistory(); toast('History cleared'); }
   });
 };
 
@@ -1841,28 +2065,25 @@ window.confirmClearMyList = function(){
     message:'This will remove all saved videos from this device. This cannot be undone.',
     confirmText:'Clear',
     danger:true,
-    onConfirm:() => {
-      safeSet(K.myList, []);
-      renderMyList();
-      toast('My List cleared');
-    }
+    onConfirm:() => { safeSet(K.myList, []); renderMyList(); toast('My List cleared'); }
   });
 };
 
 window.confirmClearAll = function(){
   showModal({
     title:'Clear all local data?',
-    message:'This will reset your theme, My List, watch history and preferences. This cannot be undone.',
+    message:'This will reset your theme, downloads, My List, watch history and preferences. This cannot be undone.',
     confirmText:'Clear All',
     danger:true,
     onConfirm:() => {
-      [K.theme,K.myList,K.continue,K.history,K.settings,K.viewCooldown].forEach(k => {
+      [K.theme,K.myList,K.continue,K.history,K.downloads,K.settings,K.viewCooldown].forEach(k => {
         try{ localStorage.removeItem(k); }catch(e){}
       });
       settings = {autoplay:true, continueWatching:true};
       applyTheme('light');
       renderHome();
       renderMyList();
+      renderDownloads();
       renderHistory();
       updateSettingsUI();
       toast('All local data cleared');
@@ -1872,7 +2093,7 @@ window.confirmClearAll = function(){
 
 window.showAboutModal = function(type){
   const content = type === 'privacy'
-    ? '<p>UPCODEZ OTT does not require an account. Your watch history, My List, and preferences are stored locally on your device using browser storage. We do not collect personal information. Content is loaded from our content database. Third-party video sources may have their own privacy policies.</p>'
+    ? '<p>UPCODEZ OTT does not require an account. Your watch history, downloads, My List, and preferences are stored locally on your device using browser storage. We do not collect personal information. Content is loaded from our content database. Third-party video sources may have their own privacy policies.</p>'
     : '<p>UPCODEZ OTT is a streaming platform for watching movies, shows and more. Content is provided through our content database and third-party video sources. By using this service, you agree to watch content responsibly. All trademarks and content belong to their respective owners.</p>';
   const overlay = document.getElementById('modalOverlay');
   const box = document.getElementById('modalBox');
@@ -1893,6 +2114,7 @@ function updateSettingsUI(){
   document.getElementById('themeDark').classList.toggle('active', t === 'dark');
   document.getElementById('autoplayToggle').checked = settings.autoplay;
   document.getElementById('continueToggle').checked = settings.continueWatching;
+  updateNotifUI();
 }
 window.toggleAutoplay = function(val){ settings.autoplay = val; saveSettings(); toast('Autoplay ' + (val?'on':'off')); };
 window.toggleContinue = function(val){ settings.continueWatching = val; saveSettings(); toast('Continue Watching ' + (val?'on':'off')); };
@@ -1915,8 +2137,7 @@ document.addEventListener('keydown', (e) => {
     const tag = document.activeElement.tagName;
     if(tag === 'INPUT' || tag === 'TEXTAREA') return;
     switch(e.key){
-      case ' ':
-      case 'k':
+      case ' ': case 'k':
         e.preventDefault();
         if(videoPlayer.paused) videoPlayer.play().catch(()=>{}); else videoPlayer.pause();
         showControls();
@@ -1927,38 +2148,25 @@ document.addEventListener('keydown', (e) => {
       case 'ArrowLeft':
         if(videoPlayer.duration){ videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - 10); showControls(); }
         break;
-      case 'm':
-        videoPlayer.muted = !videoPlayer.muted; updateMuteIcon();
-        break;
-      case 'f':
-        toggleFullscreen();
-        break;
+      case 'm': videoPlayer.muted = !videoPlayer.muted; updateMuteIcon(); break;
+      case 'f': toggleFullscreen(); break;
     }
   }
 });
 
 /* ===== HISTORY API ===== */
 window.addEventListener('popstate', (e) => {
-  if(document.getElementById('playerModal').classList.contains('active')){
-    closePlayer();
-    return;
-  }
-  if(document.getElementById('detailPage').classList.contains('active')){
-    closeDetail();
-    return;
-  }
+  if(document.getElementById('playerModal').classList.contains('active')){ closePlayer(); return; }
+  if(document.getElementById('detailPage').classList.contains('active')){ closeDetail(); return; }
   const hash = location.hash.replace('#','');
   if(hash && hash.startsWith('video=')){
     const id = hash.slice(6);
     if(id) openDetail(id);
     return;
   }
-  if(hash && document.getElementById('page-' + hash)){
-    navigate(hash, {skipHash:true});
-  }
+  if(hash && document.getElementById('page-' + hash)){ navigate(hash, {skipHash:true}); }
 });
 
-/* ===== INIT FROM HASH ===== */
 (function initFromHash(){
   const hash = location.hash.replace('#','');
   if(hash.startsWith('video=')){
@@ -1969,30 +2177,24 @@ window.addEventListener('popstate', (e) => {
   }
 })();
 
-/* ===== PAGE VISIBILITY ===== */
-document.addEventListener('visibilitychange', () => {
-  if(document.hidden) saveCurrentProgress();
-});
-
-window.addEventListener('beforeunload', () => {
-  saveCurrentProgress();
-});
+/* ===== VISIBILITY ===== */
+document.addEventListener('visibilitychange', () => { if(document.hidden) saveCurrentProgress(); });
+window.addEventListener('beforeunload', () => { saveCurrentProgress(); });
 
 /* ===== OFFLINE ===== */
-function updateOnlineStatus(){
-  document.getElementById('offlineBar').classList.toggle('show', !navigator.onLine);
-}
+function updateOnlineStatus(){ document.getElementById('offlineBar').classList.toggle('show', !navigator.onLine); }
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
 
-/* ===== EXPOSE GLOBALS ===== */
+/* ===== EXPOSE ===== */
 window.openDetail = openDetail;
 window.closeDetail = closeDetail;
 window.playVideo = playVideo;
 window.closePlayer = closePlayer;
 window.navigate = navigate;
 window.toggleMyList = toggleMyList;
+window.toggleDownload = toggleDownload;
 window.imgFallback = imgFallback;
 window.scrollRail = scrollRail;
 window.setExploreFilter = setExploreFilter;
@@ -2006,19 +2208,23 @@ window.toggleReadMore = toggleReadMore;
 window.doResume = doResume;
 window.setPlaybackRate = setPlaybackRate;
 window.togglePiP = togglePiP;
+window.quickDownloadCurrent = quickDownloadCurrent;
 window.toast = toast;
 window.showModal = showModal;
 window.confirmClearHistory = confirmClearHistory;
 window.confirmClearMyList = confirmClearMyList;
+window.confirmClearDownloads = confirmClearDownloads;
 window.confirmClearAll = confirmClearAll;
 window.showAboutModal = showAboutModal;
 window.toggleAutoplay = toggleAutoplay;
 window.toggleContinue = toggleContinue;
 window.setTheme = setTheme;
 window.toggleTheme = toggleTheme;
+window.requestNotifPermission = requestNotifPermission;
+window.dismissNotifBanner = dismissNotifBanner;
 
-/* update settings toggles */
 updateSettingsUI();
+maybeShowNotifBanner();
 </script>
 </body>
 </html>
