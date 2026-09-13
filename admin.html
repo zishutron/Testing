@@ -31,12 +31,9 @@ img{display:block;max-width:100%}
 input,textarea,select{font-family:inherit}
 ::selection{background:var(--fresh-mint);color:#fff}
 
-/* ICONS */
 .icon{width:20px;height:20px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .icon-sm{width:16px;height:16px}.icon-lg{width:24px;height:24px}.icon-xl{width:28px;height:28px}
-.icon-fill{fill:currentColor;stroke:none}
 
-/* LOGIN */
 .login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--bg),var(--soft-mint));z-index:100}
 .login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:40px 32px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
 .login-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;color:var(--deep-teal);font-size:22px;font-weight:800;letter-spacing:-.4px}
@@ -58,7 +55,6 @@ input,textarea,select{font-family:inherit}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* APP LAYOUT */
 .app{display:none;min-height:100vh}
 .app.show{display:flex}
 .sidebar{width:var(--sidebar-w);background:var(--soft-white);border-right:1px solid var(--border);display:none;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:60;transition:transform .3s}
@@ -72,7 +68,6 @@ input,textarea,select{font-family:inherit}
 .sidebar-link.active .icon{stroke:#fff}
 .sidebar-footer{padding:14px;border-top:1px solid var(--border)}
 
-/* MAIN */
 .main-area{flex:1;margin-left:0;display:flex;flex-direction:column;min-width:0}
 .topbar{background:var(--soft-white);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:12px;min-width:0}
@@ -84,7 +79,6 @@ input,textarea,select{font-family:inherit}
 .icon-btn:hover{background:var(--light-green);color:var(--deep-teal)}
 .content{padding:24px 20px 80px;max-width:1300px;width:100%;margin:0 auto;flex:1}
 
-/* DASHBOARD */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px;transition:all .2s}
 .stat-card:hover{box-shadow:var(--shadow-md);border-color:var(--fresh-mint)}
@@ -97,7 +91,6 @@ input,textarea,select{font-family:inherit}
 .panel-head h2{font-size:16px;font-weight:700;color:var(--text-dark);display:flex;align-items:center;gap:8px}
 .panel-head .icon{color:var(--teal-green)}
 
-/* FORM */
 .form-section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border)}
 .form-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .form-section-title{font-size:13px;font-weight:700;color:var(--teal-green);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
@@ -108,7 +101,7 @@ input,textarea,select{font-family:inherit}
 .form-field label .req{color:var(--danger)}
 .form-field input,.form-field textarea,.form-field select{width:100%;padding:11px 14px;background:var(--light-green);border:1.5px solid var(--border);border-radius:var(--r-sm);color:var(--text-dark);font-size:14px;transition:all .2s}
 .form-field input:focus,.form-field textarea:focus,.form-field select:focus{outline:none;border-color:var(--fresh-mint);background:var(--surface);box-shadow:0 0 0 3px rgba(154,210,183,.2)}
-.form-field input.error,.form-field textarea.error{border-color:var(--danger)}
+.form-field input.error,.form-field textarea.error,.form-field select.error{border-color:var(--danger)}
 .form-field textarea{resize:vertical;min-height:100px;line-height:1.6}
 .form-hint{font-size:12px;color:var(--text-muted);margin-top:4px}
 .form-error{font-size:12px;color:var(--danger);margin-top:4px;display:none}
@@ -120,7 +113,6 @@ input,textarea,select{font-family:inherit}
 .upload-status.success{color:var(--success)}
 .upload-status.error{color:var(--danger)}
 
-/* SWITCHES */
 .switch-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
 .switch-row:last-child{border-bottom:none}
 .switch-info h4{font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:2px}
@@ -132,7 +124,6 @@ input,textarea,select{font-family:inherit}
 .toggle input:checked + .toggle-track{background:var(--deep-teal)}
 .toggle input:checked + .toggle-track::after{transform:translateX(20px)}
 
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:var(--r-sm);font-size:14px;font-weight:600;transition:all .18s;white-space:nowrap}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{background:var(--deep-teal);color:#fff}
@@ -142,9 +133,7 @@ input,textarea,select{font-family:inherit}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-danger:hover:not(:disabled){background:#a83732}
 .btn-sm{padding:7px 14px;font-size:13px;border-radius:7px}
-.btn-icon{padding:9px;border-radius:8px}
 
-/* CONTENT LIST */
 .toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
 .toolbar-search{flex:1;min-width:200px;display:flex;align-items:center;background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:2px 4px 2px 12px;transition:all .2s}
 .toolbar-search:focus-within{border-color:var(--fresh-mint);box-shadow:0 0 0 3px rgba(154,210,183,.18)}
@@ -155,7 +144,6 @@ input,textarea,select{font-family:inherit}
 .chip:hover{background:var(--light-green);color:var(--deep-teal);border-color:var(--fresh-mint)}
 .chip.active{background:var(--deep-teal);color:#fff;border-color:var(--deep-teal)}
 
-/* CONTENT TABLE/CARDS */
 .content-grid{display:grid;grid-template-columns:1fr;gap:14px}
 .content-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;display:flex;gap:14px;padding:12px;transition:all .2s;align-items:flex-start}
 .content-item:hover{box-shadow:var(--shadow-md);border-color:var(--fresh-mint)}
@@ -176,13 +164,11 @@ input,textarea,select{font-family:inherit}
 .content-actions button:hover{background:var(--light-green);color:var(--deep-teal);border-color:var(--fresh-mint)}
 .content-actions button.danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 
-/* EMPTY */
 .empty{text-align:center;padding:60px 20px;max-width:400px;margin:0 auto}
 .empty-icon{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:var(--light-green);display:flex;align-items:center;justify-content:center;color:var(--teal-green)}
 .empty h3{font-size:17px;font-weight:700;color:var(--text-dark);margin-bottom:8px}
 .empty p{font-size:14px;color:var(--text-muted);line-height:1.6}
 
-/* TOAST */
 .toast-wrap{position:fixed;top:16px;right:16px;z-index:500;display:flex;flex-direction:column;gap:8px;max-width:360px}
 .toast{background:var(--deep-teal);color:#fff;padding:13px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);animation:toastIn .3s ease;pointer-events:auto}
 .toast.error{background:var(--danger)}
@@ -192,7 +178,6 @@ input,textarea,select{font-family:inherit}
 .toast.out{animation:toastOut .25s ease forwards}
 @keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
 
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,30,26,.6);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.show{display:flex;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -201,18 +186,19 @@ input,textarea,select{font-family:inherit}
 .modal p{font-size:14px;color:var(--text-mid);line-height:1.6;margin-bottom:22px}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 
-/* SIDEBAR OVERLAY */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55;display:none}
 .sidebar-overlay.show{display:block}
 
-/* RESPONSIVE */
+/* CATEGORY HELPER */
+.cat-helper{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cat-helper button{padding:5px 10px;font-size:11px;font-weight:600;background:var(--light-green);color:var(--deep-teal);border:1px solid var(--border);border-radius:14px;transition:all .18s}
+.cat-helper button:hover{background:var(--fresh-mint);color:#fff;border-color:var(--fresh-mint)}
+
 @media(min-width:769px){
   .sidebar{display:flex;transform:translateX(0)}
   .main-area{margin-left:var(--sidebar-w)}
   .menu-toggle{display:none}
-  .content-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr 1fr}
-  .form-row.full{grid-template-columns:1fr}
 }
 @media(min-width:1025px){
   .content-grid{grid-template-columns:1fr 1fr}
@@ -234,7 +220,6 @@ input,textarea,select{font-family:inherit}
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="login-brand">
@@ -264,7 +249,6 @@ input,textarea,select{font-family:inherit}
   </div>
 </div>
 
-<!-- APP -->
 <div class="app" id="app">
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
   <aside class="sidebar" id="sidebar">
@@ -284,6 +268,10 @@ input,textarea,select{font-family:inherit}
       <button class="sidebar-link" data-tab="add" onclick="switchTab('add')">
         <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
         Add Content
+      </button>
+      <button class="sidebar-link" data-tab="categories" onclick="switchTab('categories')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Categories
       </button>
       <button class="sidebar-link" data-tab="homepage" onclick="switchTab('homepage')">
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
@@ -321,13 +309,8 @@ input,textarea,select{font-family:inherit}
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modalBox"></div>
-</div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalBox"></div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -348,7 +331,6 @@ const IMGBB_API_KEY = "59ff7a77d4e90b6f234f1c8bb49c9ece";
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ===== STATE ===== */
 let allVideos = [];
 let currentTab = 'dashboard';
 let editingId = null;
@@ -357,11 +339,9 @@ let contentSearch = '';
 let searchDebounce = null;
 const K = { theme:'upcodez_theme' };
 
-/* ===== SAFE STORAGE ===== */
 function safeGet(key, fb){ try{ const r = localStorage.getItem(key); return r ? JSON.parse(r) : fb; }catch(e){ return fb; } }
 function safeSet(key, v){ try{ localStorage.setItem(key, JSON.stringify(v)); }catch(e){} }
 
-/* ===== THEME ===== */
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
   safeSet(K.theme, t);
@@ -378,13 +358,11 @@ window.toggleTheme = function(){
 };
 applyTheme(safeGet(K.theme, 'light'));
 
-/* ===== ESCAPE ===== */
 function esc(s){
   if(s == null) return '';
   return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/* ===== NORMALIZE ===== */
 function normalizeVideo(raw){
   if(!raw) return null;
   const v = {...raw};
@@ -393,7 +371,7 @@ function normalizeVideo(raw){
   v.description = (v.description || '').toString();
   v.videoUrl = (v.videoUrl || '').toString();
   v.thumbnail = (v.thumbnail || '').toString();
-  v.category = (v.category || '').toString();
+  v.category = (v.category || '').toString().trim();
   v.genre = (v.genre || '').toString();
   v.language = (v.language || '').toString();
   v.year = (v.year || '').toString();
@@ -408,7 +386,6 @@ function normalizeVideo(raw){
   return v;
 }
 
-/* ===== LOGIN ===== */
 window.togglePw = function(){
   const input = document.getElementById('password');
   const btn = document.getElementById('pwToggle');
@@ -457,28 +434,20 @@ window.doLogout = function(){
   location.reload();
 };
 
-document.getElementById('password').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter') doLogin();
-});
-document.getElementById('username').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter') document.getElementById('password').focus();
-});
+document.getElementById('password').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
+document.getElementById('username').addEventListener('keydown', (e) => { if(e.key === 'Enter') document.getElementById('password').focus(); });
 
-/* ===== APP ===== */
 function showApp(){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('show');
   loadVideos();
 }
 
-if(sessionStorage.getItem('adminLoggedIn') === 'true'){
-  showApp();
-}
+if(sessionStorage.getItem('adminLoggedIn') === 'true'){ showApp(); }
 
 window.openSidebar = function(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); };
 window.closeSidebar = function(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); };
 
-/* ===== DATA LOADING ===== */
 function loadVideos(){
   onValue(ref(db, 'videos'), (snapshot) => {
     allVideos = [];
@@ -498,13 +467,18 @@ function loadVideos(){
   });
 }
 
-/* ===== TABS ===== */
+function getExistingCategories(){
+  const cats = new Set();
+  allVideos.forEach(v => { if(v.category) cats.add(v.category); });
+  return [...cats].sort();
+}
+
 window.switchTab = function(tab){
   currentTab = tab;
   document.querySelectorAll('.sidebar-link[data-tab]').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
-  const titles = {dashboard:'Dashboard', content:'Content', add: editingId ? 'Edit Content' : 'Add Content', homepage:'Homepage', analytics:'Analytics'};
+  const titles = {dashboard:'Dashboard', content:'Content', add: editingId ? 'Edit Content' : 'Add Content', categories:'Categories', homepage:'Homepage', analytics:'Analytics'};
   document.getElementById('pageTitle').textContent = titles[tab] || tab;
   closeSidebar();
   renderTab();
@@ -516,12 +490,12 @@ function renderTab(){
     case 'dashboard': el.innerHTML = renderDashboard(); break;
     case 'content': el.innerHTML = renderContentList(); break;
     case 'add': renderAddForm(); break;
+    case 'categories': el.innerHTML = renderCategories(); break;
     case 'homepage': el.innerHTML = renderHomepage(); break;
     case 'analytics': el.innerHTML = renderAnalytics(); break;
   }
 }
 
-/* ===== DASHBOARD ===== */
 function renderDashboard(){
   const total = allVideos.length;
   const published = allVideos.filter(v => v.published !== false).length;
@@ -529,7 +503,6 @@ function renderDashboard(){
   const trending = allVideos.filter(v => v.trending).length;
   const totalViews = allVideos.reduce((s,v) => s + (v.views||0), 0);
   const recent = allVideos.filter(v => v.createdAt && (Date.now()-v.createdAt) < 7*24*60*60*1000).length;
-
   const recentItems = allVideos.slice(0,5);
 
   return `
@@ -568,14 +541,23 @@ function renderDashboard(){
 
     <div class="panel">
       <div class="panel-head">
+        <h2><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Active Categories</h2>
+        <button class="btn btn-secondary btn-sm" onclick="switchTab('categories')">Manage</button>
+      </div>
+      ${getExistingCategories().length ? `
+        <div class="cat-helper">
+          ${getExistingCategories().map(c => `<button onclick="switchTab('content');setTimeout(()=>{contentSearch='${c.replace(/'/g,"\\'")}';renderTab();},50)">${esc(c)}</button>`).join('')}
+        </div>
+      ` : `<p style="font-size:13px;color:var(--text-muted)">No categories yet. Add content with a category to create one.</p>`}
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
         <h2><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Recently Added</h2>
         <button class="btn btn-secondary btn-sm" onclick="switchTab('content')">View All</button>
       </div>
-      ${recentItems.length ? `
-        <div class="content-grid">
-          ${recentItems.map(v => contentItemHTML(v)).join('')}
-        </div>
-      ` : `<div class="empty"><h3>No content yet</h3><p>Add your first video to get started.</p><button class="btn btn-primary" style="margin-top:16px" onclick="switchTab('add')">Add Content</button></div>`}
+      ${recentItems.length ? `<div class="content-grid">${recentItems.map(v => contentItemHTML(v)).join('')}</div>`
+        : `<div class="empty"><h3>No content yet</h3><p>Add your first video to get started.</p><button class="btn btn-primary" style="margin-top:16px" onclick="switchTab('add')">Add Content</button></div>`}
     </div>
   `;
 }
@@ -615,7 +597,6 @@ function contentItemHTML(v){
   </div>`;
 }
 
-/* ===== CONTENT LIST ===== */
 function renderContentList(){
   const filters = ['all','published','unpublished','featured','trending','popular'];
   let list = allVideos.slice();
@@ -651,15 +632,12 @@ function renderContentList(){
       ${filters.map(f => `<button class="chip ${contentFilter===f?'active':''}" onclick="setContentFilter('${f}')">${f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
     </div>
     <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px">${list.length} ${list.length===1?'item':'items'}</div>
-    ${list.length ? `
-      <div class="content-grid">
-        ${list.map(v => contentItemHTML(v)).join('')}
-      </div>
-    ` : `<div class="empty">
-      <div class="empty-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3V9z"/></svg></div>
-      <h3>No content found</h3>
-      <p>Try adjusting your search or filters.</p>
-    </div>`}
+    ${list.length ? `<div class="content-grid">${list.map(v => contentItemHTML(v)).join('')}</div>`
+      : `<div class="empty">
+        <div class="empty-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3V9z"/></svg></div>
+        <h3>No content found</h3>
+        <p>Try adjusting your search or filters.</p>
+      </div>`}
   `;
 }
 
@@ -676,10 +654,10 @@ window.onContentSearch = function(val){
   }, 250);
 };
 
-/* ===== ADD/EDIT FORM ===== */
 function renderAddForm(){
   const v = editingId ? allVideos.find(x => x.id === editingId) : null;
   const isEdit = !!v;
+  const cats = getExistingCategories();
 
   document.getElementById('content').innerHTML = `
     <div class="panel">
@@ -689,7 +667,7 @@ function renderAddForm(){
       </div>
 
       <div class="form-section">
-        <div class="form-section-title"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg> Basic Information</div>
+        <div class="form-section-title">Basic Information</div>
         <div class="form-field">
           <label>Title <span class="req">*</span></label>
           <input type="text" id="fTitle" placeholder="Enter video title" value="${esc(v?v.title:'')}">
@@ -702,7 +680,7 @@ function renderAddForm(){
       </div>
 
       <div class="form-section">
-        <div class="form-section-title"><svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3V9z"/></svg> Media</div>
+        <div class="form-section-title">Media</div>
         <div class="form-field">
           <label>Video URL <span class="req">*</span></label>
           <input type="text" id="fUrl" placeholder="YouTube, Vimeo, MP4, Drive or any URL" value="${esc(v?v.videoUrl:'')}">
@@ -723,11 +701,19 @@ function renderAddForm(){
       </div>
 
       <div class="form-section">
-        <div class="form-section-title"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg> Metadata</div>
+        <div class="form-section-title">Metadata</div>
         <div class="form-row">
           <div class="form-field">
             <label>Category</label>
-            <input type="text" id="fCat" placeholder="e.g. Movie, Series, Short" value="${esc(v?v.category:'')}">
+            <input type="text" id="fCat" placeholder="e.g. Movie, Series, Dark Web" list="catList" value="${esc(v?v.category:'')}" oninput="updateCatHelper()">
+            <datalist id="catList">
+              ${cats.map(c => `<option value="${esc(c)}">`).join('')}
+            </datalist>
+            <div class="cat-helper" id="catHelper">
+              ${cats.map(c => `<button type="button" onclick="pickCat('${esc(c).replace(/'/g,"\\'")}')">${esc(c)}</button>`).join('')}
+              ${!cats.length ? '<span style="font-size:11px;color:var(--text-muted)">Type a category — it will become a section on Home & Explore</span>' : ''}
+            </div>
+            <div class="form-hint">💡 New category name auto-creates a Home rail + Explore chip</div>
           </div>
           <div class="form-field">
             <label>Genre</label>
@@ -753,7 +739,7 @@ function renderAddForm(){
       </div>
 
       <div class="form-section">
-        <div class="form-section-title"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg> Discovery</div>
+        <div class="form-section-title">Discovery</div>
         <div class="switch-row">
           <div class="switch-info"><h4>Published</h4><p>Visible to public users</p></div>
           <label class="toggle"><input type="checkbox" id="fPub" ${(!v || v.published !== false) ? 'checked' : ''}><span class="toggle-track"></span></label>
@@ -789,6 +775,21 @@ function renderAddForm(){
   });
 }
 
+window.pickCat = function(cat){
+  const input = document.getElementById('fCat');
+  if(input){ input.value = cat; input.focus(); }
+};
+
+window.updateCatHelper = function(){
+  const val = document.getElementById('fCat').value.trim();
+  const helper = document.getElementById('catHelper');
+  if(!helper) return;
+  const cats = getExistingCategories();
+  const isNew = val && !cats.includes(val);
+  helper.innerHTML = cats.map(c => `<button type="button" onclick="pickCat('${esc(c).replace(/'/g,"\\'")}')">${esc(c)}</button>`).join('') +
+    (isNew ? `<span style="font-size:11px;color:var(--success);font-weight:600;display:inline-flex;align-items:center;gap:4px">✓ New category "${esc(val)}"</span>` : '');
+};
+
 window.uploadThumb = async function(){
   const fileInput = document.getElementById('fThumbFile');
   const file = fileInput.files[0];
@@ -796,7 +797,7 @@ window.uploadThumb = async function(){
   const status = document.getElementById('uploadStatus');
   const thumbInput = document.getElementById('fThumb');
   status.className = 'upload-status';
-  status.innerHTML = '<span class="spinner" style="border-top-color:var(--deep-teal);border-color:var(--border);border-top-color:var(--deep-teal)"></span> Uploading...';
+  status.innerHTML = '<span class="spinner" style="border-top-color:var(--deep-teal);border-color:var(--border)"></span> Uploading...';
 
   const formData = new FormData();
   formData.append('image', file);
@@ -840,8 +841,10 @@ window.saveVideo = async function(){
   let valid = true;
   ['Title','Url','Thumb'].forEach(f => {
     document.getElementById('err'+f).classList.remove('show');
-    document.getElementById('f'+(f==='Title'?'Title':f==='Url'?'Url':'Thumb')).classList.remove('error');
   });
+  document.getElementById('fTitle').classList.remove('error');
+  document.getElementById('fUrl').classList.remove('error');
+  document.getElementById('fThumb').classList.remove('error');
 
   if(!title){ document.getElementById('errTitle').classList.add('show'); document.getElementById('fTitle').classList.add('error'); valid = false; }
   if(!videoUrl){ document.getElementById('errUrl').classList.add('show'); document.getElementById('fUrl').classList.add('error'); valid = false; }
@@ -868,7 +871,7 @@ window.saveVideo = async function(){
       editingId = null;
     } else {
       await set(push(ref(db, 'videos')), videoData);
-      toast('Content added', 'success');
+      toast('Content added — new upload will notify users', 'success');
     }
     currentTab = 'content';
     document.getElementById('pageTitle').textContent = 'Content';
@@ -941,6 +944,67 @@ window.deleteVideo = function(id){
   });
 };
 
+/* ===== CATEGORIES TAB ===== */
+function renderCategories(){
+  const published = allVideos.filter(v => v.published !== false);
+  const catMap = {};
+  published.forEach(v => {
+    if(!v.category) return;
+    if(!catMap[v.category]) catMap[v.category] = {count:0, items:[]};
+    catMap[v.category].count++;
+    catMap[v.category].items.push(v);
+  });
+  const cats = Object.entries(catMap).sort((a,b) => b[1].count - a[1].count);
+
+  return `
+    <div class="panel">
+      <div class="panel-head">
+        <h2><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Content Categories</h2>
+      </div>
+      <p style="font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:18px">
+        Categories are automatically created when you type a category name in Add Content. Each category appears as its own rail on the <strong>Home</strong> screen and as a chip on the <strong>Explore</strong> page.
+      </p>
+      ${cats.length ? `
+        <div class="content-grid">
+          ${cats.map(([name, data]) => `
+            <div class="content-item">
+              <div class="content-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--light-green)">
+                <div style="font-size:24px;font-weight:800;color:var(--deep-teal)">${data.count}</div>
+              </div>
+              <div class="content-info">
+                <h4>${esc(name)}</h4>
+                <div class="content-tags"><span class="tag tag-cat">${data.count} ${data.count===1?'video':'videos'}</span></div>
+                <div class="content-meta">
+                  ${data.items.slice(0,3).map(v => `<span>${esc(v.title.slice(0,20))}${v.title.length>20?'…':''}</span>`).join('')}
+                </div>
+              </div>
+              <div class="content-actions">
+                <button onclick="filterByCat('${esc(name).replace(/'/g,"\\'")}')" title="View videos" aria-label="View">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<div class="empty">
+        <div class="empty-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+        <h3>No categories yet</h3>
+        <p>Add content with a category to create your first category section.</p>
+        <button class="btn btn-primary" style="margin-top:16px" onclick="switchTab('add')">Add Content</button>
+      </div>`}
+    </div>
+  `;
+}
+
+window.filterByCat = function(cat){
+  contentFilter = 'all';
+  contentSearch = cat;
+  currentTab = 'content';
+  document.getElementById('pageTitle').textContent = 'Content';
+  document.querySelectorAll('.sidebar-link[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === 'content'));
+  renderTab();
+};
+
 /* ===== HOMEPAGE ===== */
 function renderHomepage(){
   const published = allVideos.filter(v => v.published !== false);
@@ -948,6 +1012,12 @@ function renderHomepage(){
   const trending = published.filter(v => v.trending);
   const popular = published.filter(v => v.popular).concat(published.filter(v => !v.popular && v.views > 0)).slice(0,10);
   const recent = published.slice(0,10);
+  const catGroups = {};
+  published.forEach(v => {
+    if(!v.category) return;
+    if(!catGroups[v.category]) catGroups[v.category] = [];
+    catGroups[v.category].push(v);
+  });
 
   const section = (title, icon, items) => `
     <div class="panel">
@@ -962,12 +1032,23 @@ function renderHomepage(){
 
   return `
     <p style="font-size:14px;color:var(--text-mid);margin-bottom:20px;line-height:1.6">
-      This shows how your homepage sections are currently populated. Use the Content tab to feature, trend, or publish content.
+      This shows how your homepage sections are currently populated. Category rails are auto-generated below.
     </p>
     ${section('Hero / Featured', '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg>', featured)}
     ${section('Trending Now', '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>', trending)}
     ${section('Popular', '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2s4 4 4 8a4 4 0 11-8 0c0-4 4-8 4-8z"/></svg>', popular)}
     ${section('New Releases', '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>', recent)}
+    ${Object.keys(catGroups).length ? `
+      <div class="panel">
+        <div class="panel-head">
+          <h2><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Auto-Generated Category Rails</h2>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">These appear on the Home screen automatically:</p>
+        <div class="cat-helper">
+          ${Object.keys(catGroups).map(c => `<button onclick="filterByCat('${esc(c).replace(/'/g,"\\'")}')">${esc(c)} (${catGroups[c].length})</button>`).join('')}
+        </div>
+      </div>
+    ` : ''}
   `;
 }
 
@@ -1005,15 +1086,13 @@ function renderAnalytics(){
     </div>
 
     <div class="panel">
-      <div class="panel-head"><h2><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg> Most Watched</h2></div>
+      <div class="panel-head"><h2>Most Watched</h2></div>
       ${withViews.length ? `
         <div style="display:flex;flex-direction:column;gap:10px">
           ${withViews.map((v,i) => `
             <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface-2);border-radius:var(--r-sm);border:1px solid var(--border)">
               <div style="width:28px;height:28px;border-radius:50%;background:var(--deep-teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${i+1}</div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:14px;font-weight:600;color:var(--text-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.title)}</div>
-              </div>
+              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--text-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.title)}</div></div>
               <div style="font-size:13px;font-weight:700;color:var(--deep-teal);flex-shrink:0">${v.views} views</div>
             </div>
           `).join('')}
@@ -1022,7 +1101,7 @@ function renderAnalytics(){
     </div>
 
     <div class="panel">
-      <div class="panel-head"><h2><svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Top Categories</h2></div>
+      <div class="panel-head"><h2>Category Distribution</h2></div>
       ${topCats.length ? `
         <div style="display:flex;flex-direction:column;gap:10px">
           ${topCats.map(([cat,count]) => {
@@ -1043,7 +1122,6 @@ function renderAnalytics(){
   `;
 }
 
-/* ===== TOAST ===== */
 window.toast = function(msg, type){
   const wrap = document.getElementById('toastWrap');
   const el = document.createElement('div');
@@ -1056,7 +1134,6 @@ window.toast = function(msg, type){
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 2800);
 };
 
-/* ===== MODAL ===== */
 window.showModal = function(opts){
   const overlay = document.getElementById('modalOverlay');
   const box = document.getElementById('modalBox');
@@ -1075,7 +1152,6 @@ window.showModal = function(opts){
   overlay.onclick = (e) => { if(e.target === overlay) close(); };
 };
 
-/* ===== EXPOSE ===== */
 window.doLogin = doLogin;
 window.doLogout = doLogout;
 window.togglePw = togglePw;
@@ -1094,6 +1170,9 @@ window.closeSidebar = closeSidebar;
 window.showModal = showModal;
 window.toast = toast;
 window.toggleTheme = toggleTheme;
+window.pickCat = pickCat;
+window.updateCatHelper = updateCatHelper;
+window.filterByCat = filterByCat;
 </script>
 </body>
 </html>
