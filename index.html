@@ -54,6 +54,7 @@
       font-size: 15px; line-height: 1.5;
       -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
       overscroll-behavior: none; text-rendering: optimizeLegibility;
+      user-select: none; -webkit-user-select: none;
     }
     #app {
       height: 100%; width: 100%; display: flex; flex-direction: column;
@@ -205,7 +206,53 @@
     .file-name { flex: 1; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .file-item.active .file-name { color: var(--primary); font-weight: 600; }
 
-    /* === EDITOR === */
+    .workspace-actions {
+      display: flex; gap: 10px; padding: 14px 16px 10px;
+      background: var(--bg); border-bottom: 1px solid var(--border-light);
+    }
+    .workspace-action-btn {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; height: 52px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-elevated);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .workspace-action-btn:active {
+      transform: scale(0.97);
+      box-shadow: var(--shadow);
+    }
+    .workspace-action-btn.primary {
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .workspace-action-btn.primary:active {
+      box-shadow: 0 2px 6px var(--primary-glow);
+    }
+    .workspace-action-btn.success {
+      background: linear-gradient(135deg, var(--success), #22c55e);
+      color: #fff;
+      border-color: var(--success);
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    }
+    .workspace-action-btn.success:active {
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+    }
+    .workspace-action-btn svg {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+
     .editor-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--bg); }
     .editor-wrapper { flex: 1; display: flex; overflow: hidden; position: relative; }
     .line-numbers {
@@ -247,6 +294,7 @@
       margin: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      user-select: text; -webkit-user-select: text;
     }
     .code-editor::selection {
       background: rgba(37, 99, 235, 0.28);
@@ -324,7 +372,6 @@
     .editor-toolbar .btn-icon svg { width: 18px; height: 18px; }
     .toolbar-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
 
-    /* === PREVIEW === */
     .preview-container { flex: 1; display: flex; flex-direction: column; background: #f1f5f9; overflow: hidden; }
     [data-theme="dark"] .preview-container { background: #0f172a; }
     .preview-toolbar {
@@ -442,7 +489,6 @@
     .switch input:checked + .slider { background: var(--primary); }
     .switch input:checked + .slider::before { transform: translateX(18px); }
 
-    /* === CONTEXT MENU === */
     .context-menu {
       position: fixed; z-index: 3000;
       background: var(--surface-elevated);
@@ -465,6 +511,23 @@
     .context-menu-item:active { background: var(--surface); }
     .context-menu-item svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-secondary); }
     .context-menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    .storage-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px;
+      background: var(--success-light); color: var(--success);
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+
+    .menu-list {
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .menu-list .settings-item {
+      border-radius: 8px;
+      border-bottom: none;
+    }
+    .menu-list .settings-item.danger { color: var(--danger); }
 
     @media (min-width: 600px) {
       .project-list { padding: 16px 24px 80px; }
@@ -501,7 +564,6 @@
 </head>
 <body>
   <div id="app">
-    <!-- SPLASH SCREEN -->
     <div id="splashScreen" class="screen active">
       <div class="splash">
         <div class="splash-logo">
@@ -516,7 +578,6 @@
       </div>
     </div>
 
-    <!-- HOME SCREEN -->
     <div id="homeScreen" class="screen">
       <header class="app-header">
         <div class="splash-logo" style="width:32px;height:32px;border-radius:8px;box-shadow:none;">
@@ -527,6 +588,7 @@
         </div>
         <div class="header-title">Zishu Code</div>
         <div class="header-actions">
+          <span class="storage-badge">Live</span>
           <button class="btn-icon" id="homeImportBtn" aria-label="Import Project">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -551,7 +613,6 @@
       </button>
     </div>
 
-    <!-- WORKSPACE SCREEN -->
     <div id="workspaceScreen" class="screen">
       <header class="app-header">
         <button class="btn-icon" id="workspaceBackBtn" aria-label="Back">
@@ -562,11 +623,6 @@
         <div class="header-title truncate" id="workspaceTitle">Project</div>
         <div class="header-actions">
           <span class="status-dot saved" id="workspaceSaveStatus"></span>
-          <button class="btn-icon" id="workspacePreviewBtn" aria-label="Preview">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-          </button>
           <button class="btn-icon" id="workspaceMoreBtn" aria-label="More options">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="1"></circle>
@@ -576,7 +632,26 @@
           </button>
         </div>
       </header>
+
+      <div class="workspace-actions">
+        <button class="workspace-action-btn success" id="workspaceLocalhostBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          Localhost
+        </button>
+        <button class="workspace-action-btn primary" id="workspacePreviewQuickBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Preview
+        </button>
+      </div>
+
       <div class="file-list" id="workspaceFileList"></div>
+
       <button class="fab" id="workspaceNewFileFab" aria-label="New File">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -585,7 +660,6 @@
       </button>
     </div>
 
-    <!-- EDITOR SCREEN -->
     <div id="editorScreen" class="screen">
       <header class="app-header">
         <button class="btn-icon" id="editorBackBtn" aria-label="Back">
@@ -669,7 +743,6 @@
       </div>
     </div>
 
-    <!-- PREVIEW SCREEN -->
     <div id="previewScreen" class="screen">
       <header class="app-header">
         <button class="btn-icon" id="previewBackBtn" aria-label="Back">
@@ -677,7 +750,7 @@
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
-        <div class="header-title">Preview</div>
+        <div class="header-title" id="previewTitle">Preview</div>
         <div class="header-actions">
           <span class="preview-live-badge" id="previewLiveBadge" style="display:none;">
             <span class="dot"></span> Live
@@ -726,7 +799,6 @@
       </div>
     </div>
 
-    <!-- SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
       <header class="app-header">
         <button class="btn-icon" id="settingsBackBtn" aria-label="Back">
@@ -796,7 +868,6 @@
       </div>
     </div>
 
-    <!-- MODAL CONTAINER -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet" id="modalSheet">
         <div class="modal-handle"></div>
@@ -804,7 +875,6 @@
       </div>
     </div>
 
-    <!-- CONTEXT MENU -->
     <div class="context-menu" id="contextMenu">
       <div class="context-menu-item" data-action="copy">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -833,26 +903,16 @@
       </div>
     </div>
 
-    <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toastContainer"></div>
   </div>
 
   <script>
-    /* ============================================================
-       ZISHU CODE — Professional HTML/CSS/JS Editor
-       Pure frontend, no native dependencies
-       ============================================================ */
     'use strict';
 
-    // ============================================================
-    // 1. CENTRAL CONFIGURATION
-    // ============================================================
-    const APP_CONFIG = {
+    var APP_CONFIG = {
       name: 'Zishu Code',
       version: '1.0.0',
       storagePrefix: 'zishucode_',
-      privacyUrl: '',
-      termsUrl: '',
       maxRecentProjects: 20,
       autosaveDebounceMs: 800,
       previewDebounceMs: 600,
@@ -860,58 +920,176 @@
     };
 
     // ============================================================
-    // 2. STORAGE ABSTRACTION
+    // NATIVE BRIDGE
     // ============================================================
-    const AppStorage = {
-      _prefix: APP_CONFIG.storagePrefix,
-      _key(key) { return this._prefix + key; },
-      get(key, fallback = null) {
+    var NativeBridge = {
+      _native: null,
+      isAvailable: function() { return this._native !== null; },
+      init: function() {
         try {
-          const raw = localStorage.getItem(this._key(key));
-          if (raw === null) return fallback;
-          return JSON.parse(raw);
-        } catch (e) { return fallback; }
+          if (typeof window.Android !== 'undefined' && window.Android !== null) {
+            this._native = window.Android;
+            return true;
+          }
+        } catch (e) {}
+        this._native = null;
+        return false;
       },
-      set(key, value) {
-        try { localStorage.setItem(this._key(key), JSON.stringify(value)); return true; }
+      writeFile: function(filename, content) {
+        if (!this._native) return false;
+        try { this._native.writeFile(filename, content); return true; }
         catch (e) { return false; }
       },
-      remove(key) {
-        try { localStorage.removeItem(this._key(key)); return true; } catch (e) { return false; }
+      readFile: function(filename) {
+        if (!this._native) return null;
+        try { return this._native.readFile(filename); }
+        catch (e) { return null; }
       },
-      clear() {
+      deleteFile: function(filename) {
+        if (!this._native) return false;
+        try { this._native.deleteFile(filename); return true; }
+        catch (e) { return false; }
+      },
+      listFiles: function() {
+        if (!this._native) return null;
         try {
-          const keys = Object.keys(localStorage).filter(k => k.startsWith(this._prefix));
-          keys.forEach(k => localStorage.removeItem(k));
-          return true;
-        } catch (e) { return false; }
+          var raw = this._native.listFiles();
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
       },
-      getSize() {
-        try {
-          let total = 0;
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith(this._prefix)) total += (localStorage.getItem(key) || '').length * 2;
-          }
-          return total;
-        } catch (e) { return 0; }
+      fileExists: function(filename) {
+        if (!this._native) return false;
+        try { return this._native.fileExists(filename); }
+        catch (e) { return false; }
       },
-      listProjects() { return this.get('projects', []); },
-      saveProjects(projects) { return this.set('projects', projects); },
-      loadProject(id) { return this.get('project_' + id, null); },
-      saveProject(project) { return this.set('project_' + project.id, project); },
-      deleteProject(id) { return this.remove('project_' + id); },
-      getSettings() { return this.get('settings', {}); },
-      saveSettings(settings) { return this.set('settings', settings); },
-      getRecovery() { return this.get('recovery', null); },
-      saveRecovery(data) { return this.set('recovery', data); },
-      clearRecovery() { return this.remove('recovery'); }
+      pickFileForImport: function() {
+        if (!this._native) return false;
+        try { this._native.pickFileForImport(); return true; }
+        catch (e) { return false; }
+      },
+      getClipboardText: function() {
+        if (!this._native || !this._native.getClipboardText) return null;
+        try { return this._native.getClipboardText(); }
+        catch (e) { return null; }
+      },
+      setClipboardText: function(text) {
+        if (!this._native || !this._native.setClipboardText) return false;
+        try { return this._native.setClipboardText(text); }
+        catch (e) { return false; }
+      },
+      vibrate: function(ms) {
+        if (this._native) {
+          try { this._native.vibrate(ms || 30); return; } catch (e) {}
+        }
+        if (navigator.vibrate) navigator.vibrate(ms || 30);
+      }
     };
 
     // ============================================================
-    // 3. APPLICATION STATE
+    // STORAGE
     // ============================================================
-    const AppState = {
+    var AppStorage = {
+      _prefix: APP_CONFIG.storagePrefix,
+      _nativeMode: false,
+      init: function() { this._nativeMode = NativeBridge.isAvailable(); },
+      isNative: function() { return this._nativeMode; },
+      _nativeGet: function(key) {
+        if (!this._nativeMode) return null;
+        var fname = key + '.json';
+        if (!NativeBridge.fileExists(fname)) return null;
+        var content = NativeBridge.readFile(fname);
+        if (!content) return null;
+        try { return JSON.parse(content); } catch (e) { return null; }
+      },
+      _nativeSet: function(key, value) {
+        if (!this._nativeMode) return false;
+        try { return NativeBridge.writeFile(key + '.json', JSON.stringify(value)); }
+        catch (e) { return false; }
+      },
+      _nativeRemove: function(key) {
+        if (!this._nativeMode) return false;
+        return NativeBridge.deleteFile(key + '.json');
+      },
+      _key: function(key) { return this._prefix + key; },
+      get: function(key, fallback) {
+        if (fallback === undefined) fallback = null;
+        if (this._nativeMode) {
+          var nv = this._nativeGet(this._key(key));
+          if (nv !== null) return nv;
+          try {
+            var raw = localStorage.getItem(this._key(key));
+            if (raw !== null) {
+              var parsed = JSON.parse(raw);
+              this._nativeSet(this._key(key), parsed);
+              return parsed;
+            }
+          } catch (e) {}
+          return fallback;
+        }
+        try {
+          var r = localStorage.getItem(this._key(key));
+          if (r === null) return fallback;
+          return JSON.parse(r);
+        } catch (e) { return fallback; }
+      },
+      set: function(key, value) {
+        if (this._nativeMode) return this._nativeSet(this._key(key), value);
+        try { localStorage.setItem(this._key(key), JSON.stringify(value)); return true; }
+        catch (e) { return false; }
+      },
+      remove: function(key) {
+        if (this._nativeMode) return this._nativeRemove(this._key(key));
+        try { localStorage.removeItem(this._key(key)); return true; }
+        catch (e) { return false; }
+      },
+      clear: function() {
+        if (this._nativeMode) {
+          var files = NativeBridge.listFiles();
+          if (files) files.forEach(function(f) {
+            if (f.indexOf(APP_CONFIG.storagePrefix) === 0) NativeBridge.deleteFile(f);
+          });
+        }
+        try {
+          var keys = Object.keys(localStorage).filter(function(k) { return k.indexOf(this._prefix) === 0; }, this);
+          keys.forEach(function(k) { localStorage.removeItem(k); });
+          return true;
+        } catch (e) { return false; }
+      },
+      getSize: function() {
+        if (this._nativeMode) {
+          var files = NativeBridge.listFiles();
+          if (!files) return 0;
+          var total = 0;
+          files.forEach(function(f) {
+            if (f.indexOf(APP_CONFIG.storagePrefix) === 0) {
+              var c = NativeBridge.readFile(f);
+              if (c) total += c.length * 2;
+            }
+          });
+          return total;
+        }
+        try {
+          var total2 = 0;
+          for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (key && key.indexOf(this._prefix) === 0) total2 += (localStorage.getItem(key) || '').length * 2;
+          }
+          return total2;
+        } catch (e) { return 0; }
+      },
+      listProjects: function() { return this.get('projects', []); },
+      saveProjects: function(p) { return this.set('projects', p); },
+      loadProject: function(id) { return this.get('project_' + id, null); },
+      saveProject: function(p) { return this.set('project_' + p.id, p); },
+      deleteProject: function(id) { return this.remove('project_' + id); },
+      getSettings: function() { return this.get('settings', {}); },
+      saveSettings: function(s) { return this.set('settings', s); },
+      getRecovery: function() { return this.get('recovery', null); },
+      saveRecovery: function(d) { return this.set('recovery', d); },
+      clearRecovery: function() { return this.remove('recovery'); }
+    };
+
+    var AppState = {
       currentScreen: 'splash',
       currentProject: null,
       currentFile: null,
@@ -921,6 +1099,7 @@
       previewLive: false,
       previewDevice: 'phone',
       previewFullscreen: false,
+      previewMode: 'preview',
       settings: {
         fontSize: 13, tabSize: 2, wordWrap: false, lineNumbers: true,
         autoSave: true, syntaxHighlight: true, theme: 'light',
@@ -929,134 +1108,135 @@
       recoveryData: null
     };
 
-    // ============================================================
-    // 4. UI HELPERS
-    // ============================================================
-    const UI = {
-      toast(message, type = 'info', duration = 2500) {
-        const container = document.getElementById('toastContainer');
+    var UI = {
+      toast: function(message, type, duration) {
+        if (type === undefined) type = 'info';
+        if (duration === undefined) duration = 2500;
+        var container = document.getElementById('toastContainer');
         if (!container) return;
-        const toast = document.createElement('div');
+        var toast = document.createElement('div');
         toast.className = 'toast ' + type;
-        const icons = {
+        var icons = {
           success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>',
           error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
           warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
           info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
         };
-        toast.innerHTML = `<span class="icon">${icons[type] || icons.info}</span><span>${this.escapeHtml(message)}</span>`;
+        toast.innerHTML = '<span class="icon">' + (icons[type] || icons.info) + '</span><span>' + this.escapeHtml(message) + '</span>';
         container.appendChild(toast);
-        setTimeout(() => {
+        setTimeout(function() {
           toast.style.opacity = '0';
           toast.style.transform = 'translateY(8px)';
-          setTimeout(() => toast.remove(), 200);
+          setTimeout(function() { toast.remove(); }, 200);
         }, duration);
       },
-      showModal(contentHtml, options = {}) {
-        const overlay = document.getElementById('modalOverlay');
-        const modalContent = document.getElementById('modalContent');
+      showModal: function(contentHtml, options) {
+        if (options === undefined) options = {};
+        var overlay = document.getElementById('modalOverlay');
+        var modalContent = document.getElementById('modalContent');
         if (!overlay || !modalContent) return {};
         modalContent.innerHTML = contentHtml;
         overlay.classList.add('visible');
         if (options.onOpen) options.onOpen();
-        return { overlay, modalContent };
+        return { overlay: overlay, modalContent: modalContent };
       },
-      hideModal() {
-        const overlay = document.getElementById('modalOverlay');
+      hideModal: function() {
+        var overlay = document.getElementById('modalOverlay');
         if (overlay) overlay.classList.remove('visible');
       },
-      confirm(title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', dangerous = false) {
-        return new Promise((resolve) => {
-          this.showModal(`
-            <div class="modal-title">${this.escapeHtml(title)}</div>
-            <p class="text-sm text-muted mb-16">${this.escapeHtml(message)}</p>
-            <div class="modal-actions">
-              <button class="btn btn-secondary" id="modalCancelBtn">${this.escapeHtml(cancelLabel)}</button>
-              <button class="btn ${dangerous ? 'btn-danger' : 'btn-primary'}" id="modalConfirmBtn">${this.escapeHtml(confirmLabel)}</button>
-            </div>
-          `);
-          document.getElementById('modalCancelBtn').onclick = () => { this.hideModal(); resolve(false); };
-          document.getElementById('modalConfirmBtn').onclick = () => { this.hideModal(); resolve(true); };
+      confirm: function(title, message, confirmLabel, cancelLabel, dangerous) {
+        if (confirmLabel === undefined) confirmLabel = 'Confirm';
+        if (cancelLabel === undefined) cancelLabel = 'Cancel';
+        if (dangerous === undefined) dangerous = false;
+        var self = this;
+        return new Promise(function(resolve) {
+          self.showModal(
+            '<div class="modal-title">' + self.escapeHtml(title) + '</div>' +
+            '<p class="text-sm text-muted mb-16">' + self.escapeHtml(message) + '</p>' +
+            '<div class="modal-actions">' +
+              '<button class="btn btn-secondary" id="modalCancelBtn">' + self.escapeHtml(cancelLabel) + '</button>' +
+              '<button class="btn ' + (dangerous ? 'btn-danger' : 'btn-primary') + '" id="modalConfirmBtn">' + self.escapeHtml(confirmLabel) + '</button>' +
+            '</div>'
+          );
+          document.getElementById('modalCancelBtn').onclick = function() { self.hideModal(); resolve(false); };
+          document.getElementById('modalConfirmBtn').onclick = function() { self.hideModal(); resolve(true); };
         });
       },
-      prompt(title, placeholder, defaultValue = '', validator = null) {
-        return new Promise((resolve) => {
-          this.showModal(`
-            <div class="modal-title">${this.escapeHtml(title)}</div>
-            <div class="form-group">
-              <input class="form-input" id="modalPromptInput" placeholder="${this.escapeHtml(placeholder)}" value="${this.escapeHtml(defaultValue)}" autofocus>
-              <div class="form-error" id="modalPromptError"></div>
-            </div>
-            <div class="modal-actions">
-              <button class="btn btn-secondary" id="modalPromptCancel">Cancel</button>
-              <button class="btn btn-primary" id="modalPromptConfirm">OK</button>
-            </div>
-          `);
-          const input = document.getElementById('modalPromptInput');
-          const error = document.getElementById('modalPromptError');
-          setTimeout(() => input.focus(), 100);
-          const validate = () => {
+      prompt: function(title, placeholder, defaultValue, validator) {
+        if (defaultValue === undefined) defaultValue = '';
+        if (validator === undefined) validator = null;
+        var self = this;
+        return new Promise(function(resolve) {
+          self.showModal(
+            '<div class="modal-title">' + self.escapeHtml(title) + '</div>' +
+            '<div class="form-group">' +
+              '<input class="form-input" id="modalPromptInput" placeholder="' + self.escapeHtml(placeholder) + '" value="' + self.escapeHtml(defaultValue) + '" autofocus>' +
+              '<div class="form-error" id="modalPromptError"></div>' +
+            '</div>' +
+            '<div class="modal-actions">' +
+              '<button class="btn btn-secondary" id="modalPromptCancel">Cancel</button>' +
+              '<button class="btn btn-primary" id="modalPromptConfirm">OK</button>' +
+            '</div>'
+          );
+          var input = document.getElementById('modalPromptInput');
+          var error = document.getElementById('modalPromptError');
+          setTimeout(function() { input.focus(); }, 100);
+          var validate = function() {
             if (validator) {
-              const err = validator(input.value);
+              var err = validator(input.value);
               if (err) { error.textContent = err; error.classList.add('visible'); input.classList.add('error'); return false; }
             }
             error.classList.remove('visible'); input.classList.remove('error');
             return true;
           };
           input.addEventListener('input', validate);
-          document.getElementById('modalPromptCancel').onclick = () => { this.hideModal(); resolve(null); };
-          document.getElementById('modalPromptConfirm').onclick = () => {
-            if (validate()) { this.hideModal(); resolve(input.value); }
+          document.getElementById('modalPromptCancel').onclick = function() { self.hideModal(); resolve(null); };
+          document.getElementById('modalPromptConfirm').onclick = function() {
+            if (validate()) { self.hideModal(); resolve(input.value); }
           };
-          input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && validate()) { this.hideModal(); resolve(input.value); }
+          input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && validate()) { self.hideModal(); resolve(input.value); }
           });
         });
       },
-      escapeHtml(str) {
+      escapeHtml: function(str) {
         if (str === null || str === undefined) return '';
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.textContent = String(str);
         return div.innerHTML;
       }
     };
 
-    // ============================================================
-    // 5. ROUTER
-    // ============================================================
-    const Router = {
+    var Router = {
       _stack: [],
-      navigate(screen, options = {}) {
-        const screens = document.querySelectorAll('.screen');
-        screens.forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(screen + 'Screen');
+      navigate: function(screen, options) {
+        if (options === undefined) options = {};
+        var screens = document.querySelectorAll('.screen');
+        screens.forEach(function(s) { s.classList.remove('active'); });
+        var target = document.getElementById(screen + 'Screen');
         if (target) { target.classList.add('active'); AppState.currentScreen = screen; }
         if (!options.replace) this._stack.push(screen);
         if (options.onNavigate) options.onNavigate();
       },
-      back() {
+      back: function() {
         if (this._stack.length > 1) {
           this._stack.pop();
-          const prev = this._stack[this._stack.length - 1];
+          var prev = this._stack[this._stack.length - 1];
           this.navigate(prev, { replace: true });
         } else {
           this.navigate('home', { replace: true });
         }
       },
-      reset(screen) { this._stack = [screen]; this.navigate(screen, { replace: true }); },
-      getCurrent() { return AppState.currentScreen; }
+      reset: function(screen) { this._stack = [screen]; this.navigate(screen, { replace: true }); },
+      getCurrent: function() { return AppState.currentScreen; }
     };
 
-    // ============================================================
-    // 6. PROJECT MANAGER
-    // ============================================================
-    const ProjectManager = {
-      generateId() { return 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9); },
-
-      createProject(data) {
-        const id = this.generateId();
-        const project = {
-          id,
+    var ProjectManager = {
+      generateId: function() { return 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9); },
+      createProject: function(data) {
+        var id = this.generateId();
+        var project = {
+          id: id,
           name: data.name || 'Untitled Project',
           template: data.template || APP_CONFIG.defaultProjectTemplate,
           homePage: 'index.html',
@@ -1064,7 +1244,6 @@
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
-
         if (project.template === 'html-css-js') {
           project.files['index.html'] = this._getHtmlTemplate(project);
           project.files['style.css'] = this._getCssTemplate();
@@ -1083,129 +1262,55 @@
         } else if (project.template === 'empty') {
           project.homePage = '';
         }
-
         AppStorage.saveProject(project);
-        const projects = AppStorage.listProjects();
-        projects.unshift({
-          id: project.id,
-          name: project.name,
-          updatedAt: project.updatedAt
-        });
+        var projects = AppStorage.listProjects();
+        projects.unshift({ id: project.id, name: project.name, updatedAt: project.updatedAt });
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         return project;
       },
-
-      _getHtmlTemplate(project) {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${project.name}</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="app">
-    <h1>Welcome to ${project.name}</h1>
-    <p>Edit <code>index.html</code>, <code>style.css</code>, and <code>script.js</code> to build your app.</p>
-    <button id="demoBtn">Tap Me</button>
-    <p id="output"></p>
-  </div>
-  <script src="script.js"><\/script>
-</body>
-</html>`;
+      _getHtmlTemplate: function(project) {
+        return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + project.name + '</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <div class="app">\n    <h1>Welcome to ' + project.name + '</h1>\n    <p>Edit <code>index.html</code>, <code>style.css</code>, and <code>script.js</code> to build your app.</p>\n    <button id="demoBtn">Tap Me</button>\n    <p id="output"></p>\n  </div>\n  <script src="script.js"><\/script>\n</body>\n</html>';
       },
-
-      _getBasicHtmlTemplate(project) {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${project.name}</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>${project.name}</h1>
-    <p>Start building your web page here.</p>
-  </div>
-</body>
-</html>`;
+      _getBasicHtmlTemplate: function(project) {
+        return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + project.name + '</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <div class="container">\n    <h1>' + project.name + '</h1>\n    <p>Start building your web page here.</p>\n  </div>\n</body>\n</html>';
       },
-
-      _getCssTemplate() {
-        return `* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f8faff; color: #1a1f36;
-  display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 24px;
-}
-.app { text-align: center; max-width: 400px; }
-h1 { font-size: 24px; margin-bottom: 12px; color: #2563eb; }
-p { font-size: 15px; color: #5b6785; margin-bottom: 16px; line-height: 1.6; }
-code { background: #dbeafe; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-button { background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
-button:active { background: #1d4ed8; }
-#output { margin-top: 16px; font-weight: 600; color: #16a34a; }`;
+      _getCssTemplate: function() {
+        return '* { margin: 0; padding: 0; box-sizing: border-box; }\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;\n  background: #f8faff; color: #1a1f36;\n  display: flex; align-items: center; justify-content: center;\n  min-height: 100vh; padding: 24px;\n}\n.app { text-align: center; max-width: 400px; }\nh1 { font-size: 24px; margin-bottom: 12px; color: #2563eb; }\np { font-size: 15px; color: #5b6785; margin-bottom: 16px; line-height: 1.6; }\ncode { background: #dbeafe; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; font-family: monospace; }\nbutton { background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }\nbutton:active { background: #1d4ed8; }\n#output { margin-top: 16px; font-weight: 600; color: #16a34a; }';
       },
-
-      _getJsTemplate() {
-        return `// ${APP_CONFIG.name} - JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('demoBtn');
-  var output = document.getElementById('output');
-  var count = 0;
-  if (btn) {
-    btn.addEventListener('click', function() {
-      count++;
-      if (output) {
-        output.textContent = 'Tapped ' + count + ' time' + (count > 1 ? 's' : '') + '!';
-      }
-    });
-  }
-});`;
+      _getJsTemplate: function() {
+        return '// ' + APP_CONFIG.name + ' - JavaScript\ndocument.addEventListener(\'DOMContentLoaded\', function() {\n  var btn = document.getElementById(\'demoBtn\');\n  var output = document.getElementById(\'output\');\n  var count = 0;\n  if (btn) {\n    btn.addEventListener(\'click\', function() {\n      count++;\n      if (output) {\n        output.textContent = \'Tapped \' + count + \' time\' + (count > 1 ? \'s\' : \'\') + \'!\';\n      }\n    });\n  }\n});';
       },
-
-      loadProject(id) {
-        const project = AppStorage.loadProject(id);
+      loadProject: function(id) {
+        var project = AppStorage.loadProject(id);
         if (project) { AppState.currentProject = project; return project; }
         return null;
       },
-
-      saveProject(project) {
+      saveProject: function(project) {
         if (!project) return false;
         project.updatedAt = new Date().toISOString();
-        const success = AppStorage.saveProject(project);
-        const projects = AppStorage.listProjects();
-        const idx = projects.findIndex(p => p.id === project.id);
+        var success = AppStorage.saveProject(project);
+        var projects = AppStorage.listProjects();
+        var idx = projects.findIndex(function(p) { return p.id === project.id; });
         if (idx !== -1) {
           projects[idx].name = project.name;
           projects[idx].updatedAt = project.updatedAt;
         } else {
-          projects.unshift({
-            id: project.id,
-            name: project.name,
-            updatedAt: project.updatedAt
-          });
+          projects.unshift({ id: project.id, name: project.name, updatedAt: project.updatedAt });
         }
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         return success;
       },
-
-      deleteProject(id) {
+      deleteProject: function(id) {
         AppStorage.deleteProject(id);
-        const projects = AppStorage.listProjects().filter(p => p.id !== id);
+        var projects = AppStorage.listProjects().filter(function(p) { return p.id !== id; });
         AppStorage.saveProjects(projects);
         if (AppState.currentProject && AppState.currentProject.id === id) {
           AppState.currentProject = null; AppState.currentFile = null;
         }
         return true;
       },
-
-      renameProject(id, newName) {
-        const project = AppStorage.loadProject(id);
+      renameProject: function(id, newName) {
+        var project = AppStorage.loadProject(id);
         if (project) {
           project.name = newName;
           project.updatedAt = new Date().toISOString();
@@ -1213,25 +1318,23 @@ document.addEventListener('DOMContentLoaded', function() {
           if (AppState.currentProject && AppState.currentProject.id === id) {
             AppState.currentProject.name = newName;
           }
-          const projects = AppStorage.listProjects();
-          const idx = projects.findIndex(p => p.id === id);
+          var projects = AppStorage.listProjects();
+          var idx = projects.findIndex(function(p) { return p.id === id; });
           if (idx !== -1) { projects[idx].name = newName; AppStorage.saveProjects(projects); }
           return true;
         }
         return false;
       },
-
-      getRecentProjects() { return AppStorage.listProjects(); },
-
-      formatDate(isoString) {
+      getRecentProjects: function() { return AppStorage.listProjects(); },
+      formatDate: function(isoString) {
         if (!isoString) return 'Unknown';
         try {
-          const date = new Date(isoString);
-          const now = new Date();
-          const diff = now - date;
-          const mins = Math.floor(diff / 60000);
-          const hours = Math.floor(diff / 3600000);
-          const days = Math.floor(diff / 86400000);
+          var date = new Date(isoString);
+          var now = new Date();
+          var diff = now - date;
+          var mins = Math.floor(diff / 60000);
+          var hours = Math.floor(diff / 3600000);
+          var days = Math.floor(diff / 86400000);
           if (mins < 1) return 'Just now';
           if (mins < 60) return mins + 'm ago';
           if (hours < 24) return hours + 'h ago';
@@ -1241,36 +1344,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
-    // ============================================================
-    // 7. FILE MANAGER
-    // ============================================================
-    const FileManager = {
-      getFileType(filename) {
-        const ext = filename.split('.').pop().toLowerCase();
-        const types = { html: 'html', htm: 'html', css: 'css', js: 'javascript', mjs: 'javascript', json: 'json', txt: 'text', xml: 'xml', svg: 'svg', md: 'text' };
+    var FileManager = {
+      getFileType: function(filename) {
+        var ext = filename.split('.').pop().toLowerCase();
+        var types = { html: 'html', htm: 'html', css: 'css', js: 'javascript', mjs: 'javascript', json: 'json', txt: 'text', xml: 'xml', svg: 'svg', md: 'text' };
         return types[ext] || 'text';
       },
-      getFileIcon(filename) {
-        const type = this.getFileType(filename);
-        const icons = {
-          html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          css: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          javascript: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          json: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          xml: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
-          svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>'
-        };
-        return icons[type] || icons.text;
+      getFileIcon: function(filename) {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
       },
-      validateFilename(name) {
+      validateFilename: function(name) {
         if (!name || !name.trim()) return 'Filename is required';
         if (/[<>:"/\\|?*]/.test(name)) return 'Filename contains invalid characters';
         if (name.startsWith('.')) return 'Filename cannot start with a dot';
         if (name.length > 100) return 'Filename is too long';
         return null;
       },
-      createFile(project, filename, content = '') {
+      createFile: function(project, filename, content) {
+        if (content === undefined) content = '';
         if (!project) return false;
         if (project.files[filename] !== undefined) return false;
         project.files[filename] = content;
@@ -1278,7 +1369,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ProjectManager.saveProject(project);
         return true;
       },
-      deleteFile(project, filename) {
+      deleteFile: function(project, filename) {
         if (!project) return false;
         if (project.files[filename] === undefined) return false;
         delete project.files[filename];
@@ -1286,7 +1377,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ProjectManager.saveProject(project);
         return true;
       },
-      renameFile(project, oldName, newName) {
+      renameFile: function(project, oldName, newName) {
         if (!project) return false;
         if (project.files[oldName] === undefined) return false;
         if (project.files[newName] !== undefined) return false;
@@ -1296,14 +1387,14 @@ document.addEventListener('DOMContentLoaded', function() {
         ProjectManager.saveProject(project);
         return true;
       },
-      duplicateFile(project, filename) {
+      duplicateFile: function(project, filename) {
         if (!project) return false;
-        const content = project.files[filename];
+        var content = project.files[filename];
         if (content === undefined) return false;
-        const ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
-        const base = filename.replace(ext, '');
-        let newName = base + '_copy' + ext;
-        let counter = 1;
+        var ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
+        var base = filename.replace(ext, '');
+        var newName = base + '_copy' + ext;
+        var counter = 1;
         while (project.files[newName] !== undefined) {
           newName = base + '_copy' + counter + ext;
           counter++;
@@ -1313,125 +1404,334 @@ document.addEventListener('DOMContentLoaded', function() {
         ProjectManager.saveProject(project);
         return newName;
       },
-      readFile(project, filename) {
+      readFile: function(project, filename) {
         if (!project) return null;
         return project.files[filename] !== undefined ? project.files[filename] : null;
       },
-      writeFile(project, filename, content) {
+      writeFile: function(project, filename, content) {
         if (!project) return false;
         project.files[filename] = content;
         project.updatedAt = new Date().toISOString();
         return true;
       },
-      listFiles(project) {
+      listFiles: function(project) {
         if (!project) return [];
         return Object.keys(project.files).sort();
       }
     };
 
-    // ============================================================
-    // 8. EDITOR
-    // ============================================================
-    const Editor = {
+    var DownloadManager = {
+  // Convert Uint8Array or string to Base64
+  _toBase64: function(data) {
+    try {
+      if (typeof data === 'string') {
+        // String content → UTF-8 → Base64
+        var utf8 = unescape(encodeURIComponent(data));
+        return btoa(utf8);
+      } else if (data instanceof Uint8Array) {
+        // Binary → Base64
+        var binary = '';
+        var chunkSize = 8192;
+        for (var i = 0; i < data.length; i += chunkSize) {
+          var chunk = data.subarray(i, i + chunkSize);
+          binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+      } else if (data instanceof ArrayBuffer) {
+        return this._toBase64(new Uint8Array(data));
+      }
+      return null;
+    } catch (e) {
+      console.error('Base64 encode failed:', e);
+      return null;
+    }
+  },
+
+  // Download a single text file
+  downloadFile: function(filename, content) {
+    try {
+      // Native mode: save via bridge
+      if (NativeBridge.isAvailable() && NativeBridge._native && NativeBridge._native.saveBase64File) {
+        var base64 = this._toBase64(content);
+        if (base64) {
+          var ok = NativeBridge._native.saveBase64File(filename, base64, 'text/plain');
+          if (ok) {
+            var path = '';
+            try { path = NativeBridge._native.getDownloadsPath(); } catch (e) {}
+            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3000);
+            return true;
+          }
+        }
+      }
+
+      // Fallback: browser download
+      var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+      UI.toast('Downloaded: ' + filename, 'success');
+      return true;
+    } catch (e) {
+      UI.toast('Download failed: ' + e.message, 'error');
+      return false;
+    }
+  },
+
+  // Download project as ZIP
+  downloadProjectZip: function(project) {
+    if (!project) return false;
+    try {
+      var zipBytes = this._buildZip(project);
+      var safeName = project.name.replace(/[^a-zA-Z0-9_-]/g, '_');
+      var filename = safeName + '.zip';
+
+      // Native mode: save via bridge
+      if (NativeBridge.isAvailable() && NativeBridge._native && NativeBridge._native.saveBase64File) {
+        var base64 = this._toBase64(zipBytes);
+        if (base64) {
+          var ok = NativeBridge._native.saveBase64File(filename, base64, 'application/zip');
+          if (ok) {
+            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3000);
+            return true;
+          }
+        }
+      }
+
+      // Fallback: browser download
+      var blob = new Blob([zipBytes], { type: 'application/zip' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+      UI.toast('Downloaded project: ' + filename, 'success');
+      return true;
+    } catch (e) {
+      UI.toast('ZIP failed: ' + e.message, 'error');
+      return false;
+    }
+  },
+
+  // ... (existing _buildZip and _crcTable methods — same rahenge)
+  _buildZip: function(project) {
+    var files = project.files || {};
+    var fileNames = Object.keys(files);
+    var crcTable = this._crcTable();
+    var crc32 = function(data) {
+      var crc = -1;
+      for (var i = 0; i < data.length; i++) {
+        crc = (crc >>> 8) ^ crcTable[(crc ^ data[i]) & 0xFF];
+      }
+      return (crc ^ -1) >>> 0;
+    };
+    var strToUtf8 = function(str) {
+      var out = [];
+      for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        if (c < 128) out.push(c);
+        else if (c < 2048) {
+          out.push(192 | (c >> 6));
+          out.push(128 | (c & 63));
+        } else if (c < 0xD800 || c >= 0xE000) {
+          out.push(224 | (c >> 12));
+          out.push(128 | ((c >> 6) & 63));
+          out.push(128 | (c & 63));
+        } else {
+          i++;
+          var c2 = str.charCodeAt(i);
+          var cp = 0x10000 + (((c & 0x3FF) << 10) | (c2 & 0x3FF));
+          out.push(240 | (cp >> 18));
+          out.push(128 | ((cp >> 12) & 63));
+          out.push(128 | ((cp >> 6) & 63));
+          out.push(128 | (cp & 63));
+        }
+      }
+      return new Uint8Array(out);
+    };
+    var now = new Date();
+    var dosTime = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
+    var dosDate = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
+    var localParts = [];
+    var centralParts = [];
+    var offset = 0;
+    for (var i = 0; i < fileNames.length; i++) {
+      var fname = fileNames[i];
+      var contentBytes = strToUtf8(files[fname] || '');
+      var nameBytes = strToUtf8(fname);
+      var crc = crc32(contentBytes);
+      var size = contentBytes.length;
+      var local = new Uint8Array(30 + nameBytes.length + size);
+      var lv = new DataView(local.buffer);
+      lv.setUint32(0, 0x04034b50, true);
+      lv.setUint16(4, 20, true);
+      lv.setUint16(6, 0x0800, true);
+      lv.setUint16(8, 0, true);
+      lv.setUint16(10, dosTime, true);
+      lv.setUint16(12, dosDate, true);
+      lv.setUint32(14, crc, true);
+      lv.setUint32(18, size, true);
+      lv.setUint32(22, size, true);
+      lv.setUint16(26, nameBytes.length, true);
+      lv.setUint16(28, 0, true);
+      local.set(nameBytes, 30);
+      local.set(contentBytes, 30 + nameBytes.length);
+      localParts.push(local);
+      var central = new Uint8Array(46 + nameBytes.length);
+      var cv = new DataView(central.buffer);
+      cv.setUint32(0, 0x02014b50, true);
+      cv.setUint16(4, 20, true);
+      cv.setUint16(6, 20, true);
+      cv.setUint16(8, 0x0800, true);
+      cv.setUint16(10, 0, true);
+      cv.setUint16(12, dosTime, true);
+      cv.setUint16(14, dosDate, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, size, true);
+      cv.setUint32(24, size, true);
+      cv.setUint16(28, nameBytes.length, true);
+      cv.setUint16(30, 0, true);
+      cv.setUint16(32, 0, true);
+      cv.setUint16(34, 0, true);
+      cv.setUint16(36, 0, true);
+      cv.setUint32(38, 0, true);
+      cv.setUint32(42, offset, true);
+      central.set(nameBytes, 46);
+      centralParts.push(central);
+      offset += local.length;
+    }
+    var centralSize = 0;
+    for (var j = 0; j < centralParts.length; j++) centralSize += centralParts[j].length;
+    var centralOffset = offset;
+    var eocd = new Uint8Array(22);
+    var ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, fileNames.length, true);
+    ev.setUint16(10, fileNames.length, true);
+    ev.setUint32(12, centralSize, true);
+    ev.setUint32(16, centralOffset, true);
+    ev.setUint16(20, 0, true);
+    var totalSize = offset + centralSize + eocd.length;
+    var result = new Uint8Array(totalSize);
+    var pos = 0;
+    for (var k = 0; k < localParts.length; k++) { result.set(localParts[k], pos); pos += localParts[k].length; }
+    for (var m = 0; m < centralParts.length; m++) { result.set(centralParts[m], pos); pos += centralParts[m].length; }
+    result.set(eocd, pos);
+    return result;
+  },
+  _crcTable: function() {
+    var table = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) {
+        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      }
+      table[n] = c >>> 0;
+    }
+    return table;
+  }
+};
+
+    var Editor = {
       _textarea: null, _lineNumbers: null, _lineNumbersInner: null,
       _highlightLayer: null, _scrollContainer: null,
       _autosaveTimer: null, _highlightTimer: null,
       _lastSelectionStart: 0, _lastSelectionEnd: 0,
 
-      init() {
+      init: function() {
         this._textarea = document.getElementById('codeEditor');
         this._lineNumbers = document.getElementById('lineNumbers');
         this._lineNumbersInner = document.getElementById('lineNumbersInner');
         this._highlightLayer = document.getElementById('highlightLayer');
         this._scrollContainer = document.getElementById('editorScroll');
         if (!this._textarea) return;
-
-        this._textarea.addEventListener('scroll', () => this._syncScroll());
-        this._scrollContainer.addEventListener('scroll', () => this._syncScroll());
-        this._textarea.addEventListener('input', () => this._onInput());
-        this._textarea.addEventListener('keydown', (e) => this._onKeyDown(e));
-        this._textarea.addEventListener('select', () => this._trackSelection());
-        this._textarea.addEventListener('click', () => this._trackSelection());
-        this._textarea.addEventListener('keyup', () => this._trackSelection());
-
+        var self = this;
+        this._textarea.addEventListener('scroll', function() { self._syncScroll(); });
+        this._scrollContainer.addEventListener('scroll', function() { self._syncScroll(); });
+        this._textarea.addEventListener('input', function() { self._onInput(); });
+        this._textarea.addEventListener('keydown', function(e) { self._onKeyDown(e); });
+        this._textarea.addEventListener('select', function() { self._trackSelection(); });
+        this._textarea.addEventListener('click', function() { self._trackSelection(); });
+        this._textarea.addEventListener('keyup', function() { self._trackSelection(); });
         if (AppState.settings.syntaxHighlight) {
           this._textarea.classList.add('highlighting');
         } else {
           this._textarea.classList.remove('highlighting');
         }
-
         this._setupLongPress();
-        this._textarea.addEventListener('contextmenu', (e) => {
+        this._textarea.addEventListener('contextmenu', function(e) {
           e.preventDefault();
-          this._showContextMenu(e.clientX, e.clientY);
+          self._showContextMenu(e.clientX, e.clientY);
         });
-
         this._syncFontMetrics();
       },
 
-      _syncFontMetrics() {
+      _syncFontMetrics: function() {
         if (!this._textarea || !this._highlightLayer) return;
-        const cs = window.getComputedStyle(this._textarea);
-        const props = [
-          'fontFamily', 'fontSize', 'fontWeight', 'fontStyle',
-          'letterSpacing', 'wordSpacing', 'lineHeight', 'tabSize',
-          'textRendering', 'fontVariantLigatures', 'fontKerning',
-          'textTransform', 'textIndent'
-        ];
-        props.forEach(p => {
-          if (cs[p]) this._highlightLayer.style[p] = cs[p];
+        var cs = window.getComputedStyle(this._textarea);
+        var props = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing', 'wordSpacing', 'lineHeight', 'tabSize', 'textRendering', 'fontVariantLigatures', 'fontKerning', 'textTransform', 'textIndent'];
+        var self = this;
+        props.forEach(function(p) {
+          if (cs[p]) self._highlightLayer.style[p] = cs[p];
         });
       },
 
-      _trackSelection() {
+      _trackSelection: function() {
         if (this._textarea) {
           this._lastSelectionStart = this._textarea.selectionStart;
           this._lastSelectionEnd = this._textarea.selectionEnd;
         }
       },
 
-      _setupLongPress() {
-        let longPressTimer = null;
-        let startX = 0, startY = 0;
-
-        const onStart = (e) => {
-          const touch = e.touches ? e.touches[0] : e;
+      _setupLongPress: function() {
+        var self = this;
+        var longPressTimer = null;
+        var startX = 0, startY = 0;
+        var onStart = function(e) {
+          var touch = e.touches ? e.touches[0] : e;
           startX = touch.clientX; startY = touch.clientY;
-          longPressTimer = setTimeout(() => {
+          longPressTimer = setTimeout(function() {
             longPressTimer = null;
-            this._showContextMenu(startX, startY);
-            if (navigator.vibrate) navigator.vibrate(30);
+            self._showContextMenu(startX, startY);
+            NativeBridge.vibrate(30);
           }, 500);
         };
-        const onEnd = () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } };
-        const onMove = (e) => {
+        var onEnd = function() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } };
+        var onMove = function(e) {
           if (!longPressTimer) return;
-          const touch = e.touches ? e.touches[0] : e;
-          const dx = Math.abs(touch.clientX - startX);
-          const dy = Math.abs(touch.clientY - startY);
+          var touch = e.touches ? e.touches[0] : e;
+          var dx = Math.abs(touch.clientX - startX);
+          var dy = Math.abs(touch.clientY - startY);
           if (dx > 10 || dy > 10) { clearTimeout(longPressTimer); longPressTimer = null; }
         };
-
         this._textarea.addEventListener('touchstart', onStart, { passive: true });
         this._textarea.addEventListener('touchend', onEnd, { passive: true });
         this._textarea.addEventListener('touchmove', onMove, { passive: true });
         this._textarea.addEventListener('touchcancel', onEnd, { passive: true });
-
-        let mouseTimer = null;
-        this._textarea.addEventListener('mousedown', (e) => {
+        var mouseTimer = null;
+        this._textarea.addEventListener('mousedown', function(e) {
           if (e.button !== 0) return;
           startX = e.clientX; startY = e.clientY;
-          mouseTimer = setTimeout(() => { mouseTimer = null; this._showContextMenu(startX, startY); }, 600);
+          mouseTimer = setTimeout(function() { mouseTimer = null; self._showContextMenu(startX, startY); }, 600);
         });
-        this._textarea.addEventListener('mouseup', () => { if (mouseTimer) { clearTimeout(mouseTimer); mouseTimer = null; } });
-        this._textarea.addEventListener('mouseleave', () => { if (mouseTimer) { clearTimeout(mouseTimer); mouseTimer = null; } });
+        this._textarea.addEventListener('mouseup', function() { if (mouseTimer) { clearTimeout(mouseTimer); mouseTimer = null; } });
+        this._textarea.addEventListener('mouseleave', function() { if (mouseTimer) { clearTimeout(mouseTimer); mouseTimer = null; } });
       },
 
-      _showContextMenu(x, y) {
-        const menu = document.getElementById('contextMenu');
+      _showContextMenu: function(x, y) {
+        var menu = document.getElementById('contextMenu');
         if (!menu) return;
-        const menuWidth = 200, menuHeight = 280;
-        let posX = x, posY = y;
+        var menuWidth = 200, menuHeight = 280;
+        var posX = x, posY = y;
         if (posX + menuWidth > window.innerWidth) posX = window.innerWidth - menuWidth - 8;
         if (posY + menuHeight > window.innerHeight) posY = window.innerHeight - menuHeight - 8;
         if (posX < 8) posX = 8;
@@ -1441,81 +1741,79 @@ document.addEventListener('DOMContentLoaded', function() {
         menu.classList.add('visible');
       },
 
-      _syncScroll() {
+      _syncScroll: function() {
         if (!this._textarea || !this._lineNumbersInner) return;
-        const scrollTop = Math.round(this._textarea.scrollTop);
-        const scrollLeft = Math.round(this._textarea.scrollLeft);
-        this._lineNumbersInner.style.transform = `translateY(-${scrollTop}px)`;
+        var scrollTop = Math.round(this._textarea.scrollTop);
+        var scrollLeft = Math.round(this._textarea.scrollLeft);
+        this._lineNumbersInner.style.transform = 'translateY(-' + scrollTop + 'px)';
         if (this._highlightLayer) {
-          this._highlightLayer.style.transform = `translate(${-scrollLeft}px, ${-scrollTop}px)`;
+          this._highlightLayer.style.transform = 'translate(' + (-scrollLeft) + 'px, ' + (-scrollTop) + 'px)';
         }
       },
 
-      _onInput() {
+      _onInput: function() {
         AppState.editorContent = this._textarea.value;
         AppState.editorDirty = true;
         this._updateLineNumbers();
         this._updateSaveStatus('unsaved');
         this._trackSelection();
-
         if (AppState.settings.syntaxHighlight) this._scheduleHighlight();
         if (AppState.settings.autoSave) this._scheduleAutosave();
         if (AppState.previewLive) PreviewManager.scheduleLiveUpdate();
       },
 
-      _onKeyDown(e) {
+      _onKeyDown: function(e) {
         if (e.key === 'Tab') {
           e.preventDefault();
-          const start = this._textarea.selectionStart;
-          const end = this._textarea.selectionEnd;
-          const value = this._textarea.value;
-          const tabSize = AppState.settings.tabSize || 2;
-          const spaces = ' '.repeat(tabSize);
+          var start = this._textarea.selectionStart;
+          var end = this._textarea.selectionEnd;
+          var value = this._textarea.value;
+          var tabSize = AppState.settings.tabSize || 2;
+          var spaces = ' '.repeat(tabSize);
           if (start === end) {
             this._textarea.value = value.substring(0, start) + spaces + value.substring(end);
             this._textarea.selectionStart = this._textarea.selectionEnd = start + spaces.length;
           } else {
-            const lines = value.substring(start, end).split('\n');
-            const newLines = lines.map(line => spaces + line);
+            var lines = value.substring(start, end).split('\n');
+            var newLines = lines.map(function(line) { return spaces + line; });
             this._textarea.value = value.substring(0, start) + newLines.join('\n') + value.substring(end);
             this._textarea.selectionStart = start;
             this._textarea.selectionEnd = end + (spaces.length * lines.length);
           }
           this._onInput();
         }
-
-        const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
+        var pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
         if (pairs[e.key]) {
-          const start = this._textarea.selectionStart;
-          const end = this._textarea.selectionEnd;
-          if (start === end) {
+          var s2 = this._textarea.selectionStart;
+          var e2 = this._textarea.selectionEnd;
+          if (s2 === e2) {
             e.preventDefault();
-            const value = this._textarea.value;
-            this._textarea.value = value.substring(0, start) + e.key + pairs[e.key] + value.substring(end);
-            this._textarea.selectionStart = this._textarea.selectionEnd = start + 1;
+            var v2 = this._textarea.value;
+            this._textarea.value = v2.substring(0, s2) + e.key + pairs[e.key] + v2.substring(e2);
+            this._textarea.selectionStart = this._textarea.selectionEnd = s2 + 1;
             this._onInput();
           }
         }
       },
 
-      _scheduleAutosave() {
+      _scheduleAutosave: function() {
+        var self = this;
         if (this._autosaveTimer) clearTimeout(this._autosaveTimer);
-        this._autosaveTimer = setTimeout(() => this.save(), APP_CONFIG.autosaveDebounceMs);
+        this._autosaveTimer = setTimeout(function() { self.save(); }, APP_CONFIG.autosaveDebounceMs);
       },
 
-      _scheduleHighlight() {
+      _scheduleHighlight: function() {
+        var self = this;
         if (this._highlightTimer) clearTimeout(this._highlightTimer);
-        this._highlightTimer = setTimeout(() => this._applyHighlight(), 150);
+        this._highlightTimer = setTimeout(function() { self._applyHighlight(); }, 150);
       },
 
-      _applyHighlight() {
+      _applyHighlight: function() {
         if (!this._highlightLayer || !this._textarea) return;
         this._syncFontMetrics();
-
-        const code = this._textarea.value;
-        const type = AppState.currentFile ? FileManager.getFileType(AppState.currentFile) : 'html';
-        let highlighted = '';
-
+        var code = this._textarea.value;
+        var type = AppState.currentFile ? FileManager.getFileType(AppState.currentFile) : 'html';
+        var highlighted = '';
         if (type === 'html' || type === 'xml' || type === 'svg') {
           highlighted = this._highlightHTML(code);
         } else if (type === 'css') {
@@ -1525,59 +1823,60 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
           highlighted = UI.escapeHtml(code);
         }
-
         this._highlightLayer.innerHTML = highlighted;
         this._highlightLayer.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
         this._highlightLayer.style.lineHeight = '1.6';
-
         this._textarea.classList.add('highlighting');
       },
 
-      _makePlaceholder(store, content) {
-        const idx = store.length;
+      _makePlaceholder: function(store, content) {
+        var idx = store.length;
         store.push(content);
-        return `\u0001PH${idx}PH\u0001`;
+        return '\u0001PH' + idx + 'PH\u0001';
       },
 
-      _restorePlaceholders(html, store) {
-        for (let i = store.length - 1; i >= 0; i--) {
-          html = html.replace(`\u0001PH${i}PH\u0001`, store[i]);
+      _restorePlaceholders: function(html, store) {
+        for (var i = store.length - 1; i >= 0; i--) {
+          html = html.replace('\u0001PH' + i + 'PH\u0001', store[i]);
         }
         return html;
       },
 
-      _highlightHTML(code) {
-        const store = [];
-        let escaped = UI.escapeHtml(code);
-        escaped = escaped.replace(/&lt;!--[\s\S]*?--&gt;/g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-        escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
+      _highlightHTML: function(code) {
+        var store = [];
+        var self = this;
+        var escaped = UI.escapeHtml(code);
+        escaped = escaped.replace(/&lt;!--[\s\S]*?--&gt;/g, function(m) { return self._makePlaceholder(store, '<span class="comment">' + m + '</span>'); });
+        escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, function(m) { return self._makePlaceholder(store, '<span class="string">' + m + '</span>'); });
         escaped = escaped.replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tag">$2</span>');
         escaped = escaped.replace(/(\s)([a-zA-Z_][\w-]*)(?==)/g, '$1<span class="attr">$2</span>');
         return this._restorePlaceholders(escaped, store);
       },
 
-      _highlightCSS(code) {
-        const store = [];
-        let escaped = UI.escapeHtml(code);
-        escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-        escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
-        escaped = escaped.replace(/([^{}\n][^{}]*?)(?=\s*\{)/g, (m) => {
+      _highlightCSS: function(code) {
+        var store = [];
+        var self = this;
+        var escaped = UI.escapeHtml(code);
+        escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, function(m) { return self._makePlaceholder(store, '<span class="comment">' + m + '</span>'); });
+        escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, function(m) { return self._makePlaceholder(store, '<span class="string">' + m + '</span>'); });
+        escaped = escaped.replace(/([^{}\n][^{}]*?)(?=\s*\{)/g, function(m) {
           if (m.trim().length === 0) return m;
-          return `<span class="selector">${m}</span>`;
+          return '<span class="selector">' + m + '</span>';
         });
         escaped = escaped.replace(/([\w-]+)(\s*:\s*)([^;{}\n]+)(;?)/g, '<span class="property">$1</span>$2<span class="value">$3</span>$4');
         return this._restorePlaceholders(escaped, store);
       },
 
-      _highlightJS(code) {
-        const store = [];
-        let escaped = UI.escapeHtml(code);
-        escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-        escaped = escaped.replace(/\/\/[^\n]*/g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
+      _highlightJS: function(code) {
+        var store = [];
+        var self = this;
+        var escaped = UI.escapeHtml(code);
+        escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, function(m) { return self._makePlaceholder(store, '<span class="comment">' + m + '</span>'); });
+        escaped = escaped.replace(/\/\/[^\n]*/g, function(m) { return self._makePlaceholder(store, '<span class="comment">' + m + '</span>'); });
         escaped = escaped.replace(/(&quot;(?:\\.|[^&\\])*?&quot;|'(?:\\.|[^'\\])*?'|`(?:\\.|[^`\\])*?`)/g,
-          (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
+          function(m) { return self._makePlaceholder(store, '<span class="string">' + m + '</span>'); });
         escaped = escaped.replace(/\b(\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g, '<span class="number">$1</span>');
-        const keywords = ['var','let','const','function','return','if','else','for','while','do','switch','case','break','continue','new','this','typeof','instanceof','try','catch','finally','throw','class','extends','super','import','export','default','async','await','yield','true','false','null','undefined','delete','in','of','void','static','get','set'];
+        var keywords = ['var','let','const','function','return','if','else','for','while','do','switch','case','break','continue','new','this','typeof','instanceof','try','catch','finally','throw','class','extends','super','import','export','default','async','await','yield','true','false','null','undefined','delete','in','of','void','static','get','set'];
         escaped = escaped.replace(
           new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g'),
           '<span class="keyword">$1</span>'
@@ -1585,37 +1884,33 @@ document.addEventListener('DOMContentLoaded', function() {
         return this._restorePlaceholders(escaped, store);
       },
 
-      _updateLineNumbers() {
+      _updateLineNumbers: function() {
         if (!this._lineNumbersInner || !this._textarea) return;
         if (!AppState.settings.lineNumbers) {
           if (this._lineNumbers) this._lineNumbers.style.display = 'none';
           return;
         }
         if (this._lineNumbers) this._lineNumbers.style.display = 'block';
-
-        const text = this._textarea.value;
-        let lineCount = 1;
-        for (let i = 0; i < text.length; i++) {
+        var text = this._textarea.value;
+        var lineCount = 1;
+        for (var i = 0; i < text.length; i++) {
           if (text.charCodeAt(i) === 10) lineCount++;
         }
         if (lineCount < 1) lineCount = 1;
-
-        const nums = new Array(lineCount);
-        for (let i = 0; i < lineCount; i++) nums[i] = (i + 1) + '<br>';
+        var nums = new Array(lineCount);
+        for (var j = 0; j < lineCount; j++) nums[j] = (j + 1) + '<br>';
         this._lineNumbersInner.innerHTML = nums.join('');
         this._lineNumbersInner.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
         this._lineNumbersInner.style.lineHeight = '1.6';
       },
 
-      loadFile(filename) {
+      loadFile: function(filename) {
         if (!AppState.currentProject) return;
-        const content = FileManager.readFile(AppState.currentProject, filename);
+        var content = FileManager.readFile(AppState.currentProject, filename);
         if (content === null) return;
-
         AppState.currentFile = filename;
         AppState.editorContent = content;
         AppState.editorDirty = false;
-
         if (this._textarea) {
           this._textarea.value = content;
           this._textarea.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
@@ -1624,12 +1919,10 @@ document.addEventListener('DOMContentLoaded', function() {
           this._textarea.style.whiteSpace = AppState.settings.wordWrap ? 'pre-wrap' : 'pre';
           this._textarea.style.overflowWrap = AppState.settings.wordWrap ? 'break-word' : 'normal';
         }
-
         this._syncFontMetrics();
         this._updateLineNumbers();
         this._updateSaveStatus('saved');
         this._syncScroll();
-
         if (AppState.settings.syntaxHighlight) {
           this._applyHighlight();
         } else {
@@ -1638,7 +1931,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       },
 
-      save() {
+      save: function() {
         if (!AppState.currentProject || !AppState.currentFile) return;
         if (!AppState.editorDirty) return;
         FileManager.writeFile(AppState.currentProject, AppState.currentFile, AppState.editorContent);
@@ -1648,35 +1941,35 @@ document.addEventListener('DOMContentLoaded', function() {
         AppStorage.clearRecovery();
       },
 
-      _updateSaveStatus(status) {
-        const dots = [document.getElementById('editorSaveStatus'), document.getElementById('workspaceSaveStatus')];
-        dots.forEach(dot => {
+      _updateSaveStatus: function(status) {
+        var dots = [document.getElementById('editorSaveStatus'), document.getElementById('workspaceSaveStatus')];
+        dots.forEach(function(dot) {
           if (!dot) return;
           dot.className = 'status-dot ' + status;
           dot.title = status === 'saved' ? 'Saved' : status === 'saving' ? 'Saving...' : 'Unsaved changes';
         });
       },
 
-      undo() { if (this._textarea) document.execCommand('undo'); },
-      redo() { if (this._textarea) document.execCommand('redo'); },
+      undo: function() { if (this._textarea) document.execCommand('undo'); },
+      redo: function() { if (this._textarea) document.execCommand('redo'); },
 
-      insertText(text) {
+      insertText: function(text) {
         if (!this._textarea) return;
-        const start = this._textarea.selectionStart;
-        const end = this._textarea.selectionEnd;
-        const value = this._textarea.value;
+        var start = this._textarea.selectionStart;
+        var end = this._textarea.selectionEnd;
+        var value = this._textarea.value;
         this._textarea.value = value.substring(0, start) + text + value.substring(end);
         this._textarea.selectionStart = this._textarea.selectionEnd = start + text.length;
         this._textarea.focus();
         this._onInput();
       },
 
-      find(query, caseSensitive = false) {
+      find: function(query, caseSensitive) {
         if (!this._textarea || !query) return false;
-        const value = this._textarea.value;
-        const searchValue = caseSensitive ? value : value.toLowerCase();
-        const searchQuery = caseSensitive ? query : query.toLowerCase();
-        const index = searchValue.indexOf(searchQuery, this._textarea.selectionEnd);
+        var value = this._textarea.value;
+        var searchValue = caseSensitive ? value : value.toLowerCase();
+        var searchQuery = caseSensitive ? query : query.toLowerCase();
+        var index = searchValue.indexOf(searchQuery, this._textarea.selectionEnd);
         if (index !== -1) {
           this._textarea.focus();
           this._textarea.setSelectionRange(index, index + query.length);
@@ -1685,18 +1978,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
       },
 
-      replace(query, replacement, all = false, caseSensitive = false) {
+      replace: function(query, replacement, all, caseSensitive) {
         if (!this._textarea || !query) return 0;
-        let value = this._textarea.value;
-        let count = 0;
-        const flags = caseSensitive ? 'g' : 'gi';
-        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+        var value = this._textarea.value;
+        var count = 0;
+        var flags = caseSensitive ? 'g' : 'gi';
+        var regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
         if (all) {
-          const matches = value.match(regex);
+          var matches = value.match(regex);
           count = matches ? matches.length : 0;
           value = value.replace(regex, replacement);
         } else {
-          const idx = value.search(regex);
+          var idx = value.search(regex);
           if (idx !== -1) {
             value = value.substring(0, idx) + replacement + value.substring(idx + query.length);
             count = 1;
@@ -1708,55 +2001,50 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
-    // ============================================================
-    // 9. PREVIEW MANAGER
-    // ============================================================
-    const PreviewManager = {
+    var PreviewManager = {
       _liveTimer: null, _iframe: null, _device: null,
-
-      init() {
+      init: function() {
         this._iframe = document.getElementById('previewIframe');
         this._device = document.getElementById('previewDevice');
       },
-
-      render() {
+      render: function() {
         if (!AppState.currentProject || !this._iframe) return;
-        const homePage = AppState.currentProject.homePage || 'index.html';
-        const htmlFile = AppState.currentProject.files[homePage] || AppState.currentProject.files['index.html'];
+        var titleEl = document.getElementById('previewTitle');
+        if (titleEl) titleEl.textContent = AppState.previewMode === 'localhost' ? 'Localhost' : 'Preview';
+        var homePage = AppState.currentProject.homePage || 'index.html';
+        var htmlFile = AppState.currentProject.files[homePage] || AppState.currentProject.files['index.html'];
         if (!htmlFile) {
           this._iframe.srcdoc = '<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;color:#8e99b3;"><p>No HTML file found</p></body></html>';
           return;
         }
-        let html = htmlFile;
-        html = html.replace(/<link[^>]*href=["']([^"']+\.css)["'][^>]*>/g, (match, filename) => {
-          const css = AppState.currentProject.files[filename];
+        var html = htmlFile;
+        html = html.replace(/<link[^>]*href=["']([^"']+\.css)["'][^>]*>/g, function(match, filename) {
+          var css = AppState.currentProject.files[filename];
           if (css !== undefined) return '<style>' + css + '</style>';
           return match;
         });
-        html = html.replace(/<script[^>]*src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/g, (match, filename) => {
-          const js = AppState.currentProject.files[filename];
+        html = html.replace(/<script[^>]*src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/g, function(match, filename) {
+          var js = AppState.currentProject.files[filename];
           if (js !== undefined) return '<script>' + js + '<\/script>';
           return match;
         });
         this._iframe.srcdoc = html;
       },
-
-      scheduleLiveUpdate() {
+      scheduleLiveUpdate: function() {
+        var self = this;
         if (this._liveTimer) clearTimeout(this._liveTimer);
-        this._liveTimer = setTimeout(() => this.render(), APP_CONFIG.previewDebounceMs);
+        this._liveTimer = setTimeout(function() { self.render(); }, APP_CONFIG.previewDebounceMs);
       },
-
-      toggleDevice() {
+      toggleDevice: function() {
         if (!this._device) return;
         AppState.previewDevice = AppState.previewDevice === 'phone' ? 'tablet' : 'phone';
         this._device.className = 'preview-device ' + AppState.previewDevice;
       },
-
-      toggleFullscreen() {
+      toggleFullscreen: function() {
         AppState.previewFullscreen = !AppState.previewFullscreen;
-        const frame = document.getElementById('previewDeviceFrame');
-        const header = document.getElementById('previewScreen').querySelector('.app-header');
-        const toolbar = document.getElementById('previewScreen').querySelector('.preview-toolbar');
+        var frame = document.getElementById('previewDeviceFrame');
+        var header = document.getElementById('previewScreen').querySelector('.app-header');
+        var toolbar = document.getElementById('previewScreen').querySelector('.preview-toolbar');
         if (frame) {
           if (AppState.previewFullscreen) {
             frame.style.padding = '0';
@@ -1785,101 +2073,94 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
       },
-
-      _addExitFullscreenBtn() {
+      _addExitFullscreenBtn: function() {
         if (document.getElementById('exitFullscreenBtn')) return;
-        const btn = document.createElement('button');
+        var self = this;
+        var btn = document.createElement('button');
         btn.id = 'exitFullscreenBtn';
         btn.className = 'btn-icon';
         btn.style.cssText = 'position:fixed;top:calc(16px + var(--safe-top));right:16px;z-index:1000;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:44px;height:44px;';
         btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-        btn.onclick = () => this.toggleFullscreen();
+        btn.onclick = function() { self.toggleFullscreen(); };
         document.body.appendChild(btn);
       },
-
-      _removeExitFullscreenBtn() {
-        const btn = document.getElementById('exitFullscreenBtn');
+      _removeExitFullscreenBtn: function() {
+        var btn = document.getElementById('exitFullscreenBtn');
         if (btn) btn.remove();
       }
     };
 
-    // ============================================================
-    // 10. THEME MANAGER
-    // ============================================================
-    const ThemeManager = {
-      init() {
-        const settings = AppStorage.getSettings();
+    var ThemeManager = {
+      init: function() {
+        var settings = AppStorage.getSettings();
         if (settings && settings.theme) AppState.settings.theme = settings.theme;
         this.apply(AppState.settings.theme);
       },
-      apply(theme) {
-        const root = document.documentElement;
+      apply: function(theme) {
+        var root = document.documentElement;
         if (theme === 'dark') root.setAttribute('data-theme', 'dark');
         else if (theme === 'light') root.removeAttribute('data-theme');
         else if (theme === 'system') {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           if (prefersDark) root.setAttribute('data-theme', 'dark');
           else root.removeAttribute('data-theme');
         }
         AppState.settings.theme = theme;
         this.save();
       },
-      save() { AppStorage.saveSettings(AppState.settings); },
-      toggle() {
-        const themes = ['light', 'dark', 'system'];
-        const idx = themes.indexOf(AppState.settings.theme);
-        const next = themes[(idx + 1) % themes.length];
+      save: function() { AppStorage.saveSettings(AppState.settings); },
+      toggle: function() {
+        var themes = ['light', 'dark', 'system'];
+        var idx = themes.indexOf(AppState.settings.theme);
+        var next = themes[(idx + 1) % themes.length];
         this.apply(next);
         UI.toast('Theme: ' + next.charAt(0).toUpperCase() + next.slice(1), 'info', 1500);
       }
     };
 
-    // ============================================================
-    // 11. SEARCH MANAGER
-    // ============================================================
-    const SearchManager = {
-      search(query, caseSensitive = false) {
+    var SearchManager = {
+      search: function(query, caseSensitive) {
         if (!query || !AppState.currentProject) return [];
-        const results = [];
-        const files = AppState.currentProject.files;
-        const searchQuery = caseSensitive ? query : query.toLowerCase();
-        Object.keys(files).forEach(filename => {
-          const content = files[filename];
-          const lines = content.split('\n');
-          lines.forEach((line, index) => {
-            const searchLine = caseSensitive ? line : line.toLowerCase();
-            if (searchLine.includes(searchQuery)) {
-              results.push({ filename, line: index + 1, text: line.trim(), match: query });
+        var results = [];
+        var files = AppState.currentProject.files;
+        var searchQuery = caseSensitive ? query : query.toLowerCase();
+        Object.keys(files).forEach(function(filename) {
+          var content = files[filename];
+          var lines = content.split('\n');
+          lines.forEach(function(line, index) {
+            var searchLine = caseSensitive ? line : line.toLowerCase();
+            if (searchLine.indexOf(searchQuery) !== -1) {
+              results.push({ filename: filename, line: index + 1, text: line.trim(), match: query });
             }
           });
         });
         return results;
       },
-      renderResults(results, container) {
+      renderResults: function(results, container) {
         if (!container) return;
         if (results.length === 0) {
           container.innerHTML = '<div class="empty-state" style="padding:30px 16px;"><p class="text-muted text-sm">No results found</p></div>';
           return;
         }
-        container.innerHTML = results.slice(0, 100).map(r => `
-          <div class="search-result" data-file="${UI.escapeHtml(r.filename)}" data-line="${r.line}">
-            <div class="file">${UI.escapeHtml(r.filename)} · Line ${r.line}</div>
-            <div class="line">${UI.escapeHtml(r.text.substring(0, 100))}</div>
-          </div>
-        `).join('');
-        container.querySelectorAll('.search-result').forEach(el => {
-          el.addEventListener('click', () => {
-            const filename = el.dataset.file;
+        container.innerHTML = results.slice(0, 100).map(function(r) {
+          return '<div class="search-result" data-file="' + UI.escapeHtml(r.filename) + '" data-line="' + r.line + '">' +
+            '<div class="file">' + UI.escapeHtml(r.filename) + ' · Line ' + r.line + '</div>' +
+            '<div class="line">' + UI.escapeHtml(r.text.substring(0, 100)) + '</div>' +
+          '</div>';
+        }).join('');
+        container.querySelectorAll('.search-result').forEach(function(el) {
+          el.addEventListener('click', function() {
+            var filename = el.dataset.file;
             Editor.loadFile(filename);
             document.getElementById('editorFileName').textContent = filename;
             Router.navigate('editor');
-            setTimeout(() => {
-              const editor = document.getElementById('codeEditor');
+            setTimeout(function() {
+              var editor = document.getElementById('codeEditor');
               if (editor) {
-                const line = parseInt(el.dataset.line);
-                const lines = editor.value.split('\n');
-                let pos = 0;
-                for (let i = 0; i < line - 1 && i < lines.length; i++) pos += lines[i].length + 1;
+                var line = parseInt(el.dataset.line);
+                var lines = editor.value.split('\n');
+                var pos = 0;
+                for (var i = 0; i < line - 1 && i < lines.length; i++) pos += lines[i].length + 1;
                 editor.focus();
                 editor.setSelectionRange(pos, pos + (lines[line - 1] ? lines[line - 1].length : 0));
               }
@@ -1889,44 +2170,33 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
-    // ============================================================
-    // 12. APP ACTIONS
-    // ============================================================
-    const AppActions = {
-      openProject(projectId) {
-        const project = ProjectManager.loadProject(projectId);
+    var AppActions = {
+      openProject: function(projectId) {
+        var project = ProjectManager.loadProject(projectId);
         if (!project) { UI.toast('Project not found', 'error'); return; }
         AppState.currentProject = project;
         AppState.currentFile = null;
         this.renderWorkspace();
         Router.navigate('workspace');
       },
-
-      saveProject() {
-        if (AppState.currentProject) {
-          if (AppState.editorDirty && AppState.currentFile) Editor.save();
-          ProjectManager.saveProject(AppState.currentProject);
-          UI.toast('Project saved', 'success', 1500);
-        }
-      },
-
-      previewProject() {
+      previewProject: function(mode) {
         if (!AppState.currentProject) return;
+        AppState.previewMode = mode || 'preview';
         Editor.save();
         PreviewManager.render();
         Router.navigate('preview');
       },
-
-      exportProject() {
+      openLocalhost: function() { this.previewProject('localhost'); },
+      exportProject: function() {
         if (!AppState.currentProject) return;
-        const project = AppState.currentProject;
+        var project = AppState.currentProject;
         try {
-          const json = JSON.stringify(project, null, 2);
-          const blob = new Blob([json], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
+          var json = JSON.stringify(project, null, 2);
+          var blob = new Blob([json], { type: 'application/json' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
           a.href = url;
-          a.download = project.name.replace(/[^a-zA-Z0-9]/g, '_') + '.zishu.json';
+          a.download = project.name.replace(/[^a-zA-Z0-9_-]/g, '_') + '.zishu.json';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -1934,78 +2204,110 @@ document.addEventListener('DOMContentLoaded', function() {
           UI.toast('Project exported', 'success');
         } catch (e) { UI.toast('Export failed: ' + e.message, 'error'); }
       },
-
-      importProject() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json,.zishu';
-        input.onchange = (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (ev) => {
+      downloadProjectZip: function(projectId) {
+        var project = AppStorage.loadProject(projectId);
+        if (!project) { UI.toast('Project not found', 'error'); return; }
+        DownloadManager.downloadProjectZip(project);
+      },
+      downloadSingleFile: function(projectId, filename) {
+        var project = AppStorage.loadProject(projectId);
+        if (!project) { UI.toast('Project not found', 'error'); return; }
+        var content = project.files[filename];
+        if (content === undefined) { UI.toast('File not found', 'error'); return; }
+        DownloadManager.downloadFile(filename, content);
+      },
+      importProject: function() {
+        if (NativeBridge.isAvailable()) {
+          var self = this;
+          window._zishuOnFileSelected = function(uri, filename, content) {
+            delete window._zishuOnFileSelected;
+            if (!content) { UI.toast('Could not read file', 'error'); return; }
             try {
-              const data = JSON.parse(ev.target.result);
+              var data = JSON.parse(content);
               if (data.name && data.files) {
-                const newProject = ProjectManager.createProject({
+                var newProject = ProjectManager.createProject({
                   name: data.name + ' (Imported)',
                   template: 'blank'
                 });
                 newProject.files = data.files;
                 newProject.homePage = data.homePage || 'index.html';
                 ProjectManager.saveProject(newProject);
-                this.renderHome();
+                self.renderHome();
                 UI.toast('Project imported successfully', 'success');
-              } else {
-                UI.toast('Invalid project file', 'error');
-              }
+              } else UI.toast('Invalid project file', 'error');
+            } catch (err) { UI.toast('Failed to parse project file', 'error'); }
+          };
+          window._zishuOnFileError = function(err) {
+            delete window._zishuOnFileError;
+            UI.toast('File error: ' + err, 'error');
+          };
+          NativeBridge.pickFileForImport();
+          return;
+        }
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json,.zishu';
+        var self2 = this;
+        input.onchange = function(e) {
+          var file = e.target.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            try {
+              var data = JSON.parse(ev.target.result);
+              if (data.name && data.files) {
+                var newProject = ProjectManager.createProject({
+                  name: data.name + ' (Imported)',
+                  template: 'blank'
+                });
+                newProject.files = data.files;
+                newProject.homePage = data.homePage || 'index.html';
+                ProjectManager.saveProject(newProject);
+                self2.renderHome();
+                UI.toast('Project imported successfully', 'success');
+              } else UI.toast('Invalid project file', 'error');
             } catch (err) { UI.toast('Failed to parse project file', 'error'); }
           };
           reader.readAsText(file);
         };
         input.click();
       },
-
-      deleteProject(projectId) {
-        UI.confirm('Delete Project?', 'This will permanently remove the project and its files.', 'Delete', 'Cancel', true).then(confirmed => {
+      deleteProject: function(projectId) {
+        var self = this;
+        UI.confirm('Delete Project?', 'This will permanently remove the project and its files.', 'Delete', 'Cancel', true).then(function(confirmed) {
           if (confirmed) {
             ProjectManager.deleteProject(projectId);
-            this.renderHome();
+            self.renderHome();
             UI.toast('Project deleted', 'info');
           }
         });
       },
-
-      duplicateProject(projectId) {
-        const project = AppStorage.loadProject(projectId);
+      duplicateProject: function(projectId) {
+        var project = AppStorage.loadProject(projectId);
         if (!project) return;
-        const newProject = JSON.parse(JSON.stringify(project));
+        var newProject = JSON.parse(JSON.stringify(project));
         newProject.id = ProjectManager.generateId();
         newProject.name = project.name + ' (Copy)';
         newProject.createdAt = new Date().toISOString();
         newProject.updatedAt = new Date().toISOString();
         ProjectManager.saveProject(newProject);
-        const projects = AppStorage.listProjects();
-        projects.unshift({
-          id: newProject.id,
-          name: newProject.name,
-          updatedAt: newProject.updatedAt
-        });
+        var projects = AppStorage.listProjects();
+        projects.unshift({ id: newProject.id, name: newProject.name, updatedAt: newProject.updatedAt });
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         this.renderHome();
         UI.toast('Project duplicated', 'success');
       },
-
-      renameProject(projectId) {
-        const project = AppStorage.loadProject(projectId);
+      renameProject: function(projectId) {
+        var project = AppStorage.loadProject(projectId);
         if (!project) return;
-        UI.prompt('Rename Project', 'Enter new project name', project.name, (val) => {
+        var self = this;
+        UI.prompt('Rename Project', 'Enter new project name', project.name, function(val) {
           if (!val || !val.trim()) return 'Name is required';
           return null;
-        }).then(newName => {
+        }).then(function(newName) {
           if (newName && newName.trim()) {
             ProjectManager.renameProject(projectId, newName.trim());
-            this.renderHome();
+            self.renderHome();
             if (AppState.currentProject && AppState.currentProject.id === projectId) {
               document.getElementById('workspaceTitle').textContent = newName.trim();
             }
@@ -2013,156 +2315,123 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       },
-
-      renderHome() {
-        const list = document.getElementById('homeProjectList');
+      renderHome: function() {
+        var list = document.getElementById('homeProjectList');
         if (!list) return;
-        const projects = ProjectManager.getRecentProjects();
+        var projects = ProjectManager.getRecentProjects();
         if (projects.length === 0) {
-          list.innerHTML = `
-            <div class="empty-state">
-              <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </div>
-              <h3>No projects yet</h3>
-              <p>Create your first project to start coding.</p>
-              <button class="btn btn-primary" id="emptyCreateBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Create Project
-              </button>
-            </div>`;
-          const btn = document.getElementById('emptyCreateBtn');
-          if (btn) btn.onclick = () => this.showCreateProject();
+          list.innerHTML = '<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div><h3>No projects yet</h3><p>Create your first project to start coding.</p><button class="btn btn-primary" id="emptyCreateBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Create Project</button></div>';
+          var btn = document.getElementById('emptyCreateBtn');
+          var self = this;
+          if (btn) btn.onclick = function() { self.showCreateProject(); };
           return;
         }
-
-        list.innerHTML = projects.map(p => {
-          const initial = (p.name || 'A').charAt(0).toUpperCase();
-          const proj = AppStorage.loadProject(p.id);
-          const fileCount = proj && proj.files ? Object.keys(proj.files).length : 0;
-          const meta = fileCount > 0
-            ? `${fileCount} file${fileCount !== 1 ? 's' : ''} · ${ProjectManager.formatDate(p.updatedAt)}`
+        list.innerHTML = projects.map(function(p) {
+          var initial = (p.name || 'A').charAt(0).toUpperCase();
+          var proj = AppStorage.loadProject(p.id);
+          var fileCount = proj && proj.files ? Object.keys(proj.files).length : 0;
+          var meta = fileCount > 0
+            ? fileCount + ' file' + (fileCount !== 1 ? 's' : '') + ' · ' + ProjectManager.formatDate(p.updatedAt)
             : ProjectManager.formatDate(p.updatedAt);
-          return `
-            <div class="project-item" data-project-id="${p.id}">
-              <div class="project-icon">${initial}</div>
-              <div class="project-info">
-                <div class="project-name">${UI.escapeHtml(p.name || 'Untitled')}</div>
-                <div class="project-meta">${meta}</div>
-              </div>
-              <div class="project-actions">
-                <button class="btn-icon" data-action="more" data-project-id="${p.id}" aria-label="More options" style="width:36px;height:36px;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                    <circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle>
-                  </svg>
-                </button>
-              </div>
-            </div>`;
+          return '<div class="project-item" data-project-id="' + p.id + '">' +
+              '<div class="project-icon">' + initial + '</div>' +
+              '<div class="project-info">' +
+                '<div class="project-name">' + UI.escapeHtml(p.name || 'Untitled') + '</div>' +
+                '<div class="project-meta">' + meta + '</div>' +
+              '</div>' +
+              '<div class="project-actions">' +
+                '<button class="btn-icon" data-action="more" data-project-id="' + p.id + '" aria-label="More options" style="width:36px;height:36px;">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">' +
+                    '<circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle>' +
+                  '</svg>' +
+                '</button>' +
+              '</div>' +
+            '</div>';
         }).join('');
-
-        list.querySelectorAll('.project-item').forEach(el => {
-          el.addEventListener('click', (e) => {
+        var self = this;
+        list.querySelectorAll('.project-item').forEach(function(el) {
+          el.addEventListener('click', function(e) {
             if (e.target.closest('[data-action="more"]')) return;
-            this.openProject(el.dataset.projectId);
+            self.openProject(el.dataset.projectId);
           });
         });
-        list.querySelectorAll('[data-action="more"]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
+        list.querySelectorAll('[data-action="more"]').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.showProjectMenu(btn.dataset.projectId);
+            self.showProjectMenu(btn.dataset.projectId);
           });
         });
       },
-
-      renderWorkspace() {
-        const list = document.getElementById('workspaceFileList');
-        const title = document.getElementById('workspaceTitle');
+      renderWorkspace: function() {
+        var list = document.getElementById('workspaceFileList');
+        var title = document.getElementById('workspaceTitle');
         if (!list || !AppState.currentProject) return;
         title.textContent = AppState.currentProject.name;
-        const files = FileManager.listFiles(AppState.currentProject);
+        var files = FileManager.listFiles(AppState.currentProject);
         if (files.length === 0) {
-          list.innerHTML = `
-            <div class="empty-state">
-              <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-              </div>
-              <h3>No files</h3>
-              <p>Create your first file to start coding.</p>
-            </div>`;
+          list.innerHTML = '<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><h3>No files</h3><p>Create your first file to start coding.</p></div>';
           return;
         }
-        list.innerHTML = files.map(f => {
-          const isActive = AppState.currentFile === f;
-          return `
-            <div class="file-item ${isActive ? 'active' : ''}" data-file="${UI.escapeHtml(f)}">
-              <span class="icon">${FileManager.getFileIcon(f)}</span>
-              <span class="file-name">${UI.escapeHtml(f)}</span>
-              <button class="btn-icon" data-action="file-more" data-file="${UI.escapeHtml(f)}" aria-label="File options" style="width:32px;height:32px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-                  <circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle>
-                </svg>
-              </button>
-            </div>`;
+        var self = this;
+        list.innerHTML = files.map(function(f) {
+          var isActive = AppState.currentFile === f;
+          return '<div class="file-item ' + (isActive ? 'active' : '') + '" data-file="' + UI.escapeHtml(f) + '">' +
+              '<span class="icon">' + FileManager.getFileIcon(f) + '</span>' +
+              '<span class="file-name">' + UI.escapeHtml(f) + '</span>' +
+              '<button class="btn-icon" data-action="file-more" data-file="' + UI.escapeHtml(f) + '" aria-label="File options" style="width:32px;height:32px;">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">' +
+                  '<circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle>' +
+                '</svg>' +
+              '</button>' +
+            '</div>';
         }).join('');
-        list.querySelectorAll('.file-item').forEach(el => {
-          el.addEventListener('click', (e) => {
+        list.querySelectorAll('.file-item').forEach(function(el) {
+          el.addEventListener('click', function(e) {
             if (e.target.closest('[data-action="file-more"]')) return;
-            this.openFile(el.dataset.file);
+            self.openFile(el.dataset.file);
           });
         });
-        list.querySelectorAll('[data-action="file-more"]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
+        list.querySelectorAll('[data-action="file-more"]').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.showFileMenu(btn.dataset.file);
+            self.showFileMenu(btn.dataset.file);
           });
         });
       },
-
-      openFile(filename) {
+      openFile: function(filename) {
         if (!AppState.currentProject) return;
         AppState.currentFile = filename;
         Editor.loadFile(filename);
         document.getElementById('editorFileName').textContent = filename;
         Router.navigate('editor');
       },
-
-      showCreateProject() {
-        UI.showModal(`
-          <div class="modal-title">New Project</div>
-          <div class="form-group">
-            <label class="form-label">Project Name</label>
-            <input class="form-input" id="createName" placeholder="My Project" value="My Project">
-            <div class="form-error" id="createNameError"></div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Starting Template</label>
-            <select class="form-select" id="createTemplate">
-              <option value="html-css-js" selected>HTML / CSS / JavaScript</option>
-              <option value="basic-web">Basic Web Page</option>
-              <option value="blank">Blank HTML</option>
-              <option value="blank-css">Blank CSS</option>
-              <option value="blank-js">Blank JavaScript</option>
-              <option value="empty">Empty Project</option>
-            </select>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="createCancelBtn">Cancel</button>
-            <button class="btn btn-primary" id="createConfirmBtn">Create Project</button>
-          </div>
-        `);
-
-        const nameInput = document.getElementById('createName');
-        const nameError = document.getElementById('createNameError');
-
-        nameInput.addEventListener('input', () => {
+      showCreateProject: function() {
+        UI.showModal(
+          '<div class="modal-title">New Project</div>' +
+          '<div class="form-group">' +
+            '<label class="form-label">Project Name</label>' +
+            '<input class="form-input" id="createName" placeholder="My Project" value="My Project">' +
+            '<div class="form-error" id="createNameError"></div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label class="form-label">Starting Template</label>' +
+            '<select class="form-select" id="createTemplate">' +
+              '<option value="html-css-js" selected>HTML / CSS / JavaScript</option>' +
+              '<option value="basic-web">Basic Web Page</option>' +
+              '<option value="blank">Blank HTML</option>' +
+              '<option value="blank-css">Blank CSS</option>' +
+              '<option value="blank-js">Blank JavaScript</option>' +
+              '<option value="empty">Empty Project</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="modal-actions">' +
+            '<button class="btn btn-secondary" id="createCancelBtn">Cancel</button>' +
+            '<button class="btn btn-primary" id="createConfirmBtn">Create Project</button>' +
+          '</div>'
+        );
+        var nameInput = document.getElementById('createName');
+        var nameError = document.getElementById('createNameError');
+        nameInput.addEventListener('input', function() {
           if (!nameInput.value.trim()) {
             nameError.textContent = 'Project name is required';
             nameError.classList.add('visible');
@@ -2172,141 +2441,188 @@ document.addEventListener('DOMContentLoaded', function() {
             nameInput.classList.remove('error');
           }
         });
-
-        document.getElementById('createCancelBtn').onclick = () => UI.hideModal();
-        document.getElementById('createConfirmBtn').onclick = () => {
-          const name = nameInput.value.trim();
+        var self = this;
+        document.getElementById('createCancelBtn').onclick = function() { UI.hideModal(); };
+        document.getElementById('createConfirmBtn').onclick = function() {
+          var name = nameInput.value.trim();
           if (!name) {
             nameError.textContent = 'Project name is required';
             nameError.classList.add('visible');
             nameInput.classList.add('error');
             return;
           }
-          const project = ProjectManager.createProject({
-            name,
+          var project = ProjectManager.createProject({
+            name: name,
             template: document.getElementById('createTemplate').value
           });
           UI.hideModal();
           AppState.currentProject = project;
           AppState.currentFile = null;
-          this.renderWorkspace();
+          self.renderWorkspace();
           Router.navigate('workspace');
           UI.toast('Project created', 'success');
         };
-        setTimeout(() => nameInput.focus(), 200);
+        setTimeout(function() { nameInput.focus(); }, 200);
       },
-
-      showProjectMenu(projectId) {
-        const project = AppStorage.loadProject(projectId);
+      showProjectMenu: function(projectId) {
+        var project = AppStorage.loadProject(projectId);
         if (!project) return;
-        UI.showModal(`
-          <div class="modal-title">${UI.escapeHtml(project.name)}</div>
-          <div style="display:flex;flex-direction:column;gap:2px;">
-            <button class="settings-item" id="menuOpen" style="border-radius:8px;"><span class="label">Open Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuPreview" style="border-radius:8px;"><span class="label">Preview</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuExport" style="border-radius:8px;"><span class="label">Export Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuDuplicate" style="border-radius:8px;"><span class="label">Duplicate Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuRename" style="border-radius:8px;"><span class="label">Rename Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuDelete" style="border-radius:8px;color:var(--danger);"><span class="label" style="color:var(--danger);">Delete Project</span></button>
-          </div>
-        `);
-        document.getElementById('menuOpen').onclick = () => { UI.hideModal(); this.openProject(projectId); };
-        document.getElementById('menuPreview').onclick = () => { UI.hideModal(); this.openProject(projectId); setTimeout(() => this.previewProject(), 300); };
-        document.getElementById('menuExport').onclick = () => { UI.hideModal(); this.openProject(projectId); setTimeout(() => this.exportProject(), 300); };
-        document.getElementById('menuDuplicate').onclick = () => { UI.hideModal(); this.duplicateProject(projectId); };
-        document.getElementById('menuRename').onclick = () => { UI.hideModal(); this.renameProject(projectId); };
-        document.getElementById('menuDelete').onclick = () => { UI.hideModal(); this.deleteProject(projectId); };
+        var self = this;
+        UI.showModal(
+          '<div class="modal-title">' + UI.escapeHtml(project.name) + '</div>' +
+          '<div class="menu-list">' +
+            '<button class="settings-item" id="menuOpen"><span class="label">Open Project</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="menuPreview"><span class="label">Preview</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="menuDownloadZip"><span class="label">Download as ZIP</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>' +
+            '<button class="settings-item" id="menuExport"><span class="label">Export Project JSON</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="menuDuplicate"><span class="label">Duplicate Project</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="menuRename"><span class="label">Rename Project</span><span class="value">›</span></button>' +
+            '<button class="settings-item danger" id="menuDelete"><span class="label" style="color:var(--danger);">Delete Project</span></button>' +
+          '</div>'
+        );
+        document.getElementById('menuOpen').onclick = function() { UI.hideModal(); self.openProject(projectId); };
+        document.getElementById('menuPreview').onclick = function() { UI.hideModal(); self.openProject(projectId); setTimeout(function() { self.previewProject(); }, 300); };
+        document.getElementById('menuDownloadZip').onclick = function() { UI.hideModal(); self.downloadProjectZip(projectId); };
+        document.getElementById('menuExport').onclick = function() { UI.hideModal(); self.openProject(projectId); setTimeout(function() { self.exportProject(); }, 300); };
+        document.getElementById('menuDuplicate').onclick = function() { UI.hideModal(); self.duplicateProject(projectId); };
+        document.getElementById('menuRename').onclick = function() { UI.hideModal(); self.renameProject(projectId); };
+        document.getElementById('menuDelete').onclick = function() { UI.hideModal(); self.deleteProject(projectId); };
       },
-
-      showFileMenu(filename) {
-        UI.showModal(`
-          <div class="modal-title">${UI.escapeHtml(filename)}</div>
-          <div style="display:flex;flex-direction:column;gap:2px;">
-            <button class="settings-item" id="fileMenuOpen" style="border-radius:8px;"><span class="label">Open</span><span class="value">›</span></button>
-            <button class="settings-item" id="fileMenuRename" style="border-radius:8px;"><span class="label">Rename</span><span class="value">›</span></button>
-            <button class="settings-item" id="fileMenuDuplicate" style="border-radius:8px;"><span class="label">Duplicate</span><span class="value">›</span></button>
-            <button class="settings-item" id="fileMenuImport" style="border-radius:8px;"><span class="label">Import from File</span><span class="value">›</span></button>
-            <button class="settings-item" id="fileMenuDelete" style="border-radius:8px;color:var(--danger);"><span class="label" style="color:var(--danger);">Delete</span></button>
-          </div>
-        `);
-        document.getElementById('fileMenuOpen').onclick = () => { UI.hideModal(); this.openFile(filename); };
-        document.getElementById('fileMenuRename').onclick = () => {
+      showFileMenu: function(filename) {
+        var self = this;
+        var projectId = AppState.currentProject ? AppState.currentProject.id : null;
+        UI.showModal(
+          '<div class="modal-title">' + UI.escapeHtml(filename) + '</div>' +
+          '<div class="menu-list">' +
+            '<button class="settings-item" id="fileMenuOpen"><span class="label">Open</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="fileMenuRename"><span class="label">Rename</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="fileMenuDuplicate"><span class="label">Duplicate</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="fileMenuImport"><span class="label">Import from File</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="fileMenuDownload"><span class="label">Download File</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>' +
+            '<button class="settings-item danger" id="fileMenuDelete"><span class="label" style="color:var(--danger);">Delete</span></button>' +
+          '</div>'
+        );
+        document.getElementById('fileMenuOpen').onclick = function() { UI.hideModal(); self.openFile(filename); };
+        document.getElementById('fileMenuRename').onclick = function() {
           UI.hideModal();
-          UI.prompt('Rename File', 'Enter new filename', filename, (val) => {
+          UI.prompt('Rename File', 'Enter new filename', filename, function(val) {
             if (!val || !val.trim()) return 'Filename is required';
             return FileManager.validateFilename(val.trim());
-          }).then(newName => {
+          }).then(function(newName) {
             if (newName && newName.trim() && newName !== filename) {
               if (FileManager.renameFile(AppState.currentProject, filename, newName.trim())) {
                 if (AppState.currentFile === filename) AppState.currentFile = newName.trim();
-                this.renderWorkspace();
+                self.renderWorkspace();
                 UI.toast('File renamed', 'success');
               } else UI.toast('Could not rename file', 'error');
             }
           });
         };
-        document.getElementById('fileMenuDuplicate').onclick = () => {
+        document.getElementById('fileMenuDuplicate').onclick = function() {
           UI.hideModal();
-          const newName = FileManager.duplicateFile(AppState.currentProject, filename);
-          if (newName) { this.renderWorkspace(); UI.toast('File duplicated: ' + newName, 'success'); }
+          var newName = FileManager.duplicateFile(AppState.currentProject, filename);
+          if (newName) { self.renderWorkspace(); UI.toast('File duplicated: ' + newName, 'success'); }
         };
-        document.getElementById('fileMenuImport').onclick = () => {
+        document.getElementById('fileMenuImport').onclick = function() {
           UI.hideModal();
-          this.importFileContent(filename);
+          self.importFileContent(filename);
         };
-        document.getElementById('fileMenuDelete').onclick = () => {
+        document.getElementById('fileMenuDownload').onclick = function() {
           UI.hideModal();
-          UI.confirm('Delete File?', `Delete "${filename}"? This cannot be undone.`, 'Delete', 'Cancel', true).then(confirmed => {
+          if (projectId) self.downloadSingleFile(projectId, filename);
+        };
+        document.getElementById('fileMenuDelete').onclick = function() {
+          UI.hideModal();
+          UI.confirm('Delete File?', 'Delete "' + filename + '"? This cannot be undone.', 'Delete', 'Cancel', true).then(function(confirmed) {
             if (confirmed) {
               FileManager.deleteFile(AppState.currentProject, filename);
               if (AppState.currentFile === filename) { AppState.currentFile = null; Router.navigate('workspace'); }
-              this.renderWorkspace();
+              self.renderWorkspace();
               UI.toast('File deleted', 'info');
             }
           });
         };
       },
-
-      importFileContent(targetFilename) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.html,.htm,.css,.js,.json,.txt,.xml,.svg,.md,.mjs';
-        input.onchange = (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            const content = ev.target.result;
+      importFileContent: function(targetFilename) {
+        if (NativeBridge.isAvailable()) {
+          var self = this;
+          window._zishuOnFileSelected = function(uri, filename, content) {
+            delete window._zishuOnFileSelected;
+            if (!content) { UI.toast('Could not read file', 'error'); return; }
             if (FileManager.writeFile(AppState.currentProject, targetFilename, content)) {
               ProjectManager.saveProject(AppState.currentProject);
               if (AppState.currentFile === targetFilename) Editor.loadFile(targetFilename);
-              this.renderWorkspace();
+              self.renderWorkspace();
               UI.toast('Imported content into ' + targetFilename, 'success');
-            } else {
-              UI.toast('Failed to import file content', 'error');
-            }
+            } else UI.toast('Failed to import file content', 'error');
+          };
+          NativeBridge.pickFileForImport();
+          return;
+        }
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.html,.htm,.css,.js,.json,.txt,.xml,.svg,.md,.mjs';
+        var self2 = this;
+        input.onchange = function(e) {
+          var file = e.target.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            var content = ev.target.result;
+            if (FileManager.writeFile(AppState.currentProject, targetFilename, content)) {
+              ProjectManager.saveProject(AppState.currentProject);
+              if (AppState.currentFile === targetFilename) Editor.loadFile(targetFilename);
+              self2.renderWorkspace();
+              UI.toast('Imported content into ' + targetFilename, 'success');
+            } else UI.toast('Failed to import file content', 'error');
           };
           reader.readAsText(file);
         };
         input.click();
       },
-
-      importAsNewFile() {
-        const input = document.createElement('input');
+      importAsNewFile: function() {
+        if (NativeBridge.isAvailable()) {
+          var self = this;
+          window._zishuOnFileSelected = function(uri, filename, content) {
+            delete window._zishuOnFileSelected;
+            if (!content) { UI.toast('Could not read file', 'error'); return; }
+            var finalName = filename || 'imported_file';
+            if (AppState.currentProject.files[finalName] !== undefined) {
+              var ext = finalName.includes('.') ? '.' + finalName.split('.').pop() : '';
+              var base = finalName.replace(ext, '');
+              var counter = 1;
+              var newName = base + '_imported' + ext;
+              while (AppState.currentProject.files[newName] !== undefined) {
+                newName = base + '_imported' + counter + ext;
+                counter++;
+              }
+              finalName = newName;
+            }
+            if (FileManager.createFile(AppState.currentProject, finalName, content)) {
+              self.renderWorkspace();
+              UI.toast('Imported: ' + finalName, 'success');
+              setTimeout(function() { self.openFile(finalName); }, 200);
+            } else UI.toast('Failed to create imported file', 'error');
+          };
+          NativeBridge.pickFileForImport();
+          return;
+        }
+        var input = document.createElement('input');
         input.type = 'file';
         input.accept = '.html,.htm,.css,.js,.json,.txt,.xml,.svg,.md,.mjs';
-        input.onchange = (e) => {
-          const file = e.target.files[0];
+        var self2 = this;
+        input.onchange = function(e) {
+          var file = e.target.files[0];
           if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            const content = ev.target.result;
-            let filename = file.name;
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            var content = ev.target.result;
+            var filename = file.name;
             if (AppState.currentProject.files[filename] !== undefined) {
-              const ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
-              const base = filename.replace(ext, '');
-              let counter = 1;
-              let newName = base + '_imported' + ext;
+              var ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
+              var base = filename.replace(ext, '');
+              var counter = 1;
+              var newName = base + '_imported' + ext;
               while (AppState.currentProject.files[newName] !== undefined) {
                 newName = base + '_imported' + counter + ext;
                 counter++;
@@ -2314,299 +2630,257 @@ document.addEventListener('DOMContentLoaded', function() {
               filename = newName;
             }
             if (FileManager.createFile(AppState.currentProject, filename, content)) {
-              this.renderWorkspace();
+              self2.renderWorkspace();
               UI.toast('Imported: ' + filename, 'success');
-              setTimeout(() => this.openFile(filename), 200);
-            } else {
-              UI.toast('Failed to create imported file', 'error');
-            }
+              setTimeout(function() { self2.openFile(filename); }, 200);
+            } else UI.toast('Failed to create imported file', 'error');
           };
           reader.readAsText(file);
         };
         input.click();
       },
-
-      showNewFileDialog() {
-        UI.showModal(`
-          <div class="modal-title">New File</div>
-          <div class="form-group">
-            <label class="form-label">File Type</label>
-            <select class="form-select" id="newFileType">
-              <option value="html">HTML (.html)</option>
-              <option value="css">CSS (.css)</option>
-              <option value="js">JavaScript (.js)</option>
-              <option value="json">JSON (.json)</option>
-              <option value="txt">Text (.txt)</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-          <div class="form-group" id="customExtGroup" style="display:none;">
-            <label class="form-label">Extension</label>
-            <input class="form-input" id="customExt" placeholder="e.g. xml">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Filename</label>
-            <input class="form-input" id="newFileName" placeholder="example.html">
-            <div class="form-error" id="newFileError"></div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="newFileImportBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Import File
-            </button>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="newFileCancel">Cancel</button>
-            <button class="btn btn-primary" id="newFileConfirm">Create</button>
-          </div>
-        `);
-        const typeSelect = document.getElementById('newFileType');
-        const nameInput = document.getElementById('newFileName');
-        const customExtGroup = document.getElementById('customExtGroup');
-        const errorEl = document.getElementById('newFileError');
-        typeSelect.addEventListener('change', () => {
-          const type = typeSelect.value;
+      showNewFileDialog: function() {
+        UI.showModal(
+          '<div class="modal-title">New File</div>' +
+          '<div class="form-group">' +
+            '<label class="form-label">File Type</label>' +
+            '<select class="form-select" id="newFileType">' +
+              '<option value="html">HTML (.html)</option>' +
+              '<option value="css">CSS (.css)</option>' +
+              '<option value="js">JavaScript (.js)</option>' +
+              '<option value="json">JSON (.json)</option>' +
+              '<option value="txt">Text (.txt)</option>' +
+              '<option value="custom">Custom</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="form-group" id="customExtGroup" style="display:none;">' +
+            '<label class="form-label">Extension</label>' +
+            '<input class="form-input" id="customExt" placeholder="e.g. xml">' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label class="form-label">Filename</label>' +
+            '<input class="form-input" id="newFileName" placeholder="example.html">' +
+            '<div class="form-error" id="newFileError"></div>' +
+          '</div>' +
+          '<div class="modal-actions">' +
+            '<button class="btn btn-secondary" id="newFileImportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Import File</button>' +
+          '</div>' +
+          '<div class="modal-actions">' +
+            '<button class="btn btn-secondary" id="newFileCancel">Cancel</button>' +
+            '<button class="btn btn-primary" id="newFileConfirm">Create</button>' +
+          '</div>'
+        );
+        var typeSelect = document.getElementById('newFileType');
+        var nameInput = document.getElementById('newFileName');
+        var customExtGroup = document.getElementById('customExtGroup');
+        var errorEl = document.getElementById('newFileError');
+        var self = this;
+        typeSelect.addEventListener('change', function() {
+          var type = typeSelect.value;
           if (type === 'custom') customExtGroup.style.display = 'block';
           else {
             customExtGroup.style.display = 'none';
-            const names = { html: 'example.html', css: 'style.css', js: 'script.js', json: 'data.json', txt: 'notes.txt' };
+            var names = { html: 'example.html', css: 'style.css', js: 'script.js', json: 'data.json', txt: 'notes.txt' };
             nameInput.value = names[type] || '';
           }
         });
-        document.getElementById('newFileCancel').onclick = () => UI.hideModal();
-        document.getElementById('newFileImportBtn').onclick = () => { UI.hideModal(); this.importAsNewFile(); };
-        document.getElementById('newFileConfirm').onclick = () => {
-          let filename = nameInput.value.trim();
+        document.getElementById('newFileCancel').onclick = function() { UI.hideModal(); };
+        document.getElementById('newFileImportBtn').onclick = function() { UI.hideModal(); self.importAsNewFile(); };
+        document.getElementById('newFileConfirm').onclick = function() {
+          var filename = nameInput.value.trim();
           if (!filename) { errorEl.textContent = 'Filename is required'; errorEl.classList.add('visible'); return; }
-          const type = typeSelect.value;
+          var type = typeSelect.value;
           if (type === 'custom') {
-            const ext = document.getElementById('customExt').value.trim();
+            var ext = document.getElementById('customExt').value.trim();
             if (ext && !filename.includes('.')) filename += '.' + ext;
           } else if (type !== 'custom') {
-            const ext = type === 'js' ? 'js' : type;
-            if (!filename.includes('.')) filename += '.' + ext;
+            var ext2 = type === 'js' ? 'js' : type;
+            if (!filename.includes('.')) filename += '.' + ext2;
           }
-          const validationError = FileManager.validateFilename(filename);
+          var validationError = FileManager.validateFilename(filename);
           if (validationError) { errorEl.textContent = validationError; errorEl.classList.add('visible'); return; }
           if (AppState.currentProject.files[filename] !== undefined) {
             errorEl.textContent = 'File already exists'; errorEl.classList.add('visible'); return;
           }
           if (FileManager.createFile(AppState.currentProject, filename, '')) {
             UI.hideModal();
-            this.renderWorkspace();
+            self.renderWorkspace();
             UI.toast('File created: ' + filename, 'success');
-            setTimeout(() => this.openFile(filename), 200);
+            setTimeout(function() { self.openFile(filename); }, 200);
           } else {
             errorEl.textContent = 'Could not create file'; errorEl.classList.add('visible');
           }
         };
-        setTimeout(() => nameInput.focus(), 200);
+        setTimeout(function() { nameInput.focus(); }, 200);
       },
-
-      showSearchDialog() {
-        UI.showModal(`
-          <div class="modal-title">Search Project</div>
-          <div class="form-group">
-            <input class="form-input" id="searchInput" placeholder="Search across all files..." autofocus>
-          </div>
-          <div id="searchResults" style="max-height:300px;overflow-y:auto;"></div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="searchCloseBtn">Close</button>
-          </div>
-        `);
-        const input = document.getElementById('searchInput');
-        const results = document.getElementById('searchResults');
-        let searchTimer;
-        input.addEventListener('input', () => {
+      showSearchDialog: function() {
+        UI.showModal(
+          '<div class="modal-title">Search Project</div>' +
+          '<div class="form-group"><input class="form-input" id="searchInput" placeholder="Search across all files..." autofocus></div>' +
+          '<div id="searchResults" style="max-height:300px;overflow-y:auto;"></div>' +
+          '<div class="modal-actions"><button class="btn btn-secondary" id="searchCloseBtn">Close</button></div>'
+        );
+        var input = document.getElementById('searchInput');
+        var results = document.getElementById('searchResults');
+        var searchTimer;
+        input.addEventListener('input', function() {
           clearTimeout(searchTimer);
-          searchTimer = setTimeout(() => {
-            const query = input.value.trim();
+          searchTimer = setTimeout(function() {
+            var query = input.value.trim();
             if (query.length < 2) {
               results.innerHTML = '<p class="text-muted text-sm" style="padding:16px 0;">Type at least 2 characters</p>';
               return;
             }
-            const res = SearchManager.search(query);
+            var res = SearchManager.search(query);
             SearchManager.renderResults(res, results);
           }, 250);
         });
-        document.getElementById('searchCloseBtn').onclick = () => UI.hideModal();
-        setTimeout(() => input.focus(), 200);
+        document.getElementById('searchCloseBtn').onclick = function() { UI.hideModal(); };
+        setTimeout(function() { input.focus(); }, 200);
       },
-
-      showFindReplaceDialog() {
-        UI.showModal(`
-          <div class="modal-title">Find & Replace</div>
-          <div class="form-group">
-            <label class="form-label">Find</label>
-            <input class="form-input" id="findInput" placeholder="Search text...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Replace</label>
-            <input class="form-input" id="replaceInput" placeholder="Replacement text...">
-          </div>
-          <div class="settings-item" style="padding:8px 0;">
-            <span class="label text-sm">Case Sensitive</span>
-            <label class="switch"><input type="checkbox" id="findCaseSensitive"><span class="slider"></span></label>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="findNextBtn">Find Next</button>
-            <button class="btn btn-secondary" id="replaceOneBtn">Replace</button>
-            <button class="btn btn-primary" id="replaceAllBtn">Replace All</button>
-          </div>
-        `);
-        const findInput = document.getElementById('findInput');
-        const replaceInput = document.getElementById('replaceInput');
-        const caseSensitive = document.getElementById('findCaseSensitive');
-        document.getElementById('findNextBtn').onclick = () => {
+      showFindReplaceDialog: function() {
+        UI.showModal(
+          '<div class="modal-title">Find & Replace</div>' +
+          '<div class="form-group"><label class="form-label">Find</label><input class="form-input" id="findInput" placeholder="Search text..."></div>' +
+          '<div class="form-group"><label class="form-label">Replace</label><input class="form-input" id="replaceInput" placeholder="Replacement text..."></div>' +
+          '<div class="settings-item" style="padding:8px 0;"><span class="label text-sm">Case Sensitive</span><label class="switch"><input type="checkbox" id="findCaseSensitive"><span class="slider"></span></label></div>' +
+          '<div class="modal-actions">' +
+            '<button class="btn btn-secondary" id="findNextBtn">Find Next</button>' +
+            '<button class="btn btn-secondary" id="replaceOneBtn">Replace</button>' +
+            '<button class="btn btn-primary" id="replaceAllBtn">Replace All</button>' +
+          '</div>'
+        );
+        var findInput = document.getElementById('findInput');
+        var replaceInput = document.getElementById('replaceInput');
+        var caseSensitive = document.getElementById('findCaseSensitive');
+        document.getElementById('findNextBtn').onclick = function() {
           if (!Editor.find(findInput.value, caseSensitive.checked)) UI.toast('No more matches', 'info', 1200);
         };
-        document.getElementById('replaceOneBtn').onclick = () => {
-          const count = Editor.replace(findInput.value, replaceInput.value, false, caseSensitive.checked);
+        document.getElementById('replaceOneBtn').onclick = function() {
+          var count = Editor.replace(findInput.value, replaceInput.value, false, caseSensitive.checked);
           UI.toast(count > 0 ? 'Replaced 1 occurrence' : 'No matches found', count > 0 ? 'success' : 'info', 1200);
         };
-        document.getElementById('replaceAllBtn').onclick = () => {
-          const count = Editor.replace(findInput.value, replaceInput.value, true, caseSensitive.checked);
-          UI.toast(`Replaced ${count} occurrence${count !== 1 ? 's' : ''}`, 'success', 1500);
+        document.getElementById('replaceAllBtn').onclick = function() {
+          var count = Editor.replace(findInput.value, replaceInput.value, true, caseSensitive.checked);
+          UI.toast('Replaced ' + count + ' occurrence' + (count !== 1 ? 's' : ''), 'success', 1500);
         };
-        setTimeout(() => findInput.focus(), 200);
+        setTimeout(function() { findInput.focus(); }, 200);
       },
-
-      showUnsavedChangesDialog() {
+      showUnsavedChangesDialog: function() {
         return UI.confirm('Unsaved Changes', 'Save changes before leaving?', 'Save', 'Discard', false);
       },
-
-      showAboutDialog() {
-        UI.showModal(`
-          <div class="modal-title">About</div>
-          <div style="text-align:center;padding:20px 0;">
-            <div class="splash-logo" style="margin:0 auto 16px;width:64px;height:64px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-              </svg>
-            </div>
-            <h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">${APP_CONFIG.name}</h3>
-            <p class="text-sm text-muted">Professional HTML / CSS / JavaScript Editor</p>
-            <p class="text-xs text-muted mt-8">Version ${APP_CONFIG.version}</p>
-          </div>
-          <div class="modal-actions"><button class="btn btn-secondary" id="aboutCloseBtn">Close</button></div>
-        `);
-        document.getElementById('aboutCloseBtn').onclick = () => UI.hideModal();
+      showAboutDialog: function() {
+        UI.showModal(
+          '<div class="modal-title">About</div>' +
+          '<div style="text-align:center;padding:20px 0;">' +
+            '<div class="splash-logo" style="margin:0 auto 16px;width:64px;height:64px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>' +
+            '<h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">' + APP_CONFIG.name + '</h3>' +
+            '<p class="text-sm text-muted">Professional HTML / CSS / JavaScript Editor</p>' +
+            '<p class="text-xs text-muted mt-8">Version ' + APP_CONFIG.version + '</p>' +
+          '</div>' +
+          '<div class="modal-actions"><button class="btn btn-secondary" id="aboutCloseBtn">Close</button></div>'
+        );
+        document.getElementById('aboutCloseBtn').onclick = function() { UI.hideModal(); };
       },
-
-      showResetDialog() {
-        UI.confirm('Reset App Data?', 'This will permanently delete all locally stored projects and settings. This action cannot be undone.', 'Reset Everything', 'Cancel', true).then(confirmed => {
+      showResetDialog: function() {
+        UI.confirm('Reset App Data?', 'This will permanently delete all locally stored projects and settings. This action cannot be undone.', 'Reset Everything', 'Cancel', true).then(function(confirmed) {
           if (confirmed) {
             AppStorage.clear();
             UI.toast('All app data has been reset', 'info');
-            setTimeout(() => window.location.reload(), 800);
+            setTimeout(function() { window.location.reload(); }, 800);
           }
         });
       },
-
-      showPreviewSettings() {
-        UI.showModal(`
-          <div class="modal-title">Preview Settings</div>
-          <div class="settings-item" id="pvToggleDevice" style="border-radius:8px;">
-            <span class="label">Device Frame</span>
-            <span class="value" id="pvDeviceVal">${AppState.previewDevice === 'phone' ? 'Phone' : 'Tablet'}</span>
-          </div>
-          <div class="settings-item" id="pvToggleLive" style="border-radius:8px;">
-            <span class="label">Live Preview</span>
-            <span class="value" id="pvLiveVal">${AppState.previewLive ? 'ON' : 'OFF'}</span>
-          </div>
-          <div class="settings-item" id="pvToggleFullscreen" style="border-radius:8px;">
-            <span class="label">Fullscreen Mode</span>
-            <span class="value" id="pvFsVal">${AppState.previewFullscreen ? 'ON' : 'OFF'}</span>
-          </div>
-          <div class="settings-item" id="pvReloadNow" style="border-radius:8px;">
-            <span class="label">Reload Preview</span>
-            <span class="value">›</span>
-          </div>
-          <div class="settings-item" id="pvOpenNew" style="border-radius:8px;">
-            <span class="label">Open in New Tab</span>
-            <span class="value">›</span>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="pvCloseBtn">Close</button>
-          </div>
-        `);
-        document.getElementById('pvToggleDevice').onclick = () => {
+      showPreviewSettings: function() {
+        UI.showModal(
+          '<div class="modal-title">Preview Settings</div>' +
+          '<div class="settings-item" id="pvToggleDevice" style="border-radius:8px;"><span class="label">Device Frame</span><span class="value" id="pvDeviceVal">' + (AppState.previewDevice === 'phone' ? 'Phone' : 'Tablet') + '</span></div>' +
+          '<div class="settings-item" id="pvToggleLive" style="border-radius:8px;"><span class="label">Live Preview</span><span class="value" id="pvLiveVal">' + (AppState.previewLive ? 'ON' : 'OFF') + '</span></div>' +
+          '<div class="settings-item" id="pvToggleFullscreen" style="border-radius:8px;"><span class="label">Fullscreen Mode</span><span class="value" id="pvFsVal">' + (AppState.previewFullscreen ? 'ON' : 'OFF') + '</span></div>' +
+          '<div class="settings-item" id="pvReloadNow" style="border-radius:8px;"><span class="label">Reload Preview</span><span class="value">›</span></div>' +
+          '<div class="settings-item" id="pvOpenNew" style="border-radius:8px;"><span class="label">Open in New Tab</span><span class="value">›</span></div>' +
+          '<div class="modal-actions"><button class="btn btn-secondary" id="pvCloseBtn">Close</button></div>'
+        );
+        document.getElementById('pvToggleDevice').onclick = function() {
           PreviewManager.toggleDevice();
           document.getElementById('pvDeviceVal').textContent = AppState.previewDevice === 'phone' ? 'Phone' : 'Tablet';
         };
-        document.getElementById('pvToggleLive').onclick = () => {
+        document.getElementById('pvToggleLive').onclick = function() {
           AppState.previewLive = !AppState.previewLive;
-          const badge = document.getElementById('previewLiveBadge');
+          var badge = document.getElementById('previewLiveBadge');
           badge.style.display = AppState.previewLive ? 'inline-flex' : 'none';
           document.getElementById('pvLiveVal').textContent = AppState.previewLive ? 'ON' : 'OFF';
           if (AppState.previewLive) PreviewManager.render();
         };
-        document.getElementById('pvToggleFullscreen').onclick = () => {
+        document.getElementById('pvToggleFullscreen').onclick = function() {
           PreviewManager.toggleFullscreen();
           document.getElementById('pvFsVal').textContent = AppState.previewFullscreen ? 'ON' : 'OFF';
         };
-        document.getElementById('pvReloadNow').onclick = () => {
+        document.getElementById('pvReloadNow').onclick = function() {
           PreviewManager.render();
           UI.toast('Preview reloaded', 'success', 1200);
         };
-        document.getElementById('pvOpenNew').onclick = () => {
+        document.getElementById('pvOpenNew').onclick = function() {
           if (!AppState.currentProject) return;
-          const homePage = AppState.currentProject.homePage || 'index.html';
-          const htmlFile = AppState.currentProject.files[homePage] || AppState.currentProject.files['index.html'];
+          var homePage = AppState.currentProject.homePage || 'index.html';
+          var htmlFile = AppState.currentProject.files[homePage] || AppState.currentProject.files['index.html'];
           if (!htmlFile) { UI.toast('No HTML file', 'error'); return; }
-          let html = htmlFile;
-          html = html.replace(/<link[^>]*href=["']([^"']+\.css)["'][^>]*>/g, (m, fn) => {
-            const css = AppState.currentProject.files[fn];
+          var html = htmlFile;
+          html = html.replace(/<link[^>]*href=["']([^"']+\.css)["'][^>]*>/g, function(m, fn) {
+            var css = AppState.currentProject.files[fn];
             return css !== undefined ? '<style>' + css + '</style>' : m;
           });
-          html = html.replace(/<script[^>]*src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/g, (m, fn) => {
-            const js = AppState.currentProject.files[fn];
+          html = html.replace(/<script[^>]*src=["']([^"']+\.js)["'][^>]*>\s*<\/script>/g, function(m, fn) {
+            var js = AppState.currentProject.files[fn];
             return js !== undefined ? '<script>' + js + '<\/script>' : m;
           });
-          const blob = new Blob([html], { type: 'text/html' });
-          const url = URL.createObjectURL(blob);
+          var blob = new Blob([html], { type: 'text/html' });
+          var url = URL.createObjectURL(blob);
           window.open(url, '_blank');
-          setTimeout(() => URL.revokeObjectURL(url), 60000);
+          setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
         };
-        document.getElementById('pvCloseBtn').onclick = () => UI.hideModal();
+        document.getElementById('pvCloseBtn').onclick = function() { UI.hideModal(); };
       }
     };
 
     // ============================================================
-    // 13. CONTEXT MENU HANDLING
+    // CONTEXT MENU — with native clipboard
     // ============================================================
     function initContextMenu() {
-      const menu = document.getElementById('contextMenu');
+      var menu = document.getElementById('contextMenu');
       if (!menu) return;
 
-      document.addEventListener('click', (e) => {
+      document.addEventListener('click', function(e) {
         if (!menu.contains(e.target)) menu.classList.remove('visible');
       });
-      document.addEventListener('touchstart', (e) => {
+      document.addEventListener('touchstart', function(e) {
         if (!menu.contains(e.target)) menu.classList.remove('visible');
       }, { passive: true });
 
-      menu.querySelectorAll('.context-menu-item').forEach(item => {
-        item.addEventListener('click', async (e) => {
+      menu.querySelectorAll('.context-menu-item').forEach(function(item) {
+        item.addEventListener('click', async function(e) {
           e.stopPropagation();
-          const action = item.dataset.action;
-          const ta = Editor._textarea;
+          var action = item.dataset.action;
+          var ta = Editor._textarea;
           if (!ta) { menu.classList.remove('visible'); return; }
 
           switch (action) {
             case 'copy': {
-              const start = ta.selectionStart;
-              const end = ta.selectionEnd;
-              if (start !== end) {
-                const text = ta.value.substring(start, end);
-                let ok = false;
+              var s = ta.selectionStart;
+              var en = ta.selectionEnd;
+              if (s !== en) {
+                var text = ta.value.substring(s, en);
+                var ok = false;
                 try {
-                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                  if (NativeBridge.isAvailable()) {
+                    ok = NativeBridge.setClipboardText(text);
+                  }
+                  if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
                     await navigator.clipboard.writeText(text);
                     ok = true;
-                  } else {
-                    const temp = document.createElement('textarea');
+                  }
+                  if (!ok) {
+                    var temp = document.createElement('textarea');
                     temp.value = text;
                     temp.style.position = 'fixed';
                     temp.style.opacity = '0';
@@ -2622,31 +2896,35 @@ document.addEventListener('DOMContentLoaded', function() {
               break;
             }
             case 'cut': {
-              const start = ta.selectionStart;
-              const end = ta.selectionEnd;
-              if (start !== end) {
-                const text = ta.value.substring(start, end);
-                let ok = false;
+              var s2 = ta.selectionStart;
+              var en2 = ta.selectionEnd;
+              if (s2 !== en2) {
+                var text2 = ta.value.substring(s2, en2);
+                var ok2 = false;
                 try {
-                  if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(text);
-                    ok = true;
-                  } else {
-                    const temp = document.createElement('textarea');
-                    temp.value = text;
-                    temp.style.position = 'fixed';
-                    temp.style.opacity = '0';
-                    document.body.appendChild(temp);
-                    temp.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(temp);
-                    ok = true;
+                  if (NativeBridge.isAvailable()) {
+                    ok2 = NativeBridge.setClipboardText(text2);
                   }
-                } catch (err) { ok = false; }
-                if (ok) {
-                  const val = ta.value;
-                  ta.value = val.substring(0, start) + val.substring(end);
-                  ta.selectionStart = ta.selectionEnd = start;
+                  if (!ok2 && navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text2);
+                    ok2 = true;
+                  }
+                  if (!ok2) {
+                    var temp2 = document.createElement('textarea');
+                    temp2.value = text2;
+                    temp2.style.position = 'fixed';
+                    temp2.style.opacity = '0';
+                    document.body.appendChild(temp2);
+                    temp2.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp2);
+                    ok2 = true;
+                  }
+                } catch (err) { ok2 = false; }
+                if (ok2) {
+                  var val = ta.value;
+                  ta.value = val.substring(0, s2) + val.substring(en2);
+                  ta.selectionStart = ta.selectionEnd = s2;
                   Editor._onInput();
                   UI.toast('Cut', 'success', 1200);
                 } else UI.toast('Cut failed', 'error', 1200);
@@ -2655,26 +2933,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             case 'paste': {
               try {
-                let text = null;
-                if (navigator.clipboard && navigator.clipboard.readText) {
-                  text = await navigator.clipboard.readText();
+                var text3 = null;
+                // Native bridge first
+                if (NativeBridge.isAvailable()) {
+                  var nativeText = NativeBridge.getClipboardText();
+                  if (nativeText && nativeText.length > 0) {
+                    text3 = nativeText;
+                  }
                 }
-                if (text) {
-                  const start = ta.selectionStart;
-                  const end = ta.selectionEnd;
-                  const val = ta.value;
-                  ta.value = val.substring(0, start) + text + val.substring(end);
-                  ta.selectionStart = ta.selectionEnd = start + text.length;
+                // Fallback to navigator.clipboard
+                if (!text3 && navigator.clipboard && navigator.clipboard.readText) {
+                  try {
+                    text3 = await navigator.clipboard.readText();
+                  } catch (e) {
+                    text3 = null;
+                  }
+                }
+                if (text3) {
+                  var s3 = ta.selectionStart;
+                  var en3 = ta.selectionEnd;
+                  var val3 = ta.value;
+                  ta.value = val3.substring(0, s3) + text3 + val3.substring(en3);
+                  ta.selectionStart = ta.selectionEnd = s3 + text3.length;
                   ta.focus();
                   Editor._onInput();
                   UI.toast('Pasted', 'success', 1200);
                 } else {
                   ta.focus();
-                  UI.toast('Use system paste (long press keyboard)', 'info', 2000);
+                  UI.toast('Clipboard is empty', 'info', 1500);
                 }
               } catch (err) {
                 ta.focus();
-                UI.toast('Clipboard permission denied', 'warning', 1800);
+                UI.toast('Paste failed', 'warning', 1500);
               }
               break;
             }
@@ -2685,32 +2975,32 @@ document.addEventListener('DOMContentLoaded', function() {
               break;
             }
             case 'duplicate': {
-              const start = ta.selectionStart;
-              const value = ta.value;
-              const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-              let lineEnd = value.indexOf('\n', start);
-              if (lineEnd === -1) lineEnd = value.length;
-              const line = value.substring(lineStart, lineEnd);
-              ta.value = value.substring(0, lineEnd) + '\n' + line + value.substring(lineEnd);
-              ta.selectionStart = ta.selectionEnd = lineEnd + 1 + line.length;
+              var st = ta.selectionStart;
+              var v = ta.value;
+              var ls = v.lastIndexOf('\n', st - 1) + 1;
+              var le = v.indexOf('\n', st);
+              if (le === -1) le = v.length;
+              var line = v.substring(ls, le);
+              ta.value = v.substring(0, le) + '\n' + line + v.substring(le);
+              ta.selectionStart = ta.selectionEnd = le + 1 + line.length;
               ta.focus();
               Editor._onInput();
               UI.toast('Line duplicated', 'success', 1200);
               break;
             }
             case 'delete': {
-              const start = ta.selectionStart;
-              const value = ta.value;
-              if (start !== ta.selectionEnd) {
-                ta.value = value.substring(0, start) + value.substring(ta.selectionEnd);
-                ta.selectionStart = ta.selectionEnd = start;
+              var st2 = ta.selectionStart;
+              var v2 = ta.value;
+              if (st2 !== ta.selectionEnd) {
+                ta.value = v2.substring(0, st2) + v2.substring(ta.selectionEnd);
+                ta.selectionStart = ta.selectionEnd = st2;
               } else {
-                const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-                let lineEnd = value.indexOf('\n', start);
-                if (lineEnd === -1) lineEnd = value.length;
-                else lineEnd += 1;
-                ta.value = value.substring(0, lineStart) + value.substring(lineEnd);
-                ta.selectionStart = ta.selectionEnd = lineStart;
+                var ls2 = v2.lastIndexOf('\n', st2 - 1) + 1;
+                var le2 = v2.indexOf('\n', st2);
+                if (le2 === -1) le2 = v2.length;
+                else le2 += 1;
+                ta.value = v2.substring(0, ls2) + v2.substring(le2);
+                ta.selectionStart = ta.selectionEnd = ls2;
               }
               ta.focus();
               Editor._onInput();
@@ -2723,12 +3013,38 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // ============================================================
-    // 14. INITIALIZATION
-    // ============================================================
+    window.handleAndroidBack = function() {
+      var screen = Router.getCurrent();
+      if (screen === 'editor') {
+        document.getElementById('editorBackBtn').click();
+        return true;
+      } else if (screen === 'preview') {
+        document.getElementById('previewBackBtn').click();
+        return true;
+      } else if (screen === 'workspace') {
+        document.getElementById('workspaceBackBtn').click();
+        return true;
+      } else if (screen === 'settings') {
+        document.getElementById('settingsBackBtn').click();
+        return true;
+      } else if (screen === 'home') {
+        return false;
+      }
+      return false;
+    };
+
     function initApp() {
-      const savedSettings = AppStorage.getSettings();
-      if (savedSettings) Object.assign(AppState.settings, savedSettings);
+      NativeBridge.init();
+      AppStorage.init();
+
+      var savedSettings = AppStorage.getSettings();
+      if (savedSettings) {
+        for (var key in savedSettings) {
+          if (savedSettings.hasOwnProperty(key)) {
+            AppState.settings[key] = savedSettings[key];
+          }
+        }
+      }
 
       ThemeManager.init();
       Editor.init();
@@ -2737,16 +3053,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       AppState.projects = AppStorage.listProjects();
 
-      const recovery = AppStorage.getRecovery();
+      var recovery = AppStorage.getRecovery();
       if (recovery && recovery.timestamp) {
-        const age = Date.now() - new Date(recovery.timestamp).getTime();
+        var age = Date.now() - new Date(recovery.timestamp).getTime();
         if (age < 86400000) AppState.recoveryData = recovery;
       }
 
       AppActions.renderHome();
 
-      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-      const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+      var setVal = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+      var setCheck = function(id, val) { var el = document.getElementById(id); if (el) el.checked = !!val; };
       setVal('settingFontSizeVal', (AppState.settings.fontSize || 13) + 'px');
       setVal('settingTabSizeVal', AppState.settings.tabSize || 2);
       setVal('settingThemeVal', (AppState.settings.theme || 'light').charAt(0).toUpperCase() + (AppState.settings.theme || 'light').slice(1));
@@ -2757,17 +3073,17 @@ document.addEventListener('DOMContentLoaded', function() {
       setCheck('settingLivePreview', AppState.settings.livePreview);
       setCheck('settingDeviceFrame', AppState.settings.deviceFrame !== false);
 
-      const storageInfo = document.getElementById('settingStorageInfo');
+      var storageInfo = document.getElementById('settingStorageInfo');
       if (storageInfo) storageInfo.textContent = (AppStorage.getSize() / 1024).toFixed(1) + ' KB';
 
-      setTimeout(() => {
+      setTimeout(function() {
         document.getElementById('splashScreen').classList.remove('active');
         Router.reset('home');
         AppActions.renderHome();
 
         if (AppState.recoveryData) {
-          setTimeout(() => {
-            UI.confirm('Recovered Unsaved Work', 'We found unsaved changes from your last session. Would you like to restore them?', 'Restore', 'Discard', false).then(restore => {
+          setTimeout(function() {
+            UI.confirm('Recovered Unsaved Work', 'We found unsaved changes from your last session. Would you like to restore them?', 'Restore', 'Discard', false).then(function(restore) {
               if (restore) {
                 AppActions.openProject(AppState.recoveryData.projectId);
                 Editor.loadFile(AppState.recoveryData.filename);
@@ -2785,64 +3101,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }, 1200);
 
-      // === EVENT LISTENERS ===
-      document.getElementById('homeNewProjectFab').addEventListener('click', () => AppActions.showCreateProject());
-      document.getElementById('homeSettingsBtn').addEventListener('click', () => Router.navigate('settings'));
-      document.getElementById('homeImportBtn').addEventListener('click', () => AppActions.importProject());
+      document.getElementById('homeNewProjectFab').addEventListener('click', function() { AppActions.showCreateProject(); });
+      document.getElementById('homeSettingsBtn').addEventListener('click', function() { Router.navigate('settings'); });
+      document.getElementById('homeImportBtn').addEventListener('click', function() { AppActions.importProject(); });
 
-      // Workspace
-      document.getElementById('workspaceBackBtn').addEventListener('click', () => {
+      document.getElementById('workspaceBackBtn').addEventListener('click', function() {
         if (AppState.editorDirty) {
-          AppActions.showUnsavedChangesDialog().then(save => {
+          AppActions.showUnsavedChangesDialog().then(function(save) {
             if (save) Editor.save(); else AppState.editorDirty = false;
             Router.navigate('home'); AppActions.renderHome();
           });
         } else { Router.navigate('home'); AppActions.renderHome(); }
       });
-      document.getElementById('workspacePreviewBtn').addEventListener('click', () => { Editor.save(); AppActions.previewProject(); });
-      document.getElementById('workspaceMoreBtn').addEventListener('click', () => {
+
+      document.getElementById('workspaceLocalhostBtn').addEventListener('click', function() { AppActions.openLocalhost(); });
+      document.getElementById('workspacePreviewQuickBtn').addEventListener('click', function() { AppActions.previewProject('preview'); });
+
+      document.getElementById('workspaceMoreBtn').addEventListener('click', function() {
         if (!AppState.currentProject) return;
-        UI.showModal(`
-          <div class="modal-title">Project Menu</div>
-          <div style="display:flex;flex-direction:column;gap:2px;">
-            <button class="settings-item" id="wsMenuSettings" style="border-radius:8px;"><span class="label">Project Settings</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuSearch" style="border-radius:8px;"><span class="label">Search Files</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuPreview" style="border-radius:8px;"><span class="label">Preview</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuExport" style="border-radius:8px;"><span class="label">Export Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuImport" style="border-radius:8px;"><span class="label">Import File Content</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuDuplicate" style="border-radius:8px;"><span class="label">Duplicate Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuRename" style="border-radius:8px;"><span class="label">Rename Project</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuDelete" style="border-radius:8px;color:var(--danger);"><span class="label" style="color:var(--danger);">Delete Project</span></button>
-          </div>
-        `);
-        document.getElementById('wsMenuSettings').onclick = () => {
+        UI.showModal(
+          '<div class="modal-title">Project Menu</div>' +
+          '<div class="menu-list">' +
+            '<button class="settings-item" id="wsMenuSettings"><span class="label">Project Settings</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="wsMenuSearch"><span class="label">Search Files</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="wsMenuDownloadZip"><span class="label">Download Project as ZIP</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>' +
+            '<button class="settings-item" id="wsMenuExport"><span class="label">Export Project JSON</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="wsMenuImport"><span class="label">Import File Content</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="wsMenuDuplicate"><span class="label">Duplicate Project</span><span class="value">›</span></button>' +
+            '<button class="settings-item" id="wsMenuRename"><span class="label">Rename Project</span><span class="value">›</span></button>' +
+            '<button class="settings-item danger" id="wsMenuDelete"><span class="label" style="color:var(--danger);">Delete Project</span></button>' +
+          '</div>'
+        );
+        document.getElementById('wsMenuSettings').onclick = function() {
           UI.hideModal();
-          UI.showModal(`
-            <div class="modal-title">Project Settings</div>
-            <div class="form-group">
-              <label class="form-label">Project Name</label>
-              <input class="form-input" id="projName" value="${UI.escapeHtml(AppState.currentProject.name)}">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Home Page (Entry File)</label>
-              <select class="form-select" id="projHomePage">
-                ${FileManager.listFiles(AppState.currentProject).length > 0
-                  ? FileManager.listFiles(AppState.currentProject).filter(f => /\.(html|htm)$/i.test(f)).map(f =>
-                      `<option value="${UI.escapeHtml(f)}" ${AppState.currentProject.homePage === f ? 'selected' : ''}>${UI.escapeHtml(f)}</option>`
-                    ).join('') || '<option value="">No HTML files</option>'
-                  : '<option value="">No files</option>'}
-              </select>
-            </div>
-            <div class="modal-actions">
-              <button class="btn btn-secondary" id="projSettingsCancel">Cancel</button>
-              <button class="btn btn-primary" id="projSettingsSave">Save</button>
-            </div>
-          `);
-          document.getElementById('projSettingsCancel').onclick = () => UI.hideModal();
-          document.getElementById('projSettingsSave').onclick = () => {
-            const p = AppState.currentProject;
+          UI.showModal(
+            '<div class="modal-title">Project Settings</div>' +
+            '<div class="form-group"><label class="form-label">Project Name</label><input class="form-input" id="projName" value="' + UI.escapeHtml(AppState.currentProject.name) + '"></div>' +
+            '<div class="form-group"><label class="form-label">Home Page (Entry File)</label>' +
+              '<select class="form-select" id="projHomePage">' +
+                (FileManager.listFiles(AppState.currentProject).length > 0
+                  ? (FileManager.listFiles(AppState.currentProject).filter(function(f) { return /\.(html|htm)$/i.test(f); }).map(function(f) {
+                      return '<option value="' + UI.escapeHtml(f) + '" ' + (AppState.currentProject.homePage === f ? 'selected' : '') + '>' + UI.escapeHtml(f) + '</option>';
+                    }).join('') || '<option value="">No HTML files</option>')
+                  : '<option value="">No files</option>') +
+              '</select>' +
+            '</div>' +
+            '<div class="modal-actions"><button class="btn btn-secondary" id="projSettingsCancel">Cancel</button><button class="btn btn-primary" id="projSettingsSave">Save</button></div>'
+          );
+          document.getElementById('projSettingsCancel').onclick = function() { UI.hideModal(); };
+          document.getElementById('projSettingsSave').onclick = function() {
+            var p = AppState.currentProject;
             p.name = document.getElementById('projName').value.trim() || p.name;
-            const hp = document.getElementById('projHomePage');
+            var hp = document.getElementById('projHomePage');
             if (hp && hp.value) p.homePage = hp.value;
             ProjectManager.saveProject(p);
             document.getElementById('workspaceTitle').textContent = p.name;
@@ -2850,38 +3160,36 @@ document.addEventListener('DOMContentLoaded', function() {
             UI.toast('Project settings saved', 'success');
           };
         };
-        document.getElementById('wsMenuSearch').onclick = () => { UI.hideModal(); AppActions.showSearchDialog(); };
-        document.getElementById('wsMenuPreview').onclick = () => { UI.hideModal(); AppActions.previewProject(); };
-        document.getElementById('wsMenuExport').onclick = () => { UI.hideModal(); AppActions.exportProject(); };
-        document.getElementById('wsMenuImport').onclick = () => {
+        document.getElementById('wsMenuSearch').onclick = function() { UI.hideModal(); AppActions.showSearchDialog(); };
+        document.getElementById('wsMenuDownloadZip').onclick = function() { UI.hideModal(); AppActions.downloadProjectZip(AppState.currentProject.id); };
+        document.getElementById('wsMenuExport').onclick = function() { UI.hideModal(); AppActions.exportProject(); };
+        document.getElementById('wsMenuImport').onclick = function() {
           UI.hideModal();
-          UI.showModal(`
-            <div class="modal-title">Import File Content</div>
-            <p class="text-sm text-muted mb-16">Choose which project file to import content into. The file content will be replaced.</p>
-            <div class="form-group">
-              <label class="form-label">Target File</label>
-              <select class="form-select" id="importTargetFile">
-                ${FileManager.listFiles(AppState.currentProject).map(f => `<option value="${UI.escapeHtml(f)}">${UI.escapeHtml(f)}</option>`).join('')}
-              </select>
-            </div>
-            <div class="modal-actions">
-              <button class="btn btn-secondary" id="importCancelBtn">Cancel</button>
-              <button class="btn btn-primary" id="importConfirmBtn">Choose File</button>
-            </div>
-          `);
-          document.getElementById('importCancelBtn').onclick = () => UI.hideModal();
-          document.getElementById('importConfirmBtn').onclick = () => {
-            const target = document.getElementById('importTargetFile').value;
+          UI.showModal(
+            '<div class="modal-title">Import File Content</div>' +
+            '<p class="text-sm text-muted mb-16">Choose which project file to import content into. The file content will be replaced.</p>' +
+            '<div class="form-group"><label class="form-label">Target File</label>' +
+              '<select class="form-select" id="importTargetFile">' +
+                FileManager.listFiles(AppState.currentProject).map(function(f) {
+                  return '<option value="' + UI.escapeHtml(f) + '">' + UI.escapeHtml(f) + '</option>';
+                }).join('') +
+              '</select>' +
+            '</div>' +
+            '<div class="modal-actions"><button class="btn btn-secondary" id="importCancelBtn">Cancel</button><button class="btn btn-primary" id="importConfirmBtn">Choose File</button></div>'
+          );
+          document.getElementById('importCancelBtn').onclick = function() { UI.hideModal(); };
+          document.getElementById('importConfirmBtn').onclick = function() {
+            var target = document.getElementById('importTargetFile').value;
             UI.hideModal();
             AppActions.importFileContent(target);
           };
         };
-        document.getElementById('wsMenuDuplicate').onclick = () => { UI.hideModal(); AppActions.duplicateProject(AppState.currentProject.id); Router.navigate('home'); };
-        document.getElementById('wsMenuRename').onclick = () => {
+        document.getElementById('wsMenuDuplicate').onclick = function() { UI.hideModal(); AppActions.duplicateProject(AppState.currentProject.id); Router.navigate('home'); };
+        document.getElementById('wsMenuRename').onclick = function() {
           UI.hideModal();
-          UI.prompt('Rename Project', 'Enter new project name', AppState.currentProject.name, (val) => {
+          UI.prompt('Rename Project', 'Enter new project name', AppState.currentProject.name, function(val) {
             if (!val || !val.trim()) return 'Name is required'; return null;
-          }).then(newName => {
+          }).then(function(newName) {
             if (newName && newName.trim()) {
               AppState.currentProject.name = newName.trim();
               ProjectManager.saveProject(AppState.currentProject);
@@ -2890,24 +3198,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
         };
-        document.getElementById('wsMenuDelete').onclick = () => { UI.hideModal(); AppActions.deleteProject(AppState.currentProject.id); Router.navigate('home'); };
+        document.getElementById('wsMenuDelete').onclick = function() { UI.hideModal(); AppActions.deleteProject(AppState.currentProject.id); Router.navigate('home'); };
       });
-      document.getElementById('workspaceNewFileFab').addEventListener('click', () => AppActions.showNewFileDialog());
 
-      // Editor
-      document.getElementById('editorBackBtn').addEventListener('click', () => {
+      document.getElementById('workspaceNewFileFab').addEventListener('click', function() { AppActions.showNewFileDialog(); });
+
+      document.getElementById('editorBackBtn').addEventListener('click', function() {
         if (AppState.editorDirty) {
-          AppActions.showUnsavedChangesDialog().then(save => {
+          AppActions.showUnsavedChangesDialog().then(function(save) {
             if (save) Editor.save(); else AppState.editorDirty = false;
             AppActions.renderWorkspace(); Router.navigate('workspace');
           });
         } else { AppActions.renderWorkspace(); Router.navigate('workspace'); }
       });
 
-      document.getElementById('editorToolbar').addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-action]');
+      document.getElementById('editorToolbar').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-action]');
         if (!btn) return;
-        const action = btn.dataset.action;
+        var action = btn.dataset.action;
         switch (action) {
           case 'undo': Editor.undo(); break;
           case 'redo': Editor.redo(); break;
@@ -2924,44 +3232,42 @@ document.addEventListener('DOMContentLoaded', function() {
           case 'insert-bracket': Editor.insertText('[]'); break;
           case 'insert-semicolon': Editor.insertText(';'); break;
           case 'save': Editor.save(); UI.toast('File saved', 'success', 1200); break;
-          case 'run': Editor.save(); AppActions.previewProject(); break;
+          case 'run': Editor.save(); AppActions.previewProject('preview'); break;
         }
       });
 
-      // Preview
-      document.getElementById('previewBackBtn').addEventListener('click', () => { Router.navigate('workspace'); AppActions.renderWorkspace(); });
-      document.getElementById('previewReloadBtn').addEventListener('click', () => { PreviewManager.render(); UI.toast('Preview reloaded', 'info', 1000); });
-      document.getElementById('previewDeviceBtn').addEventListener('click', () => {
+      document.getElementById('previewBackBtn').addEventListener('click', function() { Router.navigate('workspace'); AppActions.renderWorkspace(); });
+      document.getElementById('previewReloadBtn').addEventListener('click', function() { PreviewManager.render(); UI.toast('Preview reloaded', 'info', 1000); });
+      document.getElementById('previewDeviceBtn').addEventListener('click', function() {
         PreviewManager.toggleDevice();
         UI.toast('Device: ' + AppState.previewDevice, 'info', 1000);
       });
-      document.getElementById('previewFullscreenBtn').addEventListener('click', () => PreviewManager.toggleFullscreen());
-      document.getElementById('previewLiveToggleBtn').addEventListener('click', () => {
+      document.getElementById('previewFullscreenBtn').addEventListener('click', function() { PreviewManager.toggleFullscreen(); });
+      document.getElementById('previewLiveToggleBtn').addEventListener('click', function() {
         AppState.previewLive = !AppState.previewLive;
-        const badge = document.getElementById('previewLiveBadge');
+        var badge = document.getElementById('previewLiveBadge');
         if (AppState.previewLive) { badge.style.display = 'inline-flex'; UI.toast('Live Preview ON', 'success', 1200); PreviewManager.render(); }
         else { badge.style.display = 'none'; UI.toast('Live Preview OFF', 'info', 1200); }
       });
-      document.getElementById('previewSettingsBtn').addEventListener('click', () => AppActions.showPreviewSettings());
+      document.getElementById('previewSettingsBtn').addEventListener('click', function() { AppActions.showPreviewSettings(); });
 
-      // Settings
-      document.getElementById('settingsBackBtn').addEventListener('click', () => { Router.navigate('home'); AppActions.renderHome(); });
-      document.getElementById('settingThemeItem').addEventListener('click', () => {
+      document.getElementById('settingsBackBtn').addEventListener('click', function() { Router.navigate('home'); AppActions.renderHome(); });
+      document.getElementById('settingThemeItem').addEventListener('click', function() {
         ThemeManager.toggle();
-        const val = document.getElementById('settingThemeVal');
+        var val = document.getElementById('settingThemeVal');
         if (val) val.textContent = AppState.settings.theme.charAt(0).toUpperCase() + AppState.settings.theme.slice(1);
       });
-      document.getElementById('settingAboutItem').addEventListener('click', () => AppActions.showAboutDialog());
-      document.getElementById('settingResetItem').addEventListener('click', () => AppActions.showResetDialog());
-      document.getElementById('settingClearCache').addEventListener('click', () => {
-        UI.confirm('Clear Cache?', 'This will clear temporary cache data. Projects and settings are not affected.', 'Clear', 'Cancel', false).then(confirmed => {
+      document.getElementById('settingAboutItem').addEventListener('click', function() { AppActions.showAboutDialog(); });
+      document.getElementById('settingResetItem').addEventListener('click', function() { AppActions.showResetDialog(); });
+      document.getElementById('settingClearCache').addEventListener('click', function() {
+        UI.confirm('Clear Cache?', 'This will clear temporary cache data. Projects and settings are not affected.', 'Clear', 'Cancel', false).then(function(confirmed) {
           if (confirmed) UI.toast('Cache cleared', 'success');
         });
       });
-      document.getElementById('settingFontSizeItem').addEventListener('click', () => {
-        const sizes = [11, 12, 13, 14, 15, 16, 18, 20];
-        const idx = sizes.indexOf(AppState.settings.fontSize) === -1 ? 2 : sizes.indexOf(AppState.settings.fontSize);
-        const next = sizes[(idx + 1) % sizes.length];
+      document.getElementById('settingFontSizeItem').addEventListener('click', function() {
+        var sizes = [11, 12, 13, 14, 15, 16, 18, 20];
+        var idx = sizes.indexOf(AppState.settings.fontSize) === -1 ? 2 : sizes.indexOf(AppState.settings.fontSize);
+        var next = sizes[(idx + 1) % sizes.length];
         AppState.settings.fontSize = next;
         document.getElementById('settingFontSizeVal').textContent = next + 'px';
         if (Editor._textarea) Editor._textarea.style.fontSize = next + 'px';
@@ -2970,17 +3276,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (AppState.settings.syntaxHighlight) Editor._applyHighlight();
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingTabSizeItem').addEventListener('click', () => {
-        const sizes = [2, 4, 8];
-        const idx = sizes.indexOf(AppState.settings.tabSize);
-        const next = sizes[(idx + 1) % sizes.length];
+      document.getElementById('settingTabSizeItem').addEventListener('click', function() {
+        var sizes = [2, 4, 8];
+        var idx = sizes.indexOf(AppState.settings.tabSize);
+        var next = sizes[(idx + 1) % sizes.length];
         AppState.settings.tabSize = next;
         document.getElementById('settingTabSizeVal').textContent = next;
         if (Editor._textarea) Editor._textarea.style.tabSize = next;
         Editor._syncFontMetrics();
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingWordWrap').addEventListener('change', (e) => {
+      document.getElementById('settingWordWrap').addEventListener('change', function(e) {
         AppState.settings.wordWrap = e.target.checked;
         if (Editor._textarea) {
           Editor._textarea.style.whiteSpace = e.target.checked ? 'pre-wrap' : 'pre';
@@ -2989,16 +3295,16 @@ document.addEventListener('DOMContentLoaded', function() {
         Editor._syncFontMetrics();
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingLineNumbers').addEventListener('change', (e) => {
+      document.getElementById('settingLineNumbers').addEventListener('change', function(e) {
         AppState.settings.lineNumbers = e.target.checked;
         Editor._updateLineNumbers();
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingAutoSave').addEventListener('change', (e) => {
+      document.getElementById('settingAutoSave').addEventListener('change', function(e) {
         AppState.settings.autoSave = e.target.checked;
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingSyntaxHighlight').addEventListener('change', (e) => {
+      document.getElementById('settingSyntaxHighlight').addEventListener('change', function(e) {
         AppState.settings.syntaxHighlight = e.target.checked;
         if (e.target.checked) {
           Editor._applyHighlight();
@@ -3008,25 +3314,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingLivePreview').addEventListener('change', (e) => {
+      document.getElementById('settingLivePreview').addEventListener('change', function(e) {
         AppState.settings.livePreview = e.target.checked;
         AppStorage.saveSettings(AppState.settings);
       });
-      document.getElementById('settingDeviceFrame').addEventListener('change', (e) => {
+      document.getElementById('settingDeviceFrame').addEventListener('change', function(e) {
         AppState.settings.deviceFrame = e.target.checked;
         AppStorage.saveSettings(AppState.settings);
       });
 
-      document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      document.getElementById('modalOverlay').addEventListener('click', function(e) {
         if (e.target === e.currentTarget) UI.hideModal();
       });
 
-      window.addEventListener('resize', () => {
-        const vh = window.innerHeight;
+      window.addEventListener('resize', function() {
+        var vh = window.innerHeight;
         document.documentElement.style.setProperty('--vh', vh * 0.01 + 'px');
       });
 
-      setInterval(() => {
+      setInterval(function() {
         if (AppState.editorDirty && AppState.currentProject && AppState.currentFile) {
           AppStorage.saveRecovery({
             projectId: AppState.currentProject.id,
@@ -3037,11 +3343,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }, 5000);
 
-      const observer = new MutationObserver(() => {
-        const menu = document.getElementById('contextMenu');
+      var observer = new MutationObserver(function() {
+        var menu = document.getElementById('contextMenu');
         if (menu) menu.classList.remove('visible');
       });
-      document.querySelectorAll('.screen').forEach(s => {
+      document.querySelectorAll('.screen').forEach(function(s) {
         observer.observe(s, { attributes: true, attributeFilter: ['class'] });
       });
     }
