@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
-  <title>Zishu App Creator</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Zishu Code</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root {
       --bg: #ffffff; --surface: #f8faff; --surface-elevated: #ffffff;
       --text: #1a1f36; --text-secondary: #5b6785; --muted: #8e99b3;
       --primary: #2563eb; --primary-light: #dbeafe; --primary-dark: #1d4ed8;
+      --primary-glow: rgba(37, 99, 235, 0.15);
       --border: #e2e8f0; --border-light: #f1f5f9;
       --danger: #dc2626; --danger-light: #fee2e2;
       --success: #16a34a; --success-light: #dcfce7;
@@ -19,6 +22,7 @@
       --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
       --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
       --radius-sm: 6px; --radius: 10px; --radius-lg: 14px; --radius-xl: 18px;
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       --font-mono: "SF Mono", "Cascadia Code", "Fira Code", "Roboto Mono", "Consolas", monospace;
@@ -33,16 +37,23 @@
       --bg: #0f172a; --surface: #1e293b; --surface-elevated: #1e293b;
       --text: #f1f5f9; --text-secondary: #94a3b8; --muted: #64748b;
       --primary: #3b82f6; --primary-light: #1e3a5f; --primary-dark: #60a5fa;
+      --primary-glow: rgba(59, 130, 246, 0.25);
       --border: #334155; --border-light: #1e293b;
       --danger: #ef4444; --danger-light: #3b1a1a;
       --success: #22c55e; --success-light: #1a3b2e;
       --warning: #f59e0b; --warning-light: #3b2e1a;
+      --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.3);
+      --shadow: 0 1px 3px 0 rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.6);
     }
     html, body {
       height: 100%; width: 100%; overflow: hidden;
       font-family: var(--font-sans); background: var(--bg); color: var(--text);
       font-size: 15px; line-height: 1.5;
-      -webkit-font-smoothing: antialiased; overscroll-behavior: none;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      overscroll-behavior: none; text-rendering: optimizeLegibility;
     }
     #app {
       height: 100%; width: 100%; display: flex; flex-direction: column;
@@ -53,12 +64,14 @@
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
     .screen {
       position: absolute; inset: 0; display: none;
       flex-direction: column; background: var(--bg); overflow: hidden; z-index: 1;
     }
-    .screen.active { display: flex; z-index: 2; }
+    .screen.active { display: flex; z-index: 2; animation: screenIn 0.18s ease; }
+    @keyframes screenIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     .app-header {
       height: var(--header-height); min-height: var(--header-height);
@@ -84,11 +97,12 @@
     }
     .btn:active { transform: scale(0.97); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 1px 2px var(--primary-glow); }
+    .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 12px var(--primary-glow); }
     .btn-secondary {
       background: var(--surface); color: var(--text); border: 1px solid var(--border);
     }
+    .btn-secondary:hover { background: var(--border-light); }
     .btn-danger { background: var(--danger); color: #fff; }
     .btn-ghost { background: transparent; color: var(--text-secondary); padding: 0 10px; }
 
@@ -100,6 +114,7 @@
       flex-shrink: 0; touch-action: manipulation;
     }
     .btn-icon:active { background: var(--surface); transform: scale(0.95); }
+    .btn-icon:hover { background: var(--surface); color: var(--text); }
     .btn-icon svg { width: 20px; height: 20px; }
     .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; border-radius: var(--radius-sm); }
 
@@ -112,7 +127,7 @@
       width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--border);
       border-radius: var(--radius); background: var(--surface-elevated); color: var(--text);
       font-family: var(--font-sans); font-size: 15px; outline: none;
-      transition: border-color var(--transition);
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
     .form-input:focus, .form-select:focus {
       border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light);
@@ -141,11 +156,14 @@
       transition: all var(--transition); position: relative;
     }
     .project-item:active { background: var(--surface); transform: scale(0.99); }
+    .project-item:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
     .project-icon {
       width: 44px; height: 44px; border-radius: var(--radius);
-      background: var(--primary-light); display: flex; align-items: center;
-      justify-content: center; flex-shrink: 0; color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; color: #fff;
       font-size: 18px; font-weight: 700; overflow: hidden;
+      box-shadow: 0 2px 6px var(--primary-glow);
     }
     .project-icon img { width: 100%; height: 100%; object-fit: cover; }
     .project-info { flex: 1; min-width: 0; }
@@ -163,12 +181,15 @@
 
     .fab {
       position: fixed; bottom: calc(20px + var(--safe-bottom)); right: calc(20px + var(--safe-right));
-      width: 56px; height: 56px; border-radius: 16px; background: var(--primary);
+      width: 56px; height: 56px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
       color: #fff; border: none; display: flex; align-items: center; justify-content: center;
-      box-shadow: var(--shadow-lg); cursor: pointer; transition: all var(--transition);
+      box-shadow: 0 8px 20px var(--primary-glow), 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer; transition: all var(--transition);
       z-index: 100; touch-action: manipulation;
     }
     .fab:active { transform: scale(0.92); }
+    .fab:hover { box-shadow: 0 12px 28px var(--primary-glow), 0 6px 12px rgba(0,0,0,0.15); }
     .fab svg { width: 24px; height: 24px; }
 
     .file-list { flex: 1; overflow-y: auto; padding: 8px 12px 80px; }
@@ -198,31 +219,85 @@
     .line-numbers-inner {
       position: absolute; top: 0; left: 0; right: 0;
       padding: 12px 8px 12px 0; text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: normal;
+      word-spacing: normal;
     }
     .editor-scroll { flex: 1; overflow: auto; position: relative; -webkit-overflow-scrolling: touch; }
     .code-editor {
       display: block; width: 100%; min-height: 100%; padding: 12px;
       font-family: var(--font-mono); font-size: 13px; line-height: 1.6;
-      border: none; outline: none; resize: none; background: transparent;
-      color: var(--text); tab-size: 2; -moz-tab-size: 2;
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-rendering: auto;
+      font-variant-ligatures: none;
+      font-kerning: none;
+      tab-size: 2; -moz-tab-size: 2;
+      border: 0; outline: none; resize: none; background: transparent;
+      color: var(--text);
       white-space: pre; overflow-wrap: normal; word-break: normal;
       caret-color: var(--primary); position: relative; z-index: 2;
       box-sizing: border-box;
+      text-transform: none;
+      text-indent: 0;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .code-editor::selection { background: var(--primary-light); color: var(--text); }
+    .code-editor::selection {
+      background: rgba(37, 99, 235, 0.28);
+      color: transparent;
+    }
+    .code-editor::-moz-selection {
+      background: rgba(37, 99, 235, 0.28);
+      color: transparent;
+    }
+    [data-theme="dark"] .code-editor::selection {
+      background: rgba(96, 165, 250, 0.35);
+    }
+    [data-theme="dark"] .code-editor::-moz-selection {
+      background: rgba(96, 165, 250, 0.35);
+    }
     .code-editor.highlighting { color: transparent; caret-color: var(--primary); }
     .highlight-layer {
       position: absolute; top: 0; left: 0;
-      padding: 12px; font-family: var(--font-mono); font-size: 13px;
-      line-height: 1.6; pointer-events: none; white-space: pre;
-      color: var(--text); z-index: 0;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-rendering: auto;
+      font-variant-ligatures: none;
+      font-kerning: none;
+      tab-size: 2;
+      -moz-tab-size: 2;
+      pointer-events: none;
+      white-space: pre;
+      color: var(--text);
+      z-index: 0;
       min-width: 100%;
       box-sizing: border-box;
+      overflow: hidden;
+      word-break: normal;
+      overflow-wrap: normal;
+      text-transform: none;
+      text-indent: 0;
+      margin: 0;
+      border: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .highlight-layer .tag { color: #e06c75; }
     .highlight-layer .attr { color: #d19a66; }
     .highlight-layer .string { color: #98c379; }
-    .highlight-layer .comment { color: #5c6370; font-style: italic; }
+    .highlight-layer .comment { color: #5c6370; }
     .highlight-layer .keyword { color: #c678dd; }
     .highlight-layer .number { color: #d19a66; }
     .highlight-layer .selector { color: #e06c75; }
@@ -251,6 +326,7 @@
 
     /* === PREVIEW === */
     .preview-container { flex: 1; display: flex; flex-direction: column; background: #f1f5f9; overflow: hidden; }
+    [data-theme="dark"] .preview-container { background: #0f172a; }
     .preview-toolbar {
       display: flex; align-items: center; gap: 6px; padding: 8px 12px;
       background: var(--surface-elevated); border-bottom: 1px solid var(--border);
@@ -261,6 +337,7 @@
       flex: 1; display: flex; align-items: center; justify-content: center;
       padding: 16px; overflow: auto; background: #e2e8f0;
     }
+    [data-theme="dark"] .preview-device-frame { background: #0f172a; }
     .preview-device {
       background: #fff; border-radius: 24px;
       box-shadow: 0 0 0 8px #1e293b, 0 0 0 10px #334155, var(--shadow-lg);
@@ -290,6 +367,8 @@
       z-index: 1000; display: flex; align-items: flex-end;
       justify-content: center; opacity: 0; pointer-events: none;
       transition: opacity 0.2s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
     .modal-overlay.visible { opacity: 1; pointer-events: auto; }
     .modal-sheet {
@@ -334,17 +413,6 @@
     .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .terminal {
-      flex: 1; background: #0f172a; color: #a5d6a7; font-family: var(--font-mono);
-      font-size: 12px; line-height: 1.6; padding: 12px;
-      overflow-y: auto; white-space: pre-wrap; word-break: break-all;
-    }
-    .terminal .log-info { color: #79c0ff; }
-    .terminal .log-warn { color: #ffab70; }
-    .terminal .log-error { color: #f97583; }
-    .terminal .log-success { color: #a5d6a7; }
-    .terminal .log-time { color: #6a737d; }
-
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .status-dot.saved { background: var(--success); }
@@ -380,7 +448,7 @@
       background: var(--surface-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
       padding: 6px; min-width: 180px;
       display: none; animation: contextIn 0.15s ease;
       transform-origin: top left;
@@ -397,46 +465,6 @@
     .context-menu-item:active { background: var(--surface); }
     .context-menu-item svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-secondary); }
     .context-menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
-
-    .icon-picker-preview {
-      width: 80px; height: 80px; border-radius: var(--radius-lg);
-      background: var(--surface); border: 2px dashed var(--border);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 12px; overflow: hidden; cursor: pointer;
-      position: relative; transition: border-color var(--transition);
-    }
-    .icon-picker-preview:active { border-color: var(--primary); }
-    .icon-picker-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .icon-picker-preview .placeholder { color: var(--muted); font-size: 12px; text-align: center; padding: 8px; }
-
-    .splash-picker-preview {
-      width: 100%; height: 120px; border-radius: var(--radius);
-      background: var(--surface); border: 2px dashed var(--border);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 12px; overflow: hidden; cursor: pointer;
-      position: relative; transition: border-color var(--transition);
-    }
-    .splash-picker-preview:active { border-color: var(--primary); }
-    .splash-picker-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .splash-picker-preview .placeholder { color: var(--muted); font-size: 13px; text-align: center; padding: 8px; }
-
-    .permission-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 14px; border-bottom: 1px solid var(--border-light);
-      gap: 12px;
-    }
-    .permission-item .perm-info { flex: 1; min-width: 0; }
-    .permission-item .perm-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-    .permission-item .perm-desc { font-size: 12px; color: var(--text-secondary); }
-
-    .webview-setting {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 14px; border-bottom: 1px solid var(--border-light);
-      gap: 12px;
-    }
-    .webview-setting .ws-info { flex: 1; min-width: 0; }
-    .webview-setting .ws-name { font-size: 14px; font-weight: 500; }
-    .webview-setting .ws-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
     @media (min-width: 600px) {
       .project-list { padding: 16px 24px 80px; }
@@ -482,8 +510,8 @@
             <polyline points="8 6 2 12 8 18"></polyline>
           </svg>
         </div>
-        <div class="splash-title">Zishu App Creator</div>
-        <div class="splash-subtitle">HTML/CSS/JavaScript Android App Builder</div>
+        <div class="splash-title">Zishu Code</div>
+        <div class="splash-subtitle">Professional HTML / CSS / JavaScript Editor</div>
         <div class="spinner" style="margin-top: 12px;"></div>
       </div>
     </div>
@@ -497,7 +525,7 @@
             <polyline points="8 6 2 12 8 18"></polyline>
           </svg>
         </div>
-        <div class="header-title">Zishu App Creator</div>
+        <div class="header-title">Zishu Code</div>
         <div class="header-actions">
           <button class="btn-icon" id="homeImportBtn" aria-label="Import Project">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -762,173 +790,8 @@
           <span class="label">About</span>
           <span class="value">›</span>
         </div>
-        <div class="settings-item" id="settingDiagnosticsItem">
-          <span class="label">Diagnostics</span>
-          <span class="value">›</span>
-        </div>
         <div class="settings-item" id="settingResetItem" style="color:var(--danger);">
           <span class="label" style="color:var(--danger);">Reset App Data</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- DIAGNOSTICS SCREEN -->
-    <div id="diagnosticsScreen" class="screen">
-      <header class="app-header">
-        <button class="btn-icon" id="diagnosticsBackBtn" aria-label="Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <div class="header-title">Diagnostics</div>
-        <div class="header-actions">
-          <button class="btn-icon" id="diagnosticsRefreshBtn" aria-label="Refresh">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-            </svg>
-          </button>
-        </div>
-      </header>
-      <div style="flex:1; overflow-y:auto; padding:16px;">
-        <div class="card mb-16" id="diagnosticsContent">
-          <p class="text-muted">Loading diagnostics...</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- BUILD SCREEN -->
-    <div id="buildScreen" class="screen">
-      <header class="app-header">
-        <button class="btn-icon" id="buildBackBtn" aria-label="Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <div class="header-title">Build APK</div>
-      </header>
-      <div style="flex:1; overflow-y:auto; padding:16px 16px 32px;">
-        <div class="card mb-16" id="buildProjectInfo">
-          <div class="flex items-center gap-12 mb-8">
-            <div class="project-icon" id="buildAppIcon">Z</div>
-            <div class="flex-1 min-w-0">
-              <div class="project-name" id="buildAppName">App Name</div>
-              <div class="project-meta" id="buildPackageName">com.example.app</div>
-            </div>
-          </div>
-          <div class="text-xs text-muted" id="buildVersionInfo">Version 1.0.0 (1)</div>
-        </div>
-
-        <div class="settings-section" style="padding:0 0 8px;">App Information</div>
-        <div class="card mb-16">
-          <div class="form-group">
-            <label class="form-label">App Logo</label>
-            <div class="icon-picker-preview" id="buildIconPreview">
-              <span class="placeholder">Tap to upload logo</span>
-            </div>
-            <input type="file" id="buildIconInput" accept="image/*" style="display:none;">
-          </div>
-          <div class="form-group">
-            <label class="form-label">App Name</label>
-            <input class="form-input" id="buildFieldName" placeholder="My App">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Package Name</label>
-            <input class="form-input" id="buildFieldPackage" placeholder="com.example.myapp">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Version Name</label>
-            <input class="form-input" id="buildFieldVersionName" placeholder="1.0.0">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Version Code</label>
-            <input class="form-input" id="buildFieldVersionCode" type="number" min="1" placeholder="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Title Bar Color</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="color" id="buildFieldTitleColor" value="#2563eb" style="width:48px;height:44px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:transparent;">
-              <input class="form-input" id="buildFieldTitleColorHex" value="#2563eb" style="flex:1;">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Screen Rotation</label>
-            <select class="form-select" id="buildFieldOrientation">
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-              <option value="both">Both (Auto-rotate)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Home Page (Entry File)</label>
-            <select class="form-select" id="buildFieldHomePage"></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Splash Screen</label>
-            <div class="splash-picker-preview" id="buildSplashPreview">
-              <span class="placeholder">Tap to upload splash screen</span>
-            </div>
-            <input type="file" id="buildSplashInput" accept="image/*" style="display:none;">
-          </div>
-        </div>
-
-        <div class="settings-section" style="padding:0 0 8px;">More Options</div>
-        <div class="card mb-16">
-          <div class="webview-setting">
-            <div class="ws-info"><div class="ws-name">Full Screen Mode</div><div class="ws-desc">Hide system bars for immersive experience</div></div>
-            <label class="switch"><input type="checkbox" id="buildFullScreen"><span class="slider"></span></label>
-          </div>
-          <div class="webview-setting">
-            <div class="ws-info"><div class="ws-name">Hide Title Bar</div><div class="ws-desc">Remove the app title bar</div></div>
-            <label class="switch"><input type="checkbox" id="buildHideTitleBar"><span class="slider"></span></label>
-          </div>
-          <div class="webview-setting">
-            <div class="ws-info"><div class="ws-name">Allow Long Press</div><div class="ws-desc">Enable text selection and context menu</div></div>
-            <label class="switch"><input type="checkbox" id="buildAllowLongPress" checked><span class="slider"></span></label>
-          </div>
-          <div class="webview-setting">
-            <div class="ws-info"><div class="ws-name">Allow Zoom</div><div class="ws-desc">Enable pinch-to-zoom in WebView</div></div>
-            <label class="switch"><input type="checkbox" id="buildAllowZoom"><span class="slider"></span></label>
-          </div>
-          <div class="webview-setting">
-            <div class="ws-info"><div class="ws-name">PC Mode</div><div class="ws-desc">Load desktop version of websites</div></div>
-            <label class="switch"><input type="checkbox" id="buildPcMode"><span class="slider"></span></label>
-          </div>
-        </div>
-
-        <div class="settings-section" style="padding:0 0 8px;">Permissions</div>
-        <div class="card mb-16" id="buildPermissionsCard"></div>
-
-        <div class="card mb-16">
-          <div class="form-group">
-            <label class="form-label">Build Type</label>
-            <select class="form-select" id="buildTypeSelect">
-              <option value="debug">Debug APK</option>
-              <option value="release">Release APK</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" id="buildActionBtn" style="width:100%;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-            Build APK
-          </button>
-        </div>
-
-        <div class="card mb-16">
-          <div class="form-label mb-8">Build Log</div>
-          <div class="terminal" id="buildLog" style="height:200px; border-radius:var(--radius);">No build started.</div>
-          <div class="flex gap-8 mt-8">
-            <button class="btn btn-secondary btn-sm" id="buildClearLogBtn">Clear</button>
-            <button class="btn btn-secondary btn-sm" id="buildCopyLogBtn">Copy</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="form-label mb-8">Build History</div>
-          <div id="buildHistoryList"><p class="text-muted text-sm">No builds yet.</p></div>
         </div>
       </div>
     </div>
@@ -976,7 +839,8 @@
 
   <script>
     /* ============================================================
-       ZISHU APP CREATOR — MAIN APPLICATION
+       ZISHU CODE — Professional HTML/CSS/JS Editor
+       Pure frontend, no native dependencies
        ============================================================ */
     'use strict';
 
@@ -984,10 +848,9 @@
     // 1. CENTRAL CONFIGURATION
     // ============================================================
     const APP_CONFIG = {
-      name: 'Zishu App Creator',
+      name: 'Zishu Code',
       version: '1.0.0',
-      nativeBridgeName: 'ZishuNative',
-      storagePrefix: 'zishu_',
+      storagePrefix: 'zishucode_',
       privacyUrl: '',
       termsUrl: '',
       maxRecentProjects: 20,
@@ -1042,162 +905,11 @@
       saveSettings(settings) { return this.set('settings', settings); },
       getRecovery() { return this.get('recovery', null); },
       saveRecovery(data) { return this.set('recovery', data); },
-      clearRecovery() { return this.remove('recovery'); },
-      getBuildHistory() { return this.get('build_history', []); },
-      saveBuildHistory(history) { return this.set('build_history', history); }
+      clearRecovery() { return this.remove('recovery'); }
     };
 
     // ============================================================
-    // 3. NATIVE BRIDGE LAYER
-    // ============================================================
-    const NativeBridge = {
-      _native: null, _available: false, _eventTarget: new EventTarget(),
-      init() {
-        try {
-          if (typeof window[APP_CONFIG.nativeBridgeName] !== 'undefined') {
-            this._native = window[APP_CONFIG.nativeBridgeName];
-            this._available = true;
-          }
-        } catch (e) { this._available = false; }
-
-        window.ZishuNativeFileSelected = (filename, content) => this.emit('fileSelected', { filename, content });
-        window.ZishuNativeFileSaved = (filename, success) => this.emit('fileSaved', { filename, success });
-        window.ZishuNativeFileError = (filename, error) => this.emit('fileError', { filename, error });
-        window.ZishuNativeBuildStarted = () => this.emit('buildStarted');
-        window.ZishuNativeBuildProgress = (percent, stage) => this.emit('buildProgress', { percent, stage });
-        window.ZishuNativeBuildCompleted = (apkPath, packageName) => this.emit('buildCompleted', { apkPath, packageName });
-        window.ZishuNativeBuildFailed = (error) => this.emit('buildFailed', { error });
-        window.ZishuNativePermissionResult = (permission, granted) => this.emit('permissionResult', { permission, granted });
-        window.ZishuNativeBackPressed = () => this.emit('backPressed');
-        window.ZishuNativeKeyboardOpened = () => this.emit('keyboardOpened');
-        window.ZishuNativeKeyboardClosed = () => this.emit('keyboardClosed');
-        window.ZishuNativeAppResumed = () => this.emit('appResumed');
-        window.ZishuNativeAppPaused = () => this.emit('appPaused');
-        return this._available;
-      },
-      isAvailable() { return this._available; },
-      on(event, callback) { this._eventTarget.addEventListener(event, (e) => callback(e.detail)); },
-      emit(event, detail) { this._eventTarget.dispatchEvent(new CustomEvent(event, { detail })); },
-      getDeviceInfo() {
-        if (this._available && this._native.getDeviceInfo) {
-          try { return JSON.parse(this._native.getDeviceInfo()); } catch (e) {}
-        }
-        return { platform: 'browser', userAgent: navigator.userAgent, language: navigator.language,
-          screenWidth: window.screen.width, screenHeight: window.screen.height, pixelRatio: window.devicePixelRatio };
-      },
-      saveFile(filename, content) {
-        if (this._available && this._native.saveFile) { try { return this._native.saveFile(filename, content); } catch (e) {} }
-        return false;
-      },
-      readFile(filename) {
-        if (this._available && this._native.readFile) { try { return this._native.readFile(filename); } catch (e) {} }
-        return null;
-      },
-      deleteFile(filename) {
-        if (this._available && this._native.deleteFile) { try { return this._native.deleteFile(filename); } catch (e) {} }
-        return false;
-      },
-      selectFile() {
-        if (this._available && this._native.selectFile) { try { this._native.selectFile(); return true; } catch (e) {} }
-        return false;
-      },
-      selectImage() {
-        if (this._available && this._native.selectImage) { try { this._native.selectImage(); return true; } catch (e) {} }
-        return false;
-      },
-      shareFile(filename, mimeType) {
-        if (this._available && this._native.shareFile) { try { this._native.shareFile(filename, mimeType || 'application/octet-stream'); return true; } catch (e) {} }
-        return false;
-      },
-      openFile(filename) {
-        if (this._available && this._native.openFile) { try { this._native.openFile(filename); return true; } catch (e) {} }
-        return false;
-      },
-      buildAPK(projectJson, options) {
-        if (this._available && this._native.buildAPK) {
-          try { this._native.buildAPK(JSON.stringify(projectJson), JSON.stringify(options || {})); return true; }
-          catch (e) { console.warn('Native buildAPK error:', e); }
-        }
-        return false;
-      },
-      installAPK(path) {
-        if (this._available && this._native.installAPK) { try { this._native.installAPK(path); return true; } catch (e) {} }
-        return false;
-      },
-      shareAPK(path) {
-        if (this._available && this._native.shareFile) { try { this._native.shareFile(path, 'application/vnd.android.package-archive'); return true; } catch (e) {} }
-        return false;
-      },
-      openURL(url) {
-        if (this._available && this._native.openURL) { try { this._native.openURL(url); return true; } catch (e) {} }
-        window.open(url, '_blank'); return true;
-      },
-      openSettings() {
-        if (this._available && this._native.openSettings) { try { this._native.openSettings(); return true; } catch (e) {} }
-        return false;
-      },
-      showToast(message) {
-        if (this._available && this._native.showToast) { try { this._native.showToast(message); return true; } catch (e) {} }
-        return false;
-      },
-      vibrate(durationMs) {
-        if (this._available && this._native.vibrate) { try { this._native.vibrate(durationMs || 50); return true; } catch (e) {} }
-        if (navigator.vibrate) { navigator.vibrate(durationMs || 50); return true; }
-        return false;
-      },
-      copyToClipboard(text) {
-        if (this._available && this._native.copyToClipboard) {
-          try { return Promise.resolve(this._native.copyToClipboard(text)); } catch (e) {}
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
-        }
-        try {
-          const ta = document.createElement('textarea');
-          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-          document.body.appendChild(ta); ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          return Promise.resolve(true);
-        } catch (e) { return Promise.resolve(false); }
-      },
-      getClipboard() {
-        if (this._available && this._native.getClipboard) { try { return this._native.getClipboard(); } catch (e) {} }
-        return null;
-      },
-      requestPermission(permission) {
-        if (this._available && this._native.requestPermission) { try { this._native.requestPermission(permission); return true; } catch (e) {} }
-        return false;
-      },
-      getPermissions() {
-        if (this._available && this._native.getPermissions) { try { return JSON.parse(this._native.getPermissions()); } catch (e) {} }
-        return {};
-      },
-      showFilePicker(options) {
-        if (this._available && this._native.showFilePicker) { try { this._native.showFilePicker(JSON.stringify(options || {})); return true; } catch (e) {} }
-        return false;
-      },
-      getAppInfo() {
-        if (this._available && this._native.getAppInfo) { try { return JSON.parse(this._native.getAppInfo()); } catch (e) {} }
-        return { name: APP_CONFIG.name, version: APP_CONFIG.version };
-      },
-      getStorageInfo() {
-        if (this._available && this._native.getStorageInfo) { try { return JSON.parse(this._native.getStorageInfo()); } catch (e) {} }
-        return { available: null, total: null, used: AppStorage.getSize() };
-      },
-      getNetworkInfo() {
-        if (this._available && this._native.getNetworkInfo) { try { return JSON.parse(this._native.getNetworkInfo()); } catch (e) {} }
-        return { online: navigator.onLine };
-      },
-      exitApp() {
-        if (this._available && this._native.exitApp) { try { this._native.exitApp(); return true; } catch (e) {} }
-        return false;
-      },
-      onBackPressed() { this.emit('backPressed'); }
-    };
-
-    // ============================================================
-    // 4. APPLICATION STATE
+    // 3. APPLICATION STATE
     // ============================================================
     const AppState = {
       currentScreen: 'splash',
@@ -1214,13 +926,11 @@
         autoSave: true, syntaxHighlight: true, theme: 'light',
         livePreview: false, deviceFrame: true
       },
-      nativeAvailable: false,
-      buildState: { building: false, progress: 0, stage: '', log: [], history: [] },
       recoveryData: null
     };
 
     // ============================================================
-    // 5. UI HELPERS
+    // 4. UI HELPERS
     // ============================================================
     const UI = {
       toast(message, type = 'info', duration = 2500) {
@@ -1312,7 +1022,7 @@
     };
 
     // ============================================================
-    // 6. ROUTER
+    // 5. ROUTER
     // ============================================================
     const Router = {
       _stack: [],
@@ -1338,59 +1048,53 @@
     };
 
     // ============================================================
-    // 7. PROJECT MANAGER
+    // 6. PROJECT MANAGER
     // ============================================================
     const ProjectManager = {
       generateId() { return 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9); },
-      validatePackageName(pkg) {
-        if (!pkg) return 'Package name is required';
-        if (!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(pkg)) {
-          return 'Invalid package name. Use lowercase letters, numbers, dots (e.g., com.example.myapp)';
-        }
-        return null;
-      },
+
       createProject(data) {
         const id = this.generateId();
         const project = {
-          id, name: data.name || 'My App',
-          packageName: data.packageName || 'com.example.myapp',
-          versionName: data.versionName || '1.0.0',
-          versionCode: parseInt(data.versionCode) || 1,
-          icon: null, splash: null,
-          theme: data.theme || 'light',
-          orientation: data.orientation || 'portrait',
+          id,
+          name: data.name || 'Untitled Project',
           template: data.template || APP_CONFIG.defaultProjectTemplate,
-          titleColor: '#2563eb',
           homePage: 'index.html',
           files: {},
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          webviewSettings: {
-            javaScriptEnabled: true, domStorage: true, localStorage: true,
-            fileAccess: false, zoom: false, textScaling: 100, mixedContent: 'never',
-            fullScreen: false, hideTitleBar: false, allowLongPress: true,
-            allowZoom: false, pcMode: false
-          },
-          permissions: {
-            mediaAutoplay: false, swipeRefresh: false, camera: false,
-            location: false, microphone: false, notification: false,
-            storage: false, contacts: false, phone: false,
-            bluetooth: false, vibrate: false, wakeLock: false
-          }
+          updatedAt: new Date().toISOString()
         };
-        if (project.template === 'html-css-js' || project.template === 'basic-web') {
+
+        if (project.template === 'html-css-js') {
           project.files['index.html'] = this._getHtmlTemplate(project);
           project.files['style.css'] = this._getCssTemplate();
           project.files['script.js'] = this._getJsTemplate();
+        } else if (project.template === 'basic-web') {
+          project.files['index.html'] = this._getBasicHtmlTemplate(project);
+          project.files['style.css'] = this._getCssTemplate();
         } else if (project.template === 'blank') {
-          project.files['index.html'] = '<!DOCTYPE html>\n<html>\n<head>\n  <title>' + project.name + '</title>\n</head>\n<body>\n  <h1>' + project.name + '</h1>\n</body>\n</html>';
+          project.files['index.html'] = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + project.name + '</title>\n</head>\n<body>\n  \n</body>\n</html>';
+        } else if (project.template === 'blank-css') {
+          project.files['style.css'] = '/* ' + project.name + ' */\n\n';
+          project.homePage = 'style.css';
+        } else if (project.template === 'blank-js') {
+          project.files['script.js'] = '// ' + project.name + '\n\n';
+          project.homePage = 'script.js';
+        } else if (project.template === 'empty') {
+          project.homePage = '';
         }
+
         AppStorage.saveProject(project);
         const projects = AppStorage.listProjects();
-        projects.unshift({ id: project.id, name: project.name, packageName: project.packageName, updatedAt: project.updatedAt, icon: project.icon });
+        projects.unshift({
+          id: project.id,
+          name: project.name,
+          updatedAt: project.updatedAt
+        });
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         return project;
       },
+
       _getHtmlTemplate(project) {
         return `<!DOCTYPE html>
 <html lang="en">
@@ -1411,6 +1115,25 @@
 </body>
 </html>`;
       },
+
+      _getBasicHtmlTemplate(project) {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${project.name}</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>${project.name}</h1>
+    <p>Start building your web page here.</p>
+  </div>
+</body>
+</html>`;
+      },
+
       _getCssTemplate() {
         return `* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -1427,6 +1150,7 @@ button { background: #2563eb; color: #fff; border: none; padding: 12px 24px; bor
 button:active { background: #1d4ed8; }
 #output { margin-top: 16px; font-weight: 600; color: #16a34a; }`;
       },
+
       _getJsTemplate() {
         return `// ${APP_CONFIG.name} - JavaScript
 document.addEventListener('DOMContentLoaded', function() {
@@ -1443,11 +1167,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });`;
       },
+
       loadProject(id) {
         const project = AppStorage.loadProject(id);
         if (project) { AppState.currentProject = project; return project; }
         return null;
       },
+
       saveProject(project) {
         if (!project) return false;
         project.updatedAt = new Date().toISOString();
@@ -1456,15 +1182,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const idx = projects.findIndex(p => p.id === project.id);
         if (idx !== -1) {
           projects[idx].name = project.name;
-          projects[idx].packageName = project.packageName;
           projects[idx].updatedAt = project.updatedAt;
-          projects[idx].icon = project.icon;
         } else {
-          projects.unshift({ id: project.id, name: project.name, packageName: project.packageName, updatedAt: project.updatedAt, icon: project.icon });
+          projects.unshift({
+            id: project.id,
+            name: project.name,
+            updatedAt: project.updatedAt
+          });
         }
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         return success;
       },
+
       deleteProject(id) {
         AppStorage.deleteProject(id);
         const projects = AppStorage.listProjects().filter(p => p.id !== id);
@@ -1474,6 +1203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return true;
       },
+
       renameProject(id, newName) {
         const project = AppStorage.loadProject(id);
         if (project) {
@@ -1490,7 +1220,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return false;
       },
+
       getRecentProjects() { return AppStorage.listProjects(); },
+
       formatDate(isoString) {
         if (!isoString) return 'Unknown';
         try {
@@ -1510,7 +1242,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 8. FILE MANAGER
+    // 7. FILE MANAGER
     // ============================================================
     const FileManager = {
       getFileType(filename) {
@@ -1598,7 +1330,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 9. EDITOR (FIXED: syntax highlighting overlay, line numbers)
+    // 8. EDITOR
     // ============================================================
     const Editor = {
       _textarea: null, _lineNumbers: null, _lineNumbersInner: null,
@@ -1622,7 +1354,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this._textarea.addEventListener('click', () => this._trackSelection());
         this._textarea.addEventListener('keyup', () => this._trackSelection());
 
-        // Apply initial highlight state
         if (AppState.settings.syntaxHighlight) {
           this._textarea.classList.add('highlighting');
         } else {
@@ -1633,6 +1364,22 @@ document.addEventListener('DOMContentLoaded', function() {
         this._textarea.addEventListener('contextmenu', (e) => {
           e.preventDefault();
           this._showContextMenu(e.clientX, e.clientY);
+        });
+
+        this._syncFontMetrics();
+      },
+
+      _syncFontMetrics() {
+        if (!this._textarea || !this._highlightLayer) return;
+        const cs = window.getComputedStyle(this._textarea);
+        const props = [
+          'fontFamily', 'fontSize', 'fontWeight', 'fontStyle',
+          'letterSpacing', 'wordSpacing', 'lineHeight', 'tabSize',
+          'textRendering', 'fontVariantLigatures', 'fontKerning',
+          'textTransform', 'textIndent'
+        ];
+        props.forEach(p => {
+          if (cs[p]) this._highlightLayer.style[p] = cs[p];
         });
       },
 
@@ -1696,8 +1443,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
       _syncScroll() {
         if (!this._textarea || !this._lineNumbersInner) return;
-        const scrollTop = this._textarea.scrollTop;
-        const scrollLeft = this._textarea.scrollLeft;
+        const scrollTop = Math.round(this._textarea.scrollTop);
+        const scrollLeft = Math.round(this._textarea.scrollLeft);
         this._lineNumbersInner.style.transform = `translateY(-${scrollTop}px)`;
         if (this._highlightLayer) {
           this._highlightLayer.style.transform = `translate(${-scrollLeft}px, ${-scrollTop}px)`;
@@ -1761,11 +1508,10 @@ document.addEventListener('DOMContentLoaded', function() {
         this._highlightTimer = setTimeout(() => this._applyHighlight(), 150);
       },
 
-      /* FIXED: Uses safe placeholder tokens so overlays never leak.
-         The textarea text is made transparent when highlighting is ON
-         so only the highlight layer shows through (no double text). */
       _applyHighlight() {
         if (!this._highlightLayer || !this._textarea) return;
+        this._syncFontMetrics();
+
         const code = this._textarea.value;
         const type = AppState.currentFile ? FileManager.getFileType(AppState.currentFile) : 'html';
         let highlighted = '';
@@ -1784,7 +1530,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this._highlightLayer.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
         this._highlightLayer.style.lineHeight = '1.6';
 
-        // Critical: make textarea text transparent so only the highlight layer shows
         this._textarea.classList.add('highlighting');
       },
 
@@ -1804,75 +1549,42 @@ document.addEventListener('DOMContentLoaded', function() {
       _highlightHTML(code) {
         const store = [];
         let escaped = UI.escapeHtml(code);
-
-        // 1. Protect comments
         escaped = escaped.replace(/&lt;!--[\s\S]*?--&gt;/g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-
-        // 2. Protect quoted strings in attributes
         escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
-
-        // 3. Tags: <tag and </tag
         escaped = escaped.replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tag">$2</span>');
-
-        // 4. Attribute names (word followed by =)
         escaped = escaped.replace(/(\s)([a-zA-Z_][\w-]*)(?==)/g, '$1<span class="attr">$2</span>');
-
-        // 5. Restore placeholders
         return this._restorePlaceholders(escaped, store);
       },
 
       _highlightCSS(code) {
         const store = [];
         let escaped = UI.escapeHtml(code);
-
-        // 1. Protect comments
         escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-
-        // 2. Protect strings
         escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
-
-        // 3. Selectors (before {)
         escaped = escaped.replace(/([^{}\n][^{}]*?)(?=\s*\{)/g, (m) => {
           if (m.trim().length === 0) return m;
           return `<span class="selector">${m}</span>`;
         });
-
-        // 4. Properties and values
         escaped = escaped.replace(/([\w-]+)(\s*:\s*)([^;{}\n]+)(;?)/g, '<span class="property">$1</span>$2<span class="value">$3</span>$4');
-
-        // 5. Restore
         return this._restorePlaceholders(escaped, store);
       },
 
       _highlightJS(code) {
         const store = [];
         let escaped = UI.escapeHtml(code);
-
-        // 1. Protect block comments FIRST (they may contain // and strings)
         escaped = escaped.replace(/\/\*[\s\S]*?\*\//g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-
-        // 2. Protect line comments
         escaped = escaped.replace(/\/\/[^\n]*/g, (m) => this._makePlaceholder(store, `<span class="comment">${m}</span>`));
-
-        // 3. Protect strings (double, single, backtick) - handles escaped quotes
         escaped = escaped.replace(/(&quot;(?:\\.|[^&\\])*?&quot;|'(?:\\.|[^'\\])*?'|`(?:\\.|[^`\\])*?`)/g,
           (m) => this._makePlaceholder(store, `<span class="string">${m}</span>`));
-
-        // 4. Numbers (with optional decimal / exponent)
         escaped = escaped.replace(/\b(\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g, '<span class="number">$1</span>');
-
-        // 5. Keywords
         const keywords = ['var','let','const','function','return','if','else','for','while','do','switch','case','break','continue','new','this','typeof','instanceof','try','catch','finally','throw','class','extends','super','import','export','default','async','await','yield','true','false','null','undefined','delete','in','of','void','static','get','set'];
         escaped = escaped.replace(
           new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g'),
           '<span class="keyword">$1</span>'
         );
-
-        // 6. Restore strings/comments
         return this._restorePlaceholders(escaped, store);
       },
 
-      /* FIXED: line numbers now generated for ALL lines (no 30 line cap) */
       _updateLineNumbers() {
         if (!this._lineNumbersInner || !this._textarea) return;
         if (!AppState.settings.lineNumbers) {
@@ -1882,14 +1594,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this._lineNumbers) this._lineNumbers.style.display = 'block';
 
         const text = this._textarea.value;
-        // Count lines: 1 + number of newlines
         let lineCount = 1;
         for (let i = 0; i < text.length; i++) {
           if (text.charCodeAt(i) === 10) lineCount++;
         }
         if (lineCount < 1) lineCount = 1;
 
-        // Build using array + join for performance
         const nums = new Array(lineCount);
         for (let i = 0; i < lineCount; i++) nums[i] = (i + 1) + '<br>';
         this._lineNumbersInner.innerHTML = nums.join('');
@@ -1915,6 +1625,7 @@ document.addEventListener('DOMContentLoaded', function() {
           this._textarea.style.overflowWrap = AppState.settings.wordWrap ? 'break-word' : 'normal';
         }
 
+        this._syncFontMetrics();
         this._updateLineNumbers();
         this._updateSaveStatus('saved');
         this._syncScroll();
@@ -1998,7 +1709,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 10. PREVIEW MANAGER
+    // 9. PREVIEW MANAGER
     // ============================================================
     const PreviewManager = {
       _liveTimer: null, _iframe: null, _device: null,
@@ -2061,7 +1772,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this._addExitFullscreenBtn();
           } else {
             frame.style.padding = '16px';
-            frame.style.background = '#e2e8f0';
+            frame.style.background = '';
             if (header) header.style.display = 'flex';
             if (toolbar) toolbar.style.display = 'flex';
             if (this._device) {
@@ -2093,204 +1804,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 11. BUILD MANAGER
-    // ============================================================
-    const BuildManager = {
-      _log: [],
-      init() {
-        AppState.buildState.history = AppStorage.getBuildHistory();
-        NativeBridge.on('buildStarted', () => {
-          this.addLog('Build started', 'info');
-          AppState.buildState.building = true;
-          this.updateUI();
-        });
-        NativeBridge.on('buildProgress', ({ percent, stage }) => {
-          this.addLog(`Progress: ${percent}% - ${stage}`, 'info');
-          AppState.buildState.progress = percent;
-          AppState.buildState.stage = stage;
-          this.updateUI();
-        });
-        NativeBridge.on('buildCompleted', ({ apkPath, packageName }) => {
-          this.addLog(`Build completed: ${apkPath}`, 'success');
-          AppState.buildState.building = false;
-          AppState.buildState.progress = 100;
-          this.addBuildHistory({
-            project: AppState.currentProject ? AppState.currentProject.name : 'Unknown',
-            version: AppState.currentProject ? AppState.currentProject.versionName : '1.0.0',
-            type: document.getElementById('buildTypeSelect') ? document.getElementById('buildTypeSelect').value : 'debug',
-            date: new Date().toISOString(),
-            status: 'success', apkPath, packageName
-          });
-          this.updateUI();
-          UI.toast('Build completed successfully!', 'success');
-          this._showApkReadyActions(apkPath, packageName);
-        });
-        NativeBridge.on('buildFailed', ({ error }) => {
-          this.addLog(`Build failed: ${error}`, 'error');
-          AppState.buildState.building = false;
-          this.addBuildHistory({
-            project: AppState.currentProject ? AppState.currentProject.name : 'Unknown',
-            version: AppState.currentProject ? AppState.currentProject.versionName : '1.0.0',
-            type: 'debug', date: new Date().toISOString(),
-            status: 'failed', error
-          });
-          this.updateUI();
-          UI.toast('Build failed: ' + error, 'error');
-        });
-      },
-
-      _showApkReadyActions(apkPath, packageName) {
-        UI.showModal(`
-          <div class="modal-title">APK Ready</div>
-          <div style="text-align:center;padding:16px 0;">
-            <div style="width:64px;height:64px;border-radius:16px;background:var(--success-light);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <p class="text-sm text-muted">${UI.escapeHtml(packageName || '')}</p>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="apkInstallBtn">Install</button>
-            <button class="btn btn-primary" id="apkShareBtn">Share</button>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" id="apkSaveBtn" style="width:100%;">Save to Device</button>
-          </div>
-        `);
-        document.getElementById('apkInstallBtn').onclick = () => {
-          if (!NativeBridge.installAPK(apkPath)) UI.toast('Native install not available', 'warning');
-          UI.hideModal();
-        };
-        document.getElementById('apkShareBtn').onclick = () => {
-          if (!NativeBridge.shareAPK(apkPath)) UI.toast('Native share not available', 'warning');
-          UI.hideModal();
-        };
-        document.getElementById('apkSaveBtn').onclick = () => {
-          UI.toast('Use native file manager to save APK', 'info');
-          UI.hideModal();
-        };
-      },
-
-      addLog(message, type = 'info') {
-        const timestamp = new Date().toLocaleTimeString();
-        this._log.push({ timestamp, message, type });
-        this.renderLog();
-      },
-
-      renderLog() {
-        const logEl = document.getElementById('buildLog');
-        if (!logEl) return;
-        if (this._log.length === 0) { logEl.textContent = 'No build started.'; return; }
-        logEl.innerHTML = this._log.map(entry => {
-          const cls = 'log-' + entry.type;
-          return `<span class="log-time">[${entry.timestamp}]</span> <span class="${cls}">${UI.escapeHtml(entry.message)}</span>`;
-        }).join('\n');
-        logEl.scrollTop = logEl.scrollHeight;
-      },
-
-      clearLog() { this._log = []; this.renderLog(); },
-
-      copyLog() {
-        const text = this._log.map(e => `[${e.timestamp}] ${e.message}`).join('\n');
-        NativeBridge.copyToClipboard(text).then(() => UI.toast('Log copied', 'success'))
-          .catch(() => UI.toast('Could not copy log', 'error'));
-      },
-
-      addBuildHistory(entry) {
-        AppState.buildState.history.unshift(entry);
-        if (AppState.buildState.history.length > 50) AppState.buildState.history = AppState.buildState.history.slice(0, 50);
-        AppStorage.saveBuildHistory(AppState.buildState.history);
-        this.renderHistory();
-      },
-
-      renderHistory() {
-        const el = document.getElementById('buildHistoryList');
-        if (!el) return;
-        const history = AppState.buildState.history;
-        if (history.length === 0) { el.innerHTML = '<p class="text-muted text-sm">No builds yet.</p>'; return; }
-        el.innerHTML = history.map(h => `
-          <div class="settings-item" style="padding:10px 0;">
-            <div>
-              <div style="font-weight:600;font-size:14px;">${UI.escapeHtml(h.project)} v${UI.escapeHtml(h.version)}</div>
-              <div class="text-xs text-muted">${h.type.toUpperCase()} APK · ${ProjectManager.formatDate(h.date)}</div>
-            </div>
-            <span class="badge ${h.status === 'success' ? 'badge-success' : h.status === 'failed' ? 'badge-danger' : 'badge-warning'}">${h.status}</span>
-          </div>
-        `).join('');
-      },
-
-      updateUI() {
-        const btn = document.getElementById('buildActionBtn');
-        if (!btn) return;
-        if (AppState.buildState.building) {
-          btn.disabled = true;
-          btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div> Building...';
-        } else {
-          btn.disabled = false;
-          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Build APK';
-        }
-      },
-
-      startBuild() {
-        if (!AppState.currentProject) { UI.toast('No project selected', 'error'); return; }
-        const buildType = document.getElementById('buildTypeSelect') ? document.getElementById('buildTypeSelect').value : 'debug';
-        AppActions.syncBuildFormToProject();
-        this.clearLog();
-        this.addLog(`Preparing build for ${AppState.currentProject.name}...`, 'info');
-        this.addLog(`Package: ${AppState.currentProject.packageName}`, 'info');
-        this.addLog(`Version: ${AppState.currentProject.versionName} (${AppState.currentProject.versionCode})`, 'info');
-        this.addLog(`Build type: ${buildType}`, 'info');
-
-        const validation = this.validateProject();
-        if (!validation.valid) {
-          validation.errors.forEach(err => this.addLog('Error: ' + err, 'error'));
-          UI.toast('Project validation failed. Check build log.', 'error');
-          return;
-        }
-        validation.warnings.forEach(w => this.addLog('Warning: ' + w, 'warn'));
-
-        const started = NativeBridge.buildAPK(AppState.currentProject, {
-          buildType, outputFormat: 'apk',
-          icon: AppState.currentProject.icon,
-          splash: AppState.currentProject.splash,
-          titleColor: AppState.currentProject.titleColor,
-          orientation: AppState.currentProject.orientation,
-          homePage: AppState.currentProject.homePage,
-          webviewSettings: AppState.currentProject.webviewSettings,
-          permissions: AppState.currentProject.permissions
-        });
-
-        if (!started) {
-          this.addLog('Android build service is not connected.', 'warning');
-          this.addLog('The project editor and preview are still available.', 'warning');
-          this.addLog('To build APKs, integrate the native Android bridge.', 'info');
-          UI.toast('Android build service is not connected. The project editor and preview are still available.', 'warning', 4000);
-        }
-      },
-
-      validateProject() {
-        const errors = [], warnings = [];
-        const project = AppState.currentProject;
-        if (!project) { errors.push('No project selected'); return { valid: false, errors, warnings }; }
-        if (!project.name || !project.name.trim()) errors.push('App name is required');
-        const pkgError = ProjectManager.validatePackageName(project.packageName);
-        if (pkgError) errors.push(pkgError);
-        if (!project.versionName) errors.push('Version name is required');
-        if (!project.versionCode || project.versionCode < 1) errors.push('Version code must be at least 1');
-        const homePage = project.homePage || 'index.html';
-        if (!project.files[homePage]) errors.push(`Home page "${homePage}" not found in project files`);
-        const usedFiles = new Set();
-        const html = project.files[homePage] || '';
-        (html.match(/href=["']([^"']+\.css)["']/g) || []).forEach(m => { const r = m.match(/["']([^"']+)["']/); if (r) usedFiles.add(r[1]); });
-        (html.match(/src=["']([^"']+\.js)["']/g) || []).forEach(m => { const r = m.match(/["']([^"']+)["']/); if (r) usedFiles.add(r[1]); });
-        Object.keys(project.files).forEach(f => {
-          if (f !== homePage && !usedFiles.has(f)) warnings.push('Unused file: ' + f);
-        });
-        return { valid: errors.length === 0, errors, warnings };
-      }
-    };
-
-    // ============================================================
-    // 12. THEME MANAGER
+    // 10. THEME MANAGER
     // ============================================================
     const ThemeManager = {
       init() {
@@ -2321,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 13. SEARCH MANAGER
+    // 11. SEARCH MANAGER
     // ============================================================
     const SearchManager = {
       search(query, caseSensitive = false) {
@@ -2376,25 +1890,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 14. PERMISSIONS DEFINITIONS
-    // ============================================================
-    const PERMISSIONS_LIST = [
-      { key: 'mediaAutoplay', name: 'Media Autoplay', desc: 'Allow audio/video to autoplay' },
-      { key: 'swipeRefresh', name: 'Swipe to Refresh', desc: 'Enable pull-to-refresh gesture' },
-      { key: 'camera', name: 'Camera', desc: 'Access device camera' },
-      { key: 'location', name: 'Location', desc: 'Access device location' },
-      { key: 'microphone', name: 'Microphone', desc: 'Access device microphone' },
-      { key: 'notification', name: 'Notifications', desc: 'Send push notifications' },
-      { key: 'storage', name: 'Storage', desc: 'Read/write device storage' },
-      { key: 'contacts', name: 'Contacts', desc: 'Access contacts list' },
-      { key: 'phone', name: 'Phone', desc: 'Make phone calls' },
-      { key: 'bluetooth', name: 'Bluetooth', desc: 'Connect to Bluetooth devices' },
-      { key: 'vibrate', name: 'Vibration', desc: 'Vibrate the device' },
-      { key: 'wakeLock', name: 'Wake Lock', desc: 'Keep screen awake' }
-    ];
-
-    // ============================================================
-    // 15. APP ACTIONS
+    // 12. APP ACTIONS
     // ============================================================
     const AppActions = {
       openProject(projectId) {
@@ -2421,59 +1917,9 @@ document.addEventListener('DOMContentLoaded', function() {
         Router.navigate('preview');
       },
 
-      buildProject() {
-        if (!AppState.currentProject) return;
-        Editor.save();
-        this.renderBuildScreen();
-        Router.navigate('build');
-      },
-
-      syncBuildFormToProject() {
-        const p = AppState.currentProject;
-        if (!p) return;
-        const nameEl = document.getElementById('buildFieldName');
-        const pkgEl = document.getElementById('buildFieldPackage');
-        const vnEl = document.getElementById('buildFieldVersionName');
-        const vcEl = document.getElementById('buildFieldVersionCode');
-        const tcEl = document.getElementById('buildFieldTitleColor');
-        const orEl = document.getElementById('buildFieldOrientation');
-        const hpEl = document.getElementById('buildFieldHomePage');
-        if (nameEl && nameEl.value.trim()) p.name = nameEl.value.trim();
-        if (pkgEl) {
-          const newPkg = pkgEl.value.trim();
-          if (!ProjectManager.validatePackageName(newPkg)) p.packageName = newPkg;
-        }
-        if (vnEl && vnEl.value.trim()) p.versionName = vnEl.value.trim();
-        if (vcEl && vcEl.value) p.versionCode = parseInt(vcEl.value) || 1;
-        if (tcEl) p.titleColor = tcEl.value;
-        if (orEl) p.orientation = orEl.value;
-        if (hpEl && hpEl.value) p.homePage = hpEl.value;
-
-        p.webviewSettings.fullScreen = document.getElementById('buildFullScreen').checked;
-        p.webviewSettings.hideTitleBar = document.getElementById('buildHideTitleBar').checked;
-        p.webviewSettings.allowLongPress = document.getElementById('buildAllowLongPress').checked;
-        p.webviewSettings.allowZoom = document.getElementById('buildAllowZoom').checked;
-        p.webviewSettings.pcMode = document.getElementById('buildPcMode').checked;
-
-        document.querySelectorAll('#buildPermissionsCard input[type="checkbox"]').forEach(cb => {
-          const key = cb.dataset.permKey;
-          if (key) p.permissions[key] = cb.checked;
-        });
-        ProjectManager.saveProject(p);
-      },
-
       exportProject() {
         if (!AppState.currentProject) return;
         const project = AppState.currentProject;
-        if (NativeBridge.isAvailable()) {
-          const json = JSON.stringify(project, null, 2);
-          const filename = project.name.replace(/[^a-zA-Z0-9]/g, '_') + '.zishu.json';
-          if (NativeBridge.saveFile(filename, json)) {
-            NativeBridge.shareFile(filename, 'application/json');
-            UI.toast('Export initiated', 'success');
-            return;
-          }
-        }
         try {
           const json = JSON.stringify(project, null, 2);
           const blob = new Blob([json], { type: 'application/json' });
@@ -2492,7 +1938,7 @@ document.addEventListener('DOMContentLoaded', function() {
       importProject() {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.json,.zishu,.zip';
+        input.accept = '.json,.zishu';
         input.onchange = (e) => {
           const file = e.target.files[0];
           if (!file) return;
@@ -2503,20 +1949,10 @@ document.addEventListener('DOMContentLoaded', function() {
               if (data.name && data.files) {
                 const newProject = ProjectManager.createProject({
                   name: data.name + ' (Imported)',
-                  packageName: data.packageName || 'com.example.imported',
-                  versionName: data.versionName || '1.0.0',
-                  versionCode: data.versionCode || 1,
-                  theme: data.theme || 'light',
-                  orientation: data.orientation || 'portrait',
                   template: 'blank'
                 });
                 newProject.files = data.files;
-                newProject.icon = data.icon || null;
-                newProject.splash = data.splash || null;
-                newProject.titleColor = data.titleColor || '#2563eb';
                 newProject.homePage = data.homePage || 'index.html';
-                if (data.webviewSettings) newProject.webviewSettings = data.webviewSettings;
-                if (data.permissions) newProject.permissions = data.permissions;
                 ProjectManager.saveProject(newProject);
                 this.renderHome();
                 UI.toast('Project imported successfully', 'success');
@@ -2550,7 +1986,11 @@ document.addEventListener('DOMContentLoaded', function() {
         newProject.updatedAt = new Date().toISOString();
         ProjectManager.saveProject(newProject);
         const projects = AppStorage.listProjects();
-        projects.unshift({ id: newProject.id, name: newProject.name, packageName: newProject.packageName, updatedAt: newProject.updatedAt, icon: newProject.icon });
+        projects.unshift({
+          id: newProject.id,
+          name: newProject.name,
+          updatedAt: newProject.updatedAt
+        });
         AppStorage.saveProjects(projects.slice(0, APP_CONFIG.maxRecentProjects));
         this.renderHome();
         UI.toast('Project duplicated', 'success');
@@ -2587,7 +2027,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </svg>
               </div>
               <h3>No projects yet</h3>
-              <p>Create your first Android app project.</p>
+              <p>Create your first project to start coding.</p>
               <button class="btn btn-primary" id="emptyCreateBtn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -2600,15 +2040,20 @@ document.addEventListener('DOMContentLoaded', function() {
           if (btn) btn.onclick = () => this.showCreateProject();
           return;
         }
+
         list.innerHTML = projects.map(p => {
           const initial = (p.name || 'A').charAt(0).toUpperCase();
-          const iconHtml = p.icon ? `<img src="${p.icon}" alt="">` : initial;
+          const proj = AppStorage.loadProject(p.id);
+          const fileCount = proj && proj.files ? Object.keys(proj.files).length : 0;
+          const meta = fileCount > 0
+            ? `${fileCount} file${fileCount !== 1 ? 's' : ''} · ${ProjectManager.formatDate(p.updatedAt)}`
+            : ProjectManager.formatDate(p.updatedAt);
           return `
             <div class="project-item" data-project-id="${p.id}">
-              <div class="project-icon">${iconHtml}</div>
+              <div class="project-icon">${initial}</div>
               <div class="project-info">
                 <div class="project-name">${UI.escapeHtml(p.name || 'Untitled')}</div>
-                <div class="project-meta">${UI.escapeHtml(p.packageName || '')} · ${ProjectManager.formatDate(p.updatedAt)}</div>
+                <div class="project-meta">${meta}</div>
               </div>
               <div class="project-actions">
                 <button class="btn-icon" data-action="more" data-project-id="${p.id}" aria-label="More options" style="width:36px;height:36px;">
@@ -2619,6 +2064,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>`;
         }).join('');
+
         list.querySelectorAll('.project-item').forEach(el => {
           el.addEventListener('click', (e) => {
             if (e.target.closest('[data-action="more"]')) return;
@@ -2688,170 +2134,23 @@ document.addEventListener('DOMContentLoaded', function() {
         Router.navigate('editor');
       },
 
-      renderBuildScreen() {
-        if (!AppState.currentProject) return;
-        const p = AppState.currentProject;
-        const nameEl = document.getElementById('buildAppName');
-        const pkgEl = document.getElementById('buildPackageName');
-        const verEl = document.getElementById('buildVersionInfo');
-        const iconEl = document.getElementById('buildAppIcon');
-        if (nameEl) nameEl.textContent = p.name;
-        if (pkgEl) pkgEl.textContent = p.packageName;
-        if (verEl) verEl.textContent = `Version ${p.versionName} (${p.versionCode})`;
-        if (iconEl) {
-          if (p.icon) iconEl.innerHTML = `<img src="${p.icon}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
-          else iconEl.textContent = (p.name || 'A').charAt(0).toUpperCase();
-        }
-
-        const nameField = document.getElementById('buildFieldName');
-        const pkgField = document.getElementById('buildFieldPackage');
-        const vnField = document.getElementById('buildFieldVersionName');
-        const vcField = document.getElementById('buildFieldVersionCode');
-        const tcField = document.getElementById('buildFieldTitleColor');
-        const tcHexField = document.getElementById('buildFieldTitleColorHex');
-        const orField = document.getElementById('buildFieldOrientation');
-        const hpField = document.getElementById('buildFieldHomePage');
-
-        if (nameField) nameField.value = p.name || '';
-        if (pkgField) pkgField.value = p.packageName || '';
-        if (vnField) vnField.value = p.versionName || '1.0.0';
-        if (vcField) vcField.value = p.versionCode || 1;
-        if (tcField) tcField.value = p.titleColor || '#2563eb';
-        if (tcHexField) tcHexField.value = p.titleColor || '#2563eb';
-        if (orField) orField.value = p.orientation || 'portrait';
-
-        if (hpField) {
-          const files = FileManager.listFiles(p);
-          const htmlFiles = files.filter(f => f.endsWith('.html') || f.endsWith('.htm'));
-          hpField.innerHTML = htmlFiles.map(f =>
-            `<option value="${UI.escapeHtml(f)}" ${p.homePage === f ? 'selected' : ''}>${UI.escapeHtml(f)}</option>`
-          ).join('');
-          if (!htmlFiles.includes(p.homePage) && htmlFiles.length > 0) {
-            p.homePage = htmlFiles[0];
-            hpField.value = htmlFiles[0];
-          }
-        }
-
-        const iconPreview = document.getElementById('buildIconPreview');
-        if (iconPreview) {
-          if (p.icon) iconPreview.innerHTML = `<img src="${p.icon}" alt="App Icon">`;
-          else iconPreview.innerHTML = '<span class="placeholder">Tap to upload logo</span>';
-        }
-
-        const splashPreview = document.getElementById('buildSplashPreview');
-        if (splashPreview) {
-          if (p.splash) splashPreview.innerHTML = `<img src="${p.splash}" alt="Splash Screen">`;
-          else splashPreview.innerHTML = '<span class="placeholder">Tap to upload splash screen</span>';
-        }
-
-        if (p.webviewSettings) {
-          const fs = document.getElementById('buildFullScreen');
-          const htb = document.getElementById('buildHideTitleBar');
-          const alp = document.getElementById('buildAllowLongPress');
-          const az = document.getElementById('buildAllowZoom');
-          const pm = document.getElementById('buildPcMode');
-          if (fs) fs.checked = !!p.webviewSettings.fullScreen;
-          if (htb) htb.checked = !!p.webviewSettings.hideTitleBar;
-          if (alp) alp.checked = p.webviewSettings.allowLongPress !== false;
-          if (az) az.checked = !!p.webviewSettings.allowZoom;
-          if (pm) pm.checked = !!p.webviewSettings.pcMode;
-        }
-
-        this._renderPermissions(p);
-        BuildManager.renderHistory();
-      },
-
-      _renderPermissions(project) {
-        const card = document.getElementById('buildPermissionsCard');
-        if (!card) return;
-        card.innerHTML = PERMISSIONS_LIST.map(perm => {
-          const checked = project.permissions && project.permissions[perm.key] ? 'checked' : '';
-          return `
-            <div class="permission-item">
-              <div class="perm-info">
-                <div class="perm-name">${UI.escapeHtml(perm.name)}</div>
-                <div class="perm-desc">${UI.escapeHtml(perm.desc)}</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" data-perm-key="${perm.key}" ${checked}>
-                <span class="slider"></span>
-              </label>
-            </div>`;
-        }).join('');
-      },
-
-      renderDiagnostics() {
-        const el = document.getElementById('diagnosticsContent');
-        if (!el) return;
-        const deviceInfo = NativeBridge.getDeviceInfo();
-        const appInfo = NativeBridge.getAppInfo();
-        const storageInfo = NativeBridge.getStorageInfo();
-        const networkInfo = NativeBridge.getNetworkInfo();
-        const nativeAvailable = NativeBridge.isAvailable();
-        el.innerHTML = `
-          <div class="settings-section" style="padding:0 0 6px;">Native Bridge</div>
-          <div class="settings-item" style="padding:8px 0;">
-            <span class="label">Status</span>
-            <span class="badge ${nativeAvailable ? 'badge-success' : 'badge-warning'}">${nativeAvailable ? 'Connected' : 'Web Mode'}</span>
-          </div>
-          <div class="settings-section" style="padding:16px 0 6px;">Device</div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Platform</span><span class="value">${UI.escapeHtml(deviceInfo.platform || 'Unknown')}</span></div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Screen</span><span class="value">${deviceInfo.screenWidth || '?'} × ${deviceInfo.screenHeight || '?'}</span></div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Pixel Ratio</span><span class="value">${deviceInfo.pixelRatio || '?'}</span></div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Language</span><span class="value">${UI.escapeHtml(deviceInfo.language || 'Unknown')}</span></div>
-          <div class="settings-section" style="padding:16px 0 6px;">Application</div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Version</span><span class="value">${UI.escapeHtml(appInfo.version || APP_CONFIG.version)}</span></div>
-          <div class="settings-item" style="padding:8px 0;"><span class="label">Storage Used</span><span class="value">${(storageInfo.used / 1024).toFixed(1)} KB</span></div>
-          <div class="settings-section" style="padding:16px 0 6px;">Network</div>
-          <div class="settings-item" style="padding:8px 0;">
-            <span class="label">Status</span>
-            <span class="badge ${networkInfo.online ? 'badge-success' : 'badge-danger'}">${networkInfo.online ? 'Online' : 'Offline'}</span>
-          </div>
-          ${!nativeAvailable ? `
-            <div class="card mt-16" style="background:var(--warning-light);border-color:var(--warning);">
-              <p class="text-sm" style="color:var(--warning);">
-                <strong>Native device information unavailable.</strong><br>
-                Connect the Android native bridge for full diagnostics.
-              </p>
-            </div>` : ''}
-        `;
-      },
-
       showCreateProject() {
         UI.showModal(`
           <div class="modal-title">New Project</div>
           <div class="form-group">
-            <label class="form-label">App Name</label>
-            <input class="form-input" id="createName" placeholder="My App" value="My App">
+            <label class="form-label">Project Name</label>
+            <input class="form-input" id="createName" placeholder="My Project" value="My Project">
             <div class="form-error" id="createNameError"></div>
           </div>
           <div class="form-group">
-            <label class="form-label">Package Name</label>
-            <input class="form-input" id="createPackage" placeholder="com.example.myapp" value="com.example.myapp">
-            <div class="form-error" id="createPackageError"></div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Version Name</label>
-            <input class="form-input" id="createVersionName" placeholder="1.0.0" value="1.0.0">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Version Code</label>
-            <input class="form-input" id="createVersionCode" placeholder="1" value="1" type="number" min="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">App Theme</label>
-            <select class="form-select" id="createTheme">
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">System</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Project Template</label>
+            <label class="form-label">Starting Template</label>
             <select class="form-select" id="createTemplate">
-              <option value="html-css-js" selected>HTML/CSS/JS App</option>
-              <option value="basic-web">Basic Web App</option>
-              <option value="blank">Blank App</option>
+              <option value="html-css-js" selected>HTML / CSS / JavaScript</option>
+              <option value="basic-web">Basic Web Page</option>
+              <option value="blank">Blank HTML</option>
+              <option value="blank-css">Blank CSS</option>
+              <option value="blank-js">Blank JavaScript</option>
+              <option value="empty">Empty Project</option>
             </select>
           </div>
           <div class="modal-actions">
@@ -2859,35 +2158,32 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="btn btn-primary" id="createConfirmBtn">Create Project</button>
           </div>
         `);
+
         const nameInput = document.getElementById('createName');
-        const pkgInput = document.getElementById('createPackage');
         const nameError = document.getElementById('createNameError');
-        const pkgError = document.getElementById('createPackageError');
+
         nameInput.addEventListener('input', () => {
           if (!nameInput.value.trim()) {
-            nameError.textContent = 'App name is required';
-            nameError.classList.add('visible'); nameInput.classList.add('error');
-          } else { nameError.classList.remove('visible'); nameInput.classList.remove('error'); }
+            nameError.textContent = 'Project name is required';
+            nameError.classList.add('visible');
+            nameInput.classList.add('error');
+          } else {
+            nameError.classList.remove('visible');
+            nameInput.classList.remove('error');
+          }
         });
-        pkgInput.addEventListener('input', () => {
-          const err = ProjectManager.validatePackageName(pkgInput.value);
-          if (err) { pkgError.textContent = err; pkgError.classList.add('visible'); pkgInput.classList.add('error'); }
-          else { pkgError.classList.remove('visible'); pkgInput.classList.remove('error'); }
-        });
+
         document.getElementById('createCancelBtn').onclick = () => UI.hideModal();
         document.getElementById('createConfirmBtn').onclick = () => {
           const name = nameInput.value.trim();
-          const pkg = pkgInput.value.trim();
-          let valid = true;
-          if (!name) { nameError.textContent = 'App name is required'; nameError.classList.add('visible'); nameInput.classList.add('error'); valid = false; }
-          const pkgErr = ProjectManager.validatePackageName(pkg);
-          if (pkgErr) { pkgError.textContent = pkgErr; pkgError.classList.add('visible'); pkgInput.classList.add('error'); valid = false; }
-          if (!valid) return;
+          if (!name) {
+            nameError.textContent = 'Project name is required';
+            nameError.classList.add('visible');
+            nameInput.classList.add('error');
+            return;
+          }
           const project = ProjectManager.createProject({
-            name, packageName: pkg,
-            versionName: document.getElementById('createVersionName').value || '1.0.0',
-            versionCode: parseInt(document.getElementById('createVersionCode').value) || 1,
-            theme: document.getElementById('createTheme').value,
+            name,
             template: document.getElementById('createTemplate').value
           });
           UI.hideModal();
@@ -2908,7 +2204,6 @@ document.addEventListener('DOMContentLoaded', function() {
           <div style="display:flex;flex-direction:column;gap:2px;">
             <button class="settings-item" id="menuOpen" style="border-radius:8px;"><span class="label">Open Project</span><span class="value">›</span></button>
             <button class="settings-item" id="menuPreview" style="border-radius:8px;"><span class="label">Preview</span><span class="value">›</span></button>
-            <button class="settings-item" id="menuBuild" style="border-radius:8px;"><span class="label">Build APK</span><span class="value">›</span></button>
             <button class="settings-item" id="menuExport" style="border-radius:8px;"><span class="label">Export Project</span><span class="value">›</span></button>
             <button class="settings-item" id="menuDuplicate" style="border-radius:8px;"><span class="label">Duplicate Project</span><span class="value">›</span></button>
             <button class="settings-item" id="menuRename" style="border-radius:8px;"><span class="label">Rename Project</span><span class="value">›</span></button>
@@ -2917,7 +2212,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `);
         document.getElementById('menuOpen').onclick = () => { UI.hideModal(); this.openProject(projectId); };
         document.getElementById('menuPreview').onclick = () => { UI.hideModal(); this.openProject(projectId); setTimeout(() => this.previewProject(), 300); };
-        document.getElementById('menuBuild').onclick = () => { UI.hideModal(); this.openProject(projectId); setTimeout(() => this.buildProject(), 300); };
         document.getElementById('menuExport').onclick = () => { UI.hideModal(); this.openProject(projectId); setTimeout(() => this.exportProject(), 300); };
         document.getElementById('menuDuplicate').onclick = () => { UI.hideModal(); this.duplicateProject(projectId); };
         document.getElementById('menuRename').onclick = () => { UI.hideModal(); this.renameProject(projectId); };
@@ -3192,18 +2486,16 @@ document.addEventListener('DOMContentLoaded', function() {
               </svg>
             </div>
             <h3 style="font-size:18px;font-weight:700;margin-bottom:4px;">${APP_CONFIG.name}</h3>
-            <p class="text-sm text-muted">HTML/CSS/JavaScript Android App Builder</p>
+            <p class="text-sm text-muted">Professional HTML / CSS / JavaScript Editor</p>
             <p class="text-xs text-muted mt-8">Version ${APP_CONFIG.version}</p>
           </div>
-          <div class="settings-item" style="padding:10px 0;"><span class="label">Privacy Policy</span><span class="value">${APP_CONFIG.privacyUrl || 'Not configured'}</span></div>
-          <div class="settings-item" style="padding:10px 0;"><span class="label">Terms of Service</span><span class="value">${APP_CONFIG.termsUrl || 'Not configured'}</span></div>
           <div class="modal-actions"><button class="btn btn-secondary" id="aboutCloseBtn">Close</button></div>
         `);
         document.getElementById('aboutCloseBtn').onclick = () => UI.hideModal();
       },
 
       showResetDialog() {
-        UI.confirm('Reset App Data?', 'This will permanently delete all locally stored projects, settings, and build history. This action cannot be undone.', 'Reset Everything', 'Cancel', true).then(confirmed => {
+        UI.confirm('Reset App Data?', 'This will permanently delete all locally stored projects and settings. This action cannot be undone.', 'Reset Everything', 'Cancel', true).then(confirmed => {
           if (confirmed) {
             AppStorage.clear();
             UI.toast('All app data has been reset', 'info');
@@ -3282,7 +2574,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ============================================================
-    // 16. CONTEXT MENU HANDLING
+    // 13. CONTEXT MENU HANDLING
     // ============================================================
     function initContextMenu() {
       const menu = document.getElementById('contextMenu');
@@ -3308,7 +2600,23 @@ document.addEventListener('DOMContentLoaded', function() {
               const end = ta.selectionEnd;
               if (start !== end) {
                 const text = ta.value.substring(start, end);
-                const ok = await NativeBridge.copyToClipboard(text);
+                let ok = false;
+                try {
+                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    ok = true;
+                  } else {
+                    const temp = document.createElement('textarea');
+                    temp.value = text;
+                    temp.style.position = 'fixed';
+                    temp.style.opacity = '0';
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    ok = true;
+                  }
+                } catch (err) { ok = false; }
                 UI.toast(ok ? 'Copied' : 'Copy failed', ok ? 'success' : 'error', 1200);
               } else UI.toast('Nothing selected', 'info', 1200);
               break;
@@ -3318,7 +2626,23 @@ document.addEventListener('DOMContentLoaded', function() {
               const end = ta.selectionEnd;
               if (start !== end) {
                 const text = ta.value.substring(start, end);
-                const ok = await NativeBridge.copyToClipboard(text);
+                let ok = false;
+                try {
+                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    ok = true;
+                  } else {
+                    const temp = document.createElement('textarea');
+                    temp.value = text;
+                    temp.style.position = 'fixed';
+                    temp.style.opacity = '0';
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    ok = true;
+                  }
+                } catch (err) { ok = false; }
                 if (ok) {
                   const val = ta.value;
                   ta.value = val.substring(0, start) + val.substring(end);
@@ -3332,8 +2656,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'paste': {
               try {
                 let text = null;
-                if (NativeBridge.isAvailable()) text = NativeBridge.getClipboard();
-                if (!text && navigator.clipboard && navigator.clipboard.readText) {
+                if (navigator.clipboard && navigator.clipboard.readText) {
                   text = await navigator.clipboard.readText();
                 }
                 if (text) {
@@ -3401,17 +2724,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ============================================================
-    // 17. INITIALIZATION
+    // 14. INITIALIZATION
     // ============================================================
     function initApp() {
-      AppState.nativeAvailable = NativeBridge.init();
       const savedSettings = AppStorage.getSettings();
       if (savedSettings) Object.assign(AppState.settings, savedSettings);
 
       ThemeManager.init();
       Editor.init();
       PreviewManager.init();
-      BuildManager.init();
       initContextMenu();
 
       AppState.projects = AppStorage.listProjects();
@@ -3423,7 +2744,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       AppActions.renderHome();
-      BuildManager.renderHistory();
 
       const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
@@ -3488,28 +2808,29 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="settings-item" id="wsMenuSettings" style="border-radius:8px;"><span class="label">Project Settings</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuSearch" style="border-radius:8px;"><span class="label">Search Files</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuPreview" style="border-radius:8px;"><span class="label">Preview</span><span class="value">›</span></button>
-            <button class="settings-item" id="wsMenuBuild" style="border-radius:8px;"><span class="label">Build APK</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuExport" style="border-radius:8px;"><span class="label">Export Project</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuImport" style="border-radius:8px;"><span class="label">Import File Content</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuDuplicate" style="border-radius:8px;"><span class="label">Duplicate Project</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuRename" style="border-radius:8px;"><span class="label">Rename Project</span><span class="value">›</span></button>
             <button class="settings-item" id="wsMenuDelete" style="border-radius:8px;color:var(--danger);"><span class="label" style="color:var(--danger);">Delete Project</span></button>
-            <button class="settings-item" id="wsMenuDiagnostics" style="border-radius:8px;"><span class="label">Diagnostics</span><span class="value">›</span></button>
           </div>
         `);
         document.getElementById('wsMenuSettings').onclick = () => {
           UI.hideModal();
           UI.showModal(`
             <div class="modal-title">Project Settings</div>
-            <div class="form-group"><label class="form-label">App Name</label><input class="form-input" id="projName" value="${UI.escapeHtml(AppState.currentProject.name)}"></div>
-            <div class="form-group"><label class="form-label">Package Name</label><input class="form-input" id="projPackage" value="${UI.escapeHtml(AppState.currentProject.packageName)}"></div>
-            <div class="form-group"><label class="form-label">Version Name</label><input class="form-input" id="projVersionName" value="${UI.escapeHtml(AppState.currentProject.versionName)}"></div>
-            <div class="form-group"><label class="form-label">Version Code</label><input class="form-input" id="projVersionCode" type="number" min="1" value="${AppState.currentProject.versionCode}"></div>
-            <div class="form-group"><label class="form-label">Orientation</label>
-              <select class="form-select" id="projOrientation">
-                <option value="portrait" ${AppState.currentProject.orientation === 'portrait' ? 'selected' : ''}>Portrait</option>
-                <option value="landscape" ${AppState.currentProject.orientation === 'landscape' ? 'selected' : ''}>Landscape</option>
-                <option value="both" ${AppState.currentProject.orientation === 'both' ? 'selected' : ''}>Both</option>
+            <div class="form-group">
+              <label class="form-label">Project Name</label>
+              <input class="form-input" id="projName" value="${UI.escapeHtml(AppState.currentProject.name)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Home Page (Entry File)</label>
+              <select class="form-select" id="projHomePage">
+                ${FileManager.listFiles(AppState.currentProject).length > 0
+                  ? FileManager.listFiles(AppState.currentProject).filter(f => /\.(html|htm)$/i.test(f)).map(f =>
+                      `<option value="${UI.escapeHtml(f)}" ${AppState.currentProject.homePage === f ? 'selected' : ''}>${UI.escapeHtml(f)}</option>`
+                    ).join('') || '<option value="">No HTML files</option>'
+                  : '<option value="">No files</option>'}
               </select>
             </div>
             <div class="modal-actions">
@@ -3520,14 +2841,9 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById('projSettingsCancel').onclick = () => UI.hideModal();
           document.getElementById('projSettingsSave').onclick = () => {
             const p = AppState.currentProject;
-            const newPkg = document.getElementById('projPackage').value.trim();
-            const pkgErr = ProjectManager.validatePackageName(newPkg);
-            if (pkgErr) { UI.toast(pkgErr, 'error'); return; }
             p.name = document.getElementById('projName').value.trim() || p.name;
-            p.packageName = newPkg;
-            p.versionName = document.getElementById('projVersionName').value.trim() || p.versionName;
-            p.versionCode = parseInt(document.getElementById('projVersionCode').value) || p.versionCode;
-            p.orientation = document.getElementById('projOrientation').value;
+            const hp = document.getElementById('projHomePage');
+            if (hp && hp.value) p.homePage = hp.value;
             ProjectManager.saveProject(p);
             document.getElementById('workspaceTitle').textContent = p.name;
             UI.hideModal();
@@ -3536,7 +2852,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         document.getElementById('wsMenuSearch').onclick = () => { UI.hideModal(); AppActions.showSearchDialog(); };
         document.getElementById('wsMenuPreview').onclick = () => { UI.hideModal(); AppActions.previewProject(); };
-        document.getElementById('wsMenuBuild').onclick = () => { UI.hideModal(); AppActions.buildProject(); };
         document.getElementById('wsMenuExport').onclick = () => { UI.hideModal(); AppActions.exportProject(); };
         document.getElementById('wsMenuImport').onclick = () => {
           UI.hideModal();
@@ -3576,7 +2891,6 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         };
         document.getElementById('wsMenuDelete').onclick = () => { UI.hideModal(); AppActions.deleteProject(AppState.currentProject.id); Router.navigate('home'); };
-        document.getElementById('wsMenuDiagnostics').onclick = () => { UI.hideModal(); AppActions.renderDiagnostics(); Router.navigate('diagnostics'); };
       });
       document.getElementById('workspaceNewFileFab').addEventListener('click', () => AppActions.showNewFileDialog());
 
@@ -3638,7 +2952,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (val) val.textContent = AppState.settings.theme.charAt(0).toUpperCase() + AppState.settings.theme.slice(1);
       });
       document.getElementById('settingAboutItem').addEventListener('click', () => AppActions.showAboutDialog());
-      document.getElementById('settingDiagnosticsItem').addEventListener('click', () => { AppActions.renderDiagnostics(); Router.navigate('diagnostics'); });
       document.getElementById('settingResetItem').addEventListener('click', () => AppActions.showResetDialog());
       document.getElementById('settingClearCache').addEventListener('click', () => {
         UI.confirm('Clear Cache?', 'This will clear temporary cache data. Projects and settings are not affected.', 'Clear', 'Cancel', false).then(confirmed => {
@@ -3652,6 +2965,7 @@ document.addEventListener('DOMContentLoaded', function() {
         AppState.settings.fontSize = next;
         document.getElementById('settingFontSizeVal').textContent = next + 'px';
         if (Editor._textarea) Editor._textarea.style.fontSize = next + 'px';
+        Editor._syncFontMetrics();
         Editor._updateLineNumbers();
         if (AppState.settings.syntaxHighlight) Editor._applyHighlight();
         AppStorage.saveSettings(AppState.settings);
@@ -3663,6 +2977,7 @@ document.addEventListener('DOMContentLoaded', function() {
         AppState.settings.tabSize = next;
         document.getElementById('settingTabSizeVal').textContent = next;
         if (Editor._textarea) Editor._textarea.style.tabSize = next;
+        Editor._syncFontMetrics();
         AppStorage.saveSettings(AppState.settings);
       });
       document.getElementById('settingWordWrap').addEventListener('change', (e) => {
@@ -3671,6 +2986,7 @@ document.addEventListener('DOMContentLoaded', function() {
           Editor._textarea.style.whiteSpace = e.target.checked ? 'pre-wrap' : 'pre';
           Editor._textarea.style.overflowWrap = e.target.checked ? 'break-word' : 'normal';
         }
+        Editor._syncFontMetrics();
         AppStorage.saveSettings(AppState.settings);
       });
       document.getElementById('settingLineNumbers').addEventListener('change', (e) => {
@@ -3701,61 +3017,6 @@ document.addEventListener('DOMContentLoaded', function() {
         AppStorage.saveSettings(AppState.settings);
       });
 
-      // Diagnostics
-      document.getElementById('diagnosticsBackBtn').addEventListener('click', () => Router.navigate('settings'));
-      document.getElementById('diagnosticsRefreshBtn').addEventListener('click', () => {
-        AppActions.renderDiagnostics();
-        UI.toast('Diagnostics refreshed', 'info', 1000);
-      });
-
-      // Build
-      document.getElementById('buildBackBtn').addEventListener('click', () => { Router.navigate('workspace'); AppActions.renderWorkspace(); });
-      document.getElementById('buildActionBtn').addEventListener('click', () => BuildManager.startBuild());
-      document.getElementById('buildClearLogBtn').addEventListener('click', () => BuildManager.clearLog());
-      document.getElementById('buildCopyLogBtn').addEventListener('click', () => BuildManager.copyLog());
-
-      document.getElementById('buildIconPreview').addEventListener('click', () => {
-        document.getElementById('buildIconInput').click();
-      });
-      document.getElementById('buildIconInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const dataUrl = ev.target.result;
-          AppState.currentProject.icon = dataUrl;
-          ProjectManager.saveProject(AppState.currentProject);
-          document.getElementById('buildIconPreview').innerHTML = `<img src="${dataUrl}" alt="App Icon">`;
-          document.getElementById('buildAppIcon').innerHTML = `<img src="${dataUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
-          UI.toast('Icon updated', 'success');
-        };
-        reader.readAsDataURL(file);
-      });
-
-      document.getElementById('buildSplashPreview').addEventListener('click', () => {
-        document.getElementById('buildSplashInput').click();
-      });
-      document.getElementById('buildSplashInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const dataUrl = ev.target.result;
-          AppState.currentProject.splash = dataUrl;
-          ProjectManager.saveProject(AppState.currentProject);
-          document.getElementById('buildSplashPreview').innerHTML = `<img src="${dataUrl}" alt="Splash">`;
-          UI.toast('Splash screen updated', 'success');
-        };
-        reader.readAsDataURL(file);
-      });
-
-      const tc = document.getElementById('buildFieldTitleColor');
-      const tch = document.getElementById('buildFieldTitleColorHex');
-      if (tc && tch) {
-        tc.addEventListener('input', () => { tch.value = tc.value; });
-        tch.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(tch.value)) tc.value = tch.value; });
-      }
-
       document.getElementById('modalOverlay').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) UI.hideModal();
       });
@@ -3763,16 +3024,6 @@ document.addEventListener('DOMContentLoaded', function() {
       window.addEventListener('resize', () => {
         const vh = window.innerHeight;
         document.documentElement.style.setProperty('--vh', vh * 0.01 + 'px');
-      });
-
-      NativeBridge.on('backPressed', () => {
-        const screen = Router.getCurrent();
-        if (screen === 'editor') document.getElementById('editorBackBtn').click();
-        else if (screen === 'preview') document.getElementById('previewBackBtn').click();
-        else if (screen === 'workspace') document.getElementById('workspaceBackBtn').click();
-        else if (screen === 'settings' || screen === 'diagnostics' || screen === 'build') {
-          Router.navigate('home'); AppActions.renderHome();
-        } else if (screen === 'home') NativeBridge.exitApp();
       });
 
       setInterval(() => {
