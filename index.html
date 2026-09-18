@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -32,6 +32,7 @@
       --safe-right: env(safe-area-inset-right, 0px);
       --header-height: 56px; --toolbar-height: 48px;
       --transition: 0.15s ease;
+      --ui-scale: 1;
     }
     [data-theme="dark"] {
       --bg: #0f172a; --surface: #1e293b; --surface-elevated: #1e293b;
@@ -62,7 +63,7 @@
       padding-top: var(--safe-top); padding-bottom: var(--safe-bottom);
       padding-left: var(--safe-left); padding-right: var(--safe-right);
     }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
@@ -253,6 +254,7 @@
       flex-shrink: 0;
     }
 
+    /* === EDITOR === */
     .editor-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--bg); }
     .editor-wrapper { flex: 1; display: flex; overflow: hidden; position: relative; }
     .line-numbers {
@@ -269,32 +271,46 @@
       font-family: var(--font-mono);
       font-weight: 400;
       font-style: normal;
-      letter-spacing: normal;
-      word-spacing: normal;
+      letter-spacing: 0px;
+      word-spacing: 0px;
     }
     .editor-scroll { flex: 1; overflow: auto; position: relative; -webkit-overflow-scrolling: touch; }
     .code-editor {
-      display: block; width: 100%; min-height: 100%; padding: 12px;
-      font-family: var(--font-mono); font-size: 13px; line-height: 1.6;
+      display: block;
+      width: 100%;
+      min-height: 100%;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
       font-weight: 400;
       font-style: normal;
-      letter-spacing: normal;
-      word-spacing: normal;
-      text-rendering: auto;
+      letter-spacing: 0px;
+      word-spacing: 0px;
+      text-rendering: geometricPrecision;
       font-variant-ligatures: none;
       font-kerning: none;
-      tab-size: 2; -moz-tab-size: 2;
-      border: 0; outline: none; resize: none; background: transparent;
+      tab-size: 2;
+      -moz-tab-size: 2;
+      border: 0;
+      outline: none;
+      resize: none;
+      background: transparent;
       color: var(--text);
-      white-space: pre; overflow-wrap: normal; word-break: normal;
-      caret-color: var(--primary); position: relative; z-index: 2;
+      white-space: pre;
+      overflow-wrap: normal;
+      word-break: normal;
+      caret-color: var(--primary);
+      position: relative;
+      z-index: 2;
       box-sizing: border-box;
       text-transform: none;
       text-indent: 0;
       margin: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      user-select: text; -webkit-user-select: text;
+      user-select: text;
+      -webkit-user-select: text;
     }
     .code-editor::selection {
       background: rgba(37, 99, 235, 0.28);
@@ -312,16 +328,18 @@
     }
     .code-editor.highlighting { color: transparent; caret-color: var(--primary); }
     .highlight-layer {
-      position: absolute; top: 0; left: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
       padding: 12px;
       font-family: var(--font-mono);
       font-size: 13px;
       line-height: 1.6;
       font-weight: 400;
       font-style: normal;
-      letter-spacing: normal;
-      word-spacing: normal;
-      text-rendering: auto;
+      letter-spacing: 0px;
+      word-spacing: 0px;
+      text-rendering: geometricPrecision;
       font-variant-ligatures: none;
       font-kerning: none;
       tab-size: 2;
@@ -341,6 +359,28 @@
       border: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+    .highlight-layer .tag,
+    .highlight-layer .attr,
+    .highlight-layer .string,
+    .highlight-layer .comment,
+    .highlight-layer .keyword,
+    .highlight-layer .number,
+    .highlight-layer .selector,
+    .highlight-layer .property,
+    .highlight-layer .value {
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      font-style: inherit;
+      letter-spacing: inherit;
+      word-spacing: inherit;
+      line-height: inherit;
+      text-rendering: inherit;
+      font-variant-ligatures: inherit;
+      font-kerning: inherit;
+      text-transform: inherit;
+      text-indent: inherit;
     }
     .highlight-layer .tag { color: #e06c75; }
     .highlight-layer .attr { color: #d19a66; }
@@ -372,6 +412,7 @@
     .editor-toolbar .btn-icon svg { width: 18px; height: 18px; }
     .toolbar-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
 
+    /* === PREVIEW === */
     .preview-container { flex: 1; display: flex; flex-direction: column; background: #f1f5f9; overflow: hidden; }
     [data-theme="dark"] .preview-container { background: #0f172a; }
     .preview-toolbar {
@@ -392,6 +433,7 @@
     }
     .preview-device.phone { width: 360px; height: 640px; }
     .preview-device.tablet { width: 520px; height: 700px; border-radius: 16px; }
+    .preview-device.desktop { width: 100%; height: 100%; border-radius: 0; box-shadow: none; max-width: 1400px; max-height: 100%; }
     .preview-device iframe { width: 100%; height: 100%; border: none; background: #fff; }
     .preview-device .notch {
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -399,6 +441,7 @@
       border-radius: 0 0 12px 12px; z-index: 5;
       display: flex; align-items: center; justify-content: center;
     }
+    .preview-device.desktop .notch { display: none; }
     .preview-device .notch::after { content: ''; width: 50px; height: 4px; background: #334155; border-radius: 2px; }
     .preview-live-badge {
       display: inline-flex; align-items: center; gap: 4px;
@@ -520,14 +563,71 @@
       text-transform: uppercase; letter-spacing: 0.03em;
     }
 
-    .menu-list {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .menu-list .settings-item {
-      border-radius: 8px;
-      border-bottom: none;
-    }
+    .menu-list { display: flex; flex-direction: column; gap: 2px; }
+    .menu-list .settings-item { border-radius: 8px; border-bottom: none; }
     .menu-list .settings-item.danger { color: var(--danger); }
+
+    /* === DESKTOP MODE === */
+    body.desktop-mode {
+      font-size: 13px;
+    }
+    body.desktop-mode #app {
+      max-width: 1600px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    body.desktop-mode .app-header {
+      height: 44px; min-height: 44px;
+      padding: 0 16px;
+    }
+    body.desktop-mode .header-title { font-size: 14px; }
+    body.desktop-mode .btn-icon { width: 32px; height: 32px; }
+    body.desktop-mode .btn-icon svg { width: 16px; height: 16px; }
+    body.desktop-mode .btn { height: 32px; padding: 0 12px; font-size: 12px; min-width: 36px; border-radius: var(--radius-sm); }
+    body.desktop-mode .btn-sm { height: 26px; padding: 0 10px; font-size: 11px; }
+    body.desktop-mode .splash-logo[style*="32px"] { width: 26px !important; height: 26px !important; }
+    body.desktop-mode .project-list { padding: 12px 24px 40px; }
+    body.desktop-mode .project-item { padding: 10px 12px; margin-bottom: 6px; border-radius: var(--radius); }
+    body.desktop-mode .project-icon { width: 36px; height: 36px; font-size: 15px; border-radius: 8px; }
+    body.desktop-mode .project-name { font-size: 13px; }
+    body.desktop-mode .project-meta { font-size: 11px; }
+    body.desktop-mode .file-list { padding: 6px 8px 60px; }
+    body.desktop-mode .file-item { padding: 8px 10px; }
+    body.desktop-mode .file-name { font-size: 13px; }
+    body.desktop-mode .fab { width: 44px; height: 44px; bottom: 16px; right: 16px; border-radius: 12px; }
+    body.desktop-mode .fab svg { width: 20px; height: 20px; }
+    body.desktop-mode .workspace-actions { padding: 10px 12px 8px; gap: 8px; }
+    body.desktop-mode .workspace-action-btn { height: 40px; font-size: 13px; border-radius: var(--radius); }
+    body.desktop-mode .workspace-action-btn svg { width: 16px; height: 16px; }
+    body.desktop-mode .settings-item { padding: 10px 14px; min-height: 44px; }
+    body.desktop-mode .settings-item .label { font-size: 13px; }
+    body.desktop-mode .settings-item .value { font-size: 12px; }
+    body.desktop-mode .settings-section { padding: 12px 14px 4px; font-size: 11px; }
+    body.desktop-mode .modal-sheet { max-width: 480px; padding: 16px 16px calc(16px + var(--safe-bottom)); }
+    body.desktop-mode .modal-title { font-size: 16px; margin-bottom: 12px; }
+    body.desktop-mode .form-input, body.desktop-mode .form-select { height: 36px; font-size: 13px; }
+    body.desktop-mode .form-label { font-size: 12px; }
+    body.desktop-mode .editor-toolbar { min-height: 40px; padding: 3px 5px; }
+    body.desktop-mode .editor-toolbar .btn-icon { width: 32px; height: 32px; min-width: 32px; }
+    body.desktop-mode .editor-toolbar .btn-icon svg { width: 15px; height: 15px; }
+    body.desktop-mode .line-numbers { width: 40px; min-width: 40px; font-size: 12px; }
+    body.desktop-mode .line-numbers-inner { font-size: 12px !important; }
+    body.desktop-mode .code-editor { font-size: 12px; padding: 10px; }
+    body.desktop-mode .highlight-layer { font-size: 12px; padding: 10px; }
+    body.desktop-mode .preview-device.phone { width: 320px; height: 568px; }
+    body.desktop-mode .preview-device.tablet { width: 480px; height: 640px; }
+    body.desktop-mode .header-actions { gap: 2px; }
+    body.desktop-mode .toast { padding: 10px 14px; font-size: 13px; }
+    body.desktop-mode .modal-sheet { max-width: 440px; }
+    body.desktop-mode .context-menu { min-width: 160px; padding: 4px; }
+    body.desktop-mode .context-menu-item { padding: 8px 10px; font-size: 13px; min-height: 36px; }
+    body.desktop-mode .context-menu-item svg { width: 16px; height: 16px; }
+
+    /* Desktop layout adjustments */
+    body.desktop-mode .screen { position: relative; inset: auto; }
+    body.desktop-mode .preview-container { background: #e2e8f0; }
+    body.desktop-mode .preview-device-frame { padding: 12px; }
 
     @media (min-width: 600px) {
       .project-list { padding: 16px 24px 80px; }
@@ -588,7 +688,7 @@
         </div>
         <div class="header-title">Zishu Code</div>
         <div class="header-actions">
-          <span class="storage-badge">Live</span>
+          <span class="storage-badge" id="modeBadge">Live</span>
           <button class="btn-icon" id="homeImportBtn" aria-label="Import Project">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -809,6 +909,16 @@
         <div class="header-title">Settings</div>
       </header>
       <div style="flex:1; overflow-y:auto;">
+        <div class="settings-section">Layout Mode</div>
+        <div class="settings-item" id="settingDesktopMode">
+          <span class="label">Desktop Mode</span>
+          <label class="switch"><input type="checkbox" id="settingDesktopModeToggle"><span class="slider"></span></label>
+        </div>
+        <div class="settings-item" id="settingDesktopZoomItem">
+          <span class="label">Desktop Zoom</span>
+          <span class="value" id="settingDesktopZoomVal">100%</span>
+        </div>
+
         <div class="settings-section">Editor</div>
         <div class="settings-item" id="settingFontSizeItem">
           <span class="label">Font Size</span>
@@ -834,11 +944,13 @@
           <span class="label">Syntax Highlighting</span>
           <label class="switch"><input type="checkbox" id="settingSyntaxHighlight" checked><span class="slider"></span></label>
         </div>
+
         <div class="settings-section">Appearance</div>
         <div class="settings-item" id="settingThemeItem">
           <span class="label">Theme</span>
           <span class="value" id="settingThemeVal">Light</span>
         </div>
+
         <div class="settings-section">Preview</div>
         <div class="settings-item">
           <span class="label">Live Preview</span>
@@ -848,11 +960,13 @@
           <span class="label">Device Frame</span>
           <label class="switch"><input type="checkbox" id="settingDeviceFrame" checked><span class="slider"></span></label>
         </div>
+
         <div class="settings-section">Storage</div>
         <div class="settings-item" id="settingClearCache">
           <span class="label">Clear Cache</span>
           <span class="value" id="settingStorageInfo">—</span>
         </div>
+
         <div class="settings-section">Application</div>
         <div class="settings-item">
           <span class="label">Version</span>
@@ -976,6 +1090,16 @@
         if (!this._native || !this._native.setClipboardText) return false;
         try { return this._native.setClipboardText(text); }
         catch (e) { return false; }
+      },
+      saveBase64File: function(filename, base64, mimeType) {
+        if (!this._native || !this._native.saveBase64File) return false;
+        try { return this._native.saveBase64File(filename, base64, mimeType); }
+        catch (e) { return false; }
+      },
+      getDownloadsPath: function() {
+        if (!this._native || !this._native.getDownloadsPath) return '';
+        try { return this._native.getDownloadsPath(); }
+        catch (e) { return ''; }
       },
       vibrate: function(ms) {
         if (this._native) {
@@ -1103,7 +1227,8 @@
       settings: {
         fontSize: 13, tabSize: 2, wordWrap: false, lineNumbers: true,
         autoSave: true, syntaxHighlight: true, theme: 'light',
-        livePreview: false, deviceFrame: true
+        livePreview: false, deviceFrame: true,
+        desktopMode: false, desktopZoom: 100
       },
       recoveryData: null
     };
@@ -1420,51 +1545,57 @@
       }
     };
 
+    // ============================================================
+    // DOWNLOAD MANAGER
+    // ============================================================
     var DownloadManager = {
-  // Convert Uint8Array or string to Base64
-  _toBase64: function(data) {
+  _stringToBase64: function(str) {
     try {
-      if (typeof data === 'string') {
-        // String content → UTF-8 → Base64
-        var utf8 = unescape(encodeURIComponent(data));
-        return btoa(utf8);
-      } else if (data instanceof Uint8Array) {
-        // Binary → Base64
-        var binary = '';
-        var chunkSize = 8192;
-        for (var i = 0; i < data.length; i += chunkSize) {
-          var chunk = data.subarray(i, i + chunkSize);
-          binary += String.fromCharCode.apply(null, chunk);
-        }
-        return btoa(binary);
-      } else if (data instanceof ArrayBuffer) {
-        return this._toBase64(new Uint8Array(data));
-      }
-      return null;
+      var utf8 = unescape(encodeURIComponent(str));
+      return btoa(utf8);
     } catch (e) {
-      console.error('Base64 encode failed:', e);
+      console.error('String to Base64 failed:', e);
       return null;
     }
   },
-
-  // Download a single text file
+  _bytesToBase64: function(bytes) {
+    try {
+      var binary = '';
+      var chunkSize = 4096;
+      for (var i = 0; i < bytes.length; i += chunkSize) {
+        var end = Math.min(i + chunkSize, bytes.length);
+        var chunk = bytes.subarray(i, end);
+        binary += String.fromCharCode.apply(null, chunk);
+      }
+      return btoa(binary);
+    } catch (e) {
+      console.error('Bytes to Base64 failed:', e);
+      return null;
+    }
+  },
+  
   downloadFile: function(filename, content) {
     try {
-      // Native mode: save via bridge
+      // Native first
       if (NativeBridge.isAvailable() && NativeBridge._native && NativeBridge._native.saveBase64File) {
-        var base64 = this._toBase64(content);
+        var base64 = this._stringToBase64(content);
         if (base64) {
-          var ok = NativeBridge._native.saveBase64File(filename, base64, 'text/plain');
+          var ok = false;
+          try {
+            ok = NativeBridge._native.saveBase64File(filename, base64, 'text/plain');
+          } catch (e) {
+            console.error('Native save error:', e);
+          }
           if (ok) {
-            var path = '';
-            try { path = NativeBridge._native.getDownloadsPath(); } catch (e) {}
-            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3000);
+            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3500);
             return true;
+          } else {
+            UI.toast('Native save failed, trying browser download...', 'warning', 2000);
           }
         }
       }
-
-      // Fallback: browser download
+      
+      // Browser fallback
       var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
@@ -1473,36 +1604,42 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-      UI.toast('Downloaded: ' + filename, 'success');
+      setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+      UI.toast('Browser download started: ' + filename, 'success', 2500);
       return true;
     } catch (e) {
-      UI.toast('Download failed: ' + e.message, 'error');
+      UI.toast('Download failed: ' + e.message, 'error', 3000);
       return false;
     }
   },
-
-  // Download project as ZIP
+  
   downloadProjectZip: function(project) {
     if (!project) return false;
     try {
       var zipBytes = this._buildZip(project);
       var safeName = project.name.replace(/[^a-zA-Z0-9_-]/g, '_');
       var filename = safeName + '.zip';
-
-      // Native mode: save via bridge
+      
+      // Native first
       if (NativeBridge.isAvailable() && NativeBridge._native && NativeBridge._native.saveBase64File) {
-        var base64 = this._toBase64(zipBytes);
+        var base64 = this._bytesToBase64(zipBytes);
         if (base64) {
-          var ok = NativeBridge._native.saveBase64File(filename, base64, 'application/zip');
+          var ok = false;
+          try {
+            ok = NativeBridge._native.saveBase64File(filename, base64, 'application/zip');
+          } catch (e) {
+            console.error('Native ZIP save error:', e);
+          }
           if (ok) {
-            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3000);
+            UI.toast('Saved to Downloads/Zishu Code/' + filename, 'success', 3500);
             return true;
+          } else {
+            UI.toast('Native save failed, trying browser download...', 'warning', 2000);
           }
         }
       }
-
-      // Fallback: browser download
+      
+      // Browser fallback
       var blob = new Blob([zipBytes], { type: 'application/zip' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
@@ -1511,16 +1648,15 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
-      UI.toast('Downloaded project: ' + filename, 'success');
+      setTimeout(function() { URL.revokeObjectURL(url); }, 3000);
+      UI.toast('Browser download started: ' + filename, 'success', 2500);
       return true;
     } catch (e) {
-      UI.toast('ZIP failed: ' + e.message, 'error');
+      UI.toast('ZIP failed: ' + e.message, 'error', 3000);
       return false;
     }
   },
-
-  // ... (existing _buildZip and _crcTable methods — same rahenge)
+  
   _buildZip: function(project) {
     var files = project.files || {};
     var fileNames = Object.keys(files);
@@ -1628,6 +1764,7 @@
     result.set(eocd, pos);
     return result;
   },
+  
   _crcTable: function() {
     var table = new Uint32Array(256);
     for (var n = 0; n < 256; n++) {
@@ -1640,6 +1777,9 @@
     return table;
   }
 };
+          
+            
+
 
     var Editor = {
       _textarea: null, _lineNumbers: null, _lineNumbersInner: null,
@@ -1678,11 +1818,26 @@
       _syncFontMetrics: function() {
         if (!this._textarea || !this._highlightLayer) return;
         var cs = window.getComputedStyle(this._textarea);
-        var props = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing', 'wordSpacing', 'lineHeight', 'tabSize', 'textRendering', 'fontVariantLigatures', 'fontKerning', 'textTransform', 'textIndent'];
+        var props = [
+          'fontFamily', 'fontSize', 'fontWeight', 'fontStyle',
+          'letterSpacing', 'wordSpacing', 'lineHeight', 'tabSize',
+          'textRendering', 'fontVariantLigatures', 'fontKerning',
+          'textTransform', 'textIndent'
+        ];
         var self = this;
         props.forEach(function(p) {
-          if (cs[p]) self._highlightLayer.style[p] = cs[p];
+          if (cs[p] !== undefined && cs[p] !== '') {
+            self._highlightLayer.style[p] = cs[p];
+          }
         });
+        // Force padding match
+        this._highlightLayer.style.paddingTop = cs.paddingTop;
+        this._highlightLayer.style.paddingLeft = cs.paddingLeft;
+        this._highlightLayer.style.paddingRight = cs.paddingRight;
+        this._highlightLayer.style.paddingBottom = cs.paddingBottom;
+        this._highlightLayer.style.boxSizing = 'border-box';
+        this._lineNumbersInner.style.fontSize = cs.fontSize;
+        this._lineNumbersInner.style.lineHeight = cs.lineHeight;
       },
 
       _trackSelection: function() {
@@ -1814,18 +1969,20 @@
         var code = this._textarea.value;
         var type = AppState.currentFile ? FileManager.getFileType(AppState.currentFile) : 'html';
         var highlighted = '';
-        if (type === 'html' || type === 'xml' || type === 'svg') {
-          highlighted = this._highlightHTML(code);
-        } else if (type === 'css') {
-          highlighted = this._highlightCSS(code);
-        } else if (type === 'javascript' || type === 'json') {
-          highlighted = this._highlightJS(code);
-        } else {
+        try {
+          if (type === 'html' || type === 'xml' || type === 'svg') {
+            highlighted = this._highlightHTML(code);
+          } else if (type === 'css') {
+            highlighted = this._highlightCSS(code);
+          } else if (type === 'javascript' || type === 'json') {
+            highlighted = this._highlightJS(code);
+          } else {
+            highlighted = UI.escapeHtml(code);
+          }
+        } catch (err) {
           highlighted = UI.escapeHtml(code);
         }
         this._highlightLayer.innerHTML = highlighted;
-        this._highlightLayer.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
-        this._highlightLayer.style.lineHeight = '1.6';
         this._textarea.classList.add('highlighting');
       },
 
@@ -1848,8 +2005,8 @@
         var escaped = UI.escapeHtml(code);
         escaped = escaped.replace(/&lt;!--[\s\S]*?--&gt;/g, function(m) { return self._makePlaceholder(store, '<span class="comment">' + m + '</span>'); });
         escaped = escaped.replace(/(&quot;[^&]*&quot;|'[^']*')/g, function(m) { return self._makePlaceholder(store, '<span class="string">' + m + '</span>'); });
-        escaped = escaped.replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tag">$2</span>');
-        escaped = escaped.replace(/(\s)([a-zA-Z_][\w-]*)(?==)/g, '$1<span class="attr">$2</span>');
+        escaped = escaped.replace(/(&lt;\/?)([a-zA-Z][\w:-]*)/g, '$1<span class="tag">$2</span>');
+        escaped = escaped.replace(/(\s)([a-zA-Z_][\w:-]*)(?==)/g, '$1<span class="attr">$2</span>');
         return this._restorePlaceholders(escaped, store);
       },
 
@@ -1900,8 +2057,7 @@
         var nums = new Array(lineCount);
         for (var j = 0; j < lineCount; j++) nums[j] = (j + 1) + '<br>';
         this._lineNumbersInner.innerHTML = nums.join('');
-        this._lineNumbersInner.style.fontSize = (AppState.settings.fontSize || 13) + 'px';
-        this._lineNumbersInner.style.lineHeight = '1.6';
+        this._syncFontMetrics();
       },
 
       loadFile: function(filename) {
@@ -2037,8 +2193,15 @@
       },
       toggleDevice: function() {
         if (!this._device) return;
-        AppState.previewDevice = AppState.previewDevice === 'phone' ? 'tablet' : 'phone';
+        var devices = ['phone', 'tablet', 'desktop'];
+        var idx = devices.indexOf(AppState.previewDevice);
+        AppState.previewDevice = devices[(idx + 1) % devices.length];
         this._device.className = 'preview-device ' + AppState.previewDevice;
+        UI.toast('Device: ' + AppState.previewDevice.charAt(0).toUpperCase() + AppState.previewDevice.slice(1), 'info', 1000);
+      },
+      setDevice: function(device) {
+        AppState.previewDevice = device;
+        if (this._device) this._device.className = 'preview-device ' + device;
       },
       toggleFullscreen: function() {
         AppState.previewFullscreen = !AppState.previewFullscreen;
@@ -2064,10 +2227,14 @@
             if (header) header.style.display = 'flex';
             if (toolbar) toolbar.style.display = 'flex';
             if (this._device) {
-              this._device.style.width = AppState.previewDevice === 'phone' ? '360px' : '520px';
-              this._device.style.height = AppState.previewDevice === 'phone' ? '640px' : '700px';
-              this._device.style.borderRadius = AppState.previewDevice === 'phone' ? '24px' : '16px';
-              this._device.style.boxShadow = '0 0 0 8px #1e293b, 0 0 0 10px #334155, var(--shadow-lg)';
+              var w, h, r, s;
+              if (AppState.previewDevice === 'phone') { w = '360px'; h = '640px'; r = '24px'; s = '0 0 0 8px #1e293b, 0 0 0 10px #334155, var(--shadow-lg)'; }
+              else if (AppState.previewDevice === 'tablet') { w = '520px'; h = '700px'; r = '16px'; s = '0 0 0 8px #1e293b, 0 0 0 10px #334155, var(--shadow-lg)'; }
+              else { w = '100%'; h = '100%'; r = '0'; s = 'none'; }
+              this._device.style.width = w;
+              this._device.style.height = h;
+              this._device.style.borderRadius = r;
+              this._device.style.boxShadow = s;
             }
             this._removeExitFullscreenBtn();
           }
@@ -2115,6 +2282,39 @@
         var next = themes[(idx + 1) % themes.length];
         this.apply(next);
         UI.toast('Theme: ' + next.charAt(0).toUpperCase() + next.slice(1), 'info', 1500);
+      }
+    };
+
+    var DesktopMode = {
+      apply: function(enabled) {
+        AppState.settings.desktopMode = !!enabled;
+        if (enabled) {
+          document.body.classList.add('desktop-mode');
+          document.getElementById('modeBadge').textContent = 'Desktop';
+        } else {
+          document.body.classList.remove('desktop-mode');
+          document.getElementById('modeBadge').textContent = 'Live';
+        }
+        this.applyZoom(AppState.settings.desktopZoom || 100);
+        Editor._syncFontMetrics();
+        AppStorage.saveSettings(AppState.settings);
+      },
+      applyZoom: function(percent) {
+        percent = Math.max(50, Math.min(200, percent));
+        AppState.settings.desktopZoom = percent;
+        if (AppState.settings.desktopMode) {
+          var scale = percent / 100;
+          var app = document.getElementById('app');
+          if (app) {
+            app.style.zoom = scale;
+          }
+        } else {
+          var app2 = document.getElementById('app');
+          if (app2) app2.style.zoom = 1;
+        }
+        var valEl = document.getElementById('settingDesktopZoomVal');
+        if (valEl) valEl.textContent = percent + '%';
+        AppStorage.saveSettings(AppState.settings);
       }
     };
 
@@ -2794,7 +2994,7 @@
       showPreviewSettings: function() {
         UI.showModal(
           '<div class="modal-title">Preview Settings</div>' +
-          '<div class="settings-item" id="pvToggleDevice" style="border-radius:8px;"><span class="label">Device Frame</span><span class="value" id="pvDeviceVal">' + (AppState.previewDevice === 'phone' ? 'Phone' : 'Tablet') + '</span></div>' +
+          '<div class="settings-item" id="pvToggleDevice" style="border-radius:8px;"><span class="label">Device</span><span class="value" id="pvDeviceVal">' + AppState.previewDevice.charAt(0).toUpperCase() + AppState.previewDevice.slice(1) + '</span></div>' +
           '<div class="settings-item" id="pvToggleLive" style="border-radius:8px;"><span class="label">Live Preview</span><span class="value" id="pvLiveVal">' + (AppState.previewLive ? 'ON' : 'OFF') + '</span></div>' +
           '<div class="settings-item" id="pvToggleFullscreen" style="border-radius:8px;"><span class="label">Fullscreen Mode</span><span class="value" id="pvFsVal">' + (AppState.previewFullscreen ? 'ON' : 'OFF') + '</span></div>' +
           '<div class="settings-item" id="pvReloadNow" style="border-radius:8px;"><span class="label">Reload Preview</span><span class="value">›</span></div>' +
@@ -2803,7 +3003,7 @@
         );
         document.getElementById('pvToggleDevice').onclick = function() {
           PreviewManager.toggleDevice();
-          document.getElementById('pvDeviceVal').textContent = AppState.previewDevice === 'phone' ? 'Phone' : 'Tablet';
+          document.getElementById('pvDeviceVal').textContent = AppState.previewDevice.charAt(0).toUpperCase() + AppState.previewDevice.slice(1);
         };
         document.getElementById('pvToggleLive').onclick = function() {
           AppState.previewLive = !AppState.previewLive;
@@ -2843,9 +3043,6 @@
       }
     };
 
-    // ============================================================
-    // CONTEXT MENU — with native clipboard
-    // ============================================================
     function initContextMenu() {
       var menu = document.getElementById('contextMenu');
       if (!menu) return;
@@ -2934,14 +3131,12 @@
             case 'paste': {
               try {
                 var text3 = null;
-                // Native bridge first
                 if (NativeBridge.isAvailable()) {
                   var nativeText = NativeBridge.getClipboardText();
                   if (nativeText && nativeText.length > 0) {
                     text3 = nativeText;
                   }
                 }
-                // Fallback to navigator.clipboard
                 if (!text3 && navigator.clipboard && navigator.clipboard.readText) {
                   try {
                     text3 = await navigator.clipboard.readText();
@@ -2950,6 +3145,7 @@
                   }
                 }
                 if (text3) {
+                  text3 = text3.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
                   var s3 = ta.selectionStart;
                   var en3 = ta.selectionEnd;
                   var val3 = ta.value;
@@ -3051,6 +3247,10 @@
       PreviewManager.init();
       initContextMenu();
 
+      if (AppState.settings.desktopMode) {
+        DesktopMode.apply(true);
+      }
+
       AppState.projects = AppStorage.listProjects();
 
       var recovery = AppStorage.getRecovery();
@@ -3066,12 +3266,14 @@
       setVal('settingFontSizeVal', (AppState.settings.fontSize || 13) + 'px');
       setVal('settingTabSizeVal', AppState.settings.tabSize || 2);
       setVal('settingThemeVal', (AppState.settings.theme || 'light').charAt(0).toUpperCase() + (AppState.settings.theme || 'light').slice(1));
+      setVal('settingDesktopZoomVal', (AppState.settings.desktopZoom || 100) + '%');
       setCheck('settingWordWrap', AppState.settings.wordWrap);
       setCheck('settingLineNumbers', AppState.settings.lineNumbers !== false);
       setCheck('settingAutoSave', AppState.settings.autoSave !== false);
       setCheck('settingSyntaxHighlight', AppState.settings.syntaxHighlight !== false);
       setCheck('settingLivePreview', AppState.settings.livePreview);
       setCheck('settingDeviceFrame', AppState.settings.deviceFrame !== false);
+      setCheck('settingDesktopModeToggle', AppState.settings.desktopMode);
 
       var storageInfo = document.getElementById('settingStorageInfo');
       if (storageInfo) storageInfo.textContent = (AppStorage.getSize() / 1024).toFixed(1) + ' KB';
@@ -3238,10 +3440,7 @@
 
       document.getElementById('previewBackBtn').addEventListener('click', function() { Router.navigate('workspace'); AppActions.renderWorkspace(); });
       document.getElementById('previewReloadBtn').addEventListener('click', function() { PreviewManager.render(); UI.toast('Preview reloaded', 'info', 1000); });
-      document.getElementById('previewDeviceBtn').addEventListener('click', function() {
-        PreviewManager.toggleDevice();
-        UI.toast('Device: ' + AppState.previewDevice, 'info', 1000);
-      });
+      document.getElementById('previewDeviceBtn').addEventListener('click', function() { PreviewManager.toggleDevice(); });
       document.getElementById('previewFullscreenBtn').addEventListener('click', function() { PreviewManager.toggleFullscreen(); });
       document.getElementById('previewLiveToggleBtn').addEventListener('click', function() {
         AppState.previewLive = !AppState.previewLive;
@@ -3263,6 +3462,18 @@
         UI.confirm('Clear Cache?', 'This will clear temporary cache data. Projects and settings are not affected.', 'Clear', 'Cancel', false).then(function(confirmed) {
           if (confirmed) UI.toast('Cache cleared', 'success');
         });
+      });
+      document.getElementById('settingDesktopModeToggle').addEventListener('change', function(e) {
+        DesktopMode.apply(e.target.checked);
+        UI.toast('Desktop Mode: ' + (e.target.checked ? 'ON' : 'OFF'), 'info', 1500);
+      });
+      document.getElementById('settingDesktopZoomItem').addEventListener('click', function() {
+        var options = [50, 75, 100, 125, 150, 175, 200];
+        var current = AppState.settings.desktopZoom || 100;
+        var idx = options.indexOf(current);
+        var next = options[(idx + 1) % options.length];
+        DesktopMode.applyZoom(next);
+        UI.toast('Zoom: ' + next + '%', 'info', 1200);
       });
       document.getElementById('settingFontSizeItem').addEventListener('click', function() {
         var sizes = [11, 12, 13, 14, 15, 16, 18, 20];
