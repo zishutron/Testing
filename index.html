@@ -1,894 +1,1048 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stardust Admin Panel</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --bg: #0b0f19;
-            --bg-card: #111827;
-            --bg-input: #1f2937;
-            --text: #f9fafb;
-            --text-gray: #9ca3af;
-            --border: #374151;
-            --green: #22c55e;
-            --red: #ef4444;
-            --gold: #f59e0b;
-            --yellow: #eab308;
-            --radius: 12px;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-        
-        /* LOGIN SCREEN */
-        .login-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .login-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 40px 32px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-        }
-        .login-box .logo {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        .login-box h1 {
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-        .login-box p {
-            color: var(--text-gray);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .login-box button {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .login-box button:hover {
-            background: var(--primary-dark);
-        }
-        .login-box .error {
-            color: var(--red);
-            font-size: 13px;
-            margin-top: 12px;
-        }
-        
-        /* ACCESS DENIED */
-        .access-denied {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-        .access-denied .box {
-            background: var(--bg-card);
-            border: 1px solid var(--red);
-            border-radius: var(--radius);
-            padding: 40px;
-            max-width: 420px;
-        }
-        .access-denied .icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-        }
-        .access-denied h2 {
-            color: var(--red);
-            margin-bottom: 12px;
-        }
-        .access-denied p {
-            color: var(--text-gray);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        /* MAIN APP */
-        .app {
-            display: none;
-            min-height: 100vh;
-        }
-        .app.show {
-            display: flex;
-        }
-        
-        /* SIDEBAR */
-        .sidebar {
-            width: 240px;
-            background: var(--bg-card);
-            border-right: 1px solid var(--border);
-            padding: 20px 0;
-            flex-shrink: 0;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            overflow-y: auto;
-        }
-        .sidebar .brand {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 16px;
-        }
-        .sidebar .brand h2 {
-            font-size: 18px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .sidebar .brand span {
-            font-size: 11px;
-            color: var(--text-gray);
-        }
-        .sidebar .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: var(--text-gray);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-        .sidebar .nav-item:hover {
-            background: var(--bg-input);
-            color: var(--text);
-        }
-        .sidebar .nav-item.active {
-            color: var(--primary);
-            border-left-color: var(--primary);
-            background: rgba(37, 99, 235, 0.08);
-        }
-        .sidebar .nav-item .badge {
-            margin-left: auto;
-            background: var(--red);
-            color: white;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-        .sidebar .nav-item .badge.green {
-            background: var(--green);
-        }
-        
-        /* MAIN CONTENT */
-        .main {
-            flex: 1;
-            padding: 24px 32px;
-            overflow-y: auto;
-            max-height: 100vh;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .header h1 {
-            font-size: 22px;
-        }
-        .header .user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .header .user .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-        .header .user .info {
-            font-size: 13px;
-        }
-        .header .user .info .name {
-            font-weight: 600;
-        }
-        .header .user .info .email {
-            color: var(--text-gray);
-            font-size: 11px;
-        }
-        
-        /* STATS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            transition: all 0.2s;
-        }
-        .stat-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        .stat-card .icon {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-        .stat-card .value {
-            font-size: 28px;
-            font-weight: 700;
-        }
-        .stat-card .label {
-            font-size: 12px;
-            color: var(--text-gray);
-            margin-top: 4px;
-        }
-        
-        /* SECTIONS */
-        .section {
-            display: none;
-        }
-        .section.active {
-            display: block;
-        }
-        
-        /* SEARCH BAR */
-        .search-bar {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 18px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 14px;
-            outline: none;
-            margin-bottom: 16px;
-        }
-        .search-bar:focus {
-            border-color: var(--primary);
-        }
-        
-        /* APP CARD */
-        .app-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.2s;
-            flex-wrap: wrap;
-        }
-        .app-card:hover {
-            border-color: var(--primary);
-        }
-        .app-card img {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .app-card .info {
-            flex: 1;
-            min-width: 200px;
-        }
-        .app-card .info .name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-        .app-card .info .meta {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-        .app-card .status {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .app-card .status.pending {
-            background: rgba(234, 179, 8, 0.15);
-            color: var(--yellow);
-        }
-        .app-card .status.approved {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--green);
-        }
-        .app-card .status.rejected {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--red);
-        }
-        .app-card .status.draft {
-            background: rgba(156, 163, 175, 0.15);
-            color: var(--text-gray);
-        }
-        .app-card .actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .btn.primary {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        .btn.primary:hover {
-            background: var(--primary-dark);
-        }
-        .btn.success {
-            background: var(--green);
-            border-color: var(--green);
-            color: white;
-        }
-        .btn.success:hover {
-            background: #16a34a;
-        }
-        .btn.danger {
-            background: var(--red);
-            border-color: var(--red);
-            color: white;
-        }
-        .btn.danger:hover {
-            background: #dc2626;
-        }
-        .btn.warning {
-            background: var(--yellow);
-            border-color: var(--yellow);
-            color: #000;
-        }
-        
-        /* FILTER TABS */
-        .filter-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .filter-tabs button {
-            padding: 8px 18px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-gray);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .filter-tabs button.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        .filter-tabs button:hover:not(.active) {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        /* MODAL */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-        .modal.open {
-            display: flex;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .modal-content h3 {
-            margin-bottom: 16px;
-            font-size: 18px;
-        }
-        .modal-content .close {
-            float: right;
-            background: var(--bg-input);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: var(--text-gray);
-            font-size: 18px;
-            cursor: pointer;
-        }
-        
-        /* FORM */
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-gray);
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            outline: none;
-            font-family: inherit;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: var(--primary);
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        /* HERO BANNER PREVIEW */
-        .banner-preview {
-            width: 100%;
-            height: 150px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            color: white;
-            margin-bottom: 12px;
-        }
-        .banner-preview img {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            margin-right: 16px;
-            object-fit: cover;
-        }
-        .banner-preview .info h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-        .banner-preview .info p {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-        
-        /* LOADING */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-gray);
-        }
-        .loading.show {
-            display: block;
-        }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* EMPTY STATE */
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-gray);
-        }
-        .empty .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-        
-        /* MOBILE */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 60px;
-                padding: 12px 0;
-            }
-            .sidebar .brand h2, .sidebar .brand span, .sidebar .nav-item span {
-                display: none;
-            }
-            .sidebar .nav-item {
-                justify-content: center;
-                padding: 14px;
-            }
-            .main {
-                padding: 16px;
-            }
-            .header h1 {
-                font-size: 18px;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .stat-card {
-                padding: 14px;
-            }
-            .stat-card .value {
-                font-size: 22px;
-            }
-            .app-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .app-card .actions {
-                width: 100%;
-            }
-            .app-card .actions .btn {
-                flex: 1;
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Stardust Store</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #60a5fa;
+  --bg-dark: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-input: #e2e8f0;
+  --text-light: #0f172a;
+  --text-gray: #475569;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  --gold: #f59e0b;
+  --green: #22c55e;
+  --red: #ef4444;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-bottom: 75px;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; color: inherit; font-family: inherit; }
+img { display: block; max-width: 100%; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+.header {
+  background: var(--bg-card);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 60px;
+}
+.header-back {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--bg-input);
+  flex-shrink: 0; cursor: pointer; border: none; color: var(--text-light);
+}
+.header-back svg { width: 22px; height: 22px; fill: var(--text-light); }
+.header-title {
+  font-size: 17px; font-weight: 600; flex: 1; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px;
+}
+.header-action {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--bg-input);
+  flex-shrink: 0; position: relative; cursor: pointer; border: none; color: var(--text-light);
+}
+.header-action svg { width: 20px; height: 20px; fill: var(--text-light); }
+.badge-dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 10px; height: 10px; background: var(--red);
+  border-radius: 50%; border: 2px solid var(--bg-card);
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+.page {
+  display: none; opacity: 0; transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  padding: 16px 0 20px;
+}
+.page.active { display: block; opacity: 1; transform: translateY(0); }
+
+.banner-slider {
+  position: relative; border-radius: var(--radius); overflow: hidden;
+  margin-bottom: 16px; height: 180px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+}
+.banner-slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; padding: 24px 28px;
+  opacity: 0; transition: opacity 0.6s ease;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(59, 130, 246, 0.05));
+  cursor: pointer;
+}
+.banner-slide.active { opacity: 1; }
+.banner-slide .banner-icon {
+  width: 72px; height: 72px; border-radius: 16px; object-fit: cover;
+  margin-right: 18px; border: 2px solid rgba(255, 255, 255, 0.1); flex-shrink: 0;
+}
+.banner-slide .banner-info { flex: 1; }
+.banner-slide .banner-info h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.banner-slide .banner-info p { font-size: 13px; color: var(--text-gray); margin-bottom: 8px; }
+.banner-slide .banner-tag {
+  display: inline-block; background: var(--primary);
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+}
+.banner-dots {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 5;
+}
+.banner-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3); cursor: pointer; transition: var(--transition);
+}
+.banner-dots span.active { background: var(--primary); width: 24px; border-radius: 4px; }
+
+.category-filter {
+  display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; margin-bottom: 4px;
+}
+.category-filter .cat-chip {
+  flex: 0 0 auto; padding: 8px 18px; border-radius: 20px;
+  background: var(--bg-input); border: 1px solid var(--border-color);
+  font-size: 13px; font-weight: 500; color: var(--text-gray);
+  cursor: pointer; transition: var(--transition); scroll-snap-align: start; white-space: nowrap;
+}
+.category-filter .cat-chip:hover { border-color: var(--primary); color: var(--text-light); }
+.category-filter .cat-chip.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.section-header h4 { font-size: 17px; font-weight: 600; }
+.section-header .see-all { font-size: 13px; color: var(--primary); font-weight: 500; cursor: pointer; }
+
+.scroll-horizontal {
+  display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+}
+.scroll-horizontal .mini-card {
+  flex: 0 0 140px; scroll-snap-align: start;
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  padding: 14px 12px; border: 1px solid var(--border-color);
+  text-align: center; transition: var(--transition); cursor: pointer; position: relative;
+}
+.scroll-horizontal .mini-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.scroll-horizontal .mini-card img {
+  width: 60px; height: 60px; border-radius: 14px; object-fit: cover;
+  margin: 0 auto 8px; border: 1px solid var(--border-color);
+}
+.scroll-horizontal .mini-card .name {
+  font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.scroll-horizontal .mini-card .sub { font-size: 11px; color: var(--text-gray); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+.app-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); padding: 16px 14px;
+  cursor: pointer; transition: var(--transition); text-align: center; position: relative;
+}
+.app-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1); }
+.app-card .app-icon {
+  width: 72px; height: 72px; border-radius: 16px; object-fit: cover;
+  margin: 0 auto 10px; border: 1px solid var(--border-color);
+}
+.app-card .app-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-card .app-meta { font-size: 11px; color: var(--text-gray); margin-top: 2px; }
+.app-card .app-downloads { font-size: 11px; color: var(--primary); font-weight: 500; margin-top: 4px; }
+.app-card .app-rating { font-size: 12px; color: var(--gold); }
+
+.search-container { position: relative; margin-bottom: 20px; }
+.search-bar {
+  width: 100%; padding: 14px 14px 14px 46px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+  background: var(--bg-card); color: var(--text-light);
+  font-size: 15px; outline: none; transition: var(--transition);
+}
+.search-bar:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.search-icon-inside {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px; fill: var(--text-gray);
+}
+.search-voice {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; fill: var(--text-gray); cursor: pointer; transition: var(--transition);
+}
+.search-voice:hover { fill: var(--primary); }
+.search-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.search-filters button {
+  background: var(--bg-input); padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; color: var(--text-gray); border: 1px solid transparent; transition: var(--transition);
+}
+.search-filters button.active { border-color: var(--primary); color: var(--primary); }
+
+/* DETAILS PAGE */
+#page-details { padding-bottom: 40px; }
+.detail-header {
+  display: flex; gap: 18px; align-items: flex-start;
+  margin-bottom: 20px; position: relative;
+}
+.detail-icon {
+  width: 80px; height: 80px; border-radius: 18px; object-fit: cover;
+  border: 2px solid var(--border-color); flex-shrink: 0;
+}
+.detail-info { flex: 1; }
+.detail-info h2 { font-size: 20px; font-weight: 700; margin: 0; }
+.detail-info .dev { font-size: 13px; color: var(--primary-light); }
+.detail-info .meta-row {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  font-size: 12px; color: var(--text-gray); margin-top: 4px;
+}
+.detail-info .meta-row .badge-verified { color: var(--green); font-weight: 600; }
+.detail-info .rating-big { font-size: 20px; font-weight: 700; color: var(--gold); }
+.detail-info .rating-big span { font-size: 14px; color: var(--text-gray); font-weight: 400; }
+
+.detail-wishlist-btn {
+  position: absolute; top: 0; right: 0;
+  background: var(--bg-input); border: 1px solid var(--border-color);
+  border-radius: 50%; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: var(--transition);
+}
+.detail-wishlist-btn:hover { border-color: var(--primary); background: var(--border-color); }
+.detail-wishlist-btn svg { width: 22px; height: 22px; fill: var(--text-muted); transition: var(--transition); }
+.detail-wishlist-btn.active svg { fill: var(--red); }
+
+.detail-section {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); padding: 18px 16px; margin-bottom: 16px;
+}
+.detail-section .section-title {
+  font-size: 15px; font-weight: 600; margin-bottom: 12px;
+  border-left: 3px solid var(--primary); padding-left: 10px;
+}
+
+.screenshots-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.screenshots-scroll img {
+  height: 160px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+  object-fit: cover; cursor: zoom-in; transition: var(--transition);
+}
+.screenshots-scroll img:hover { opacity: 0.85; }
+
+.whats-new-item {
+  background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-gray); margin-bottom: 6px;
+}
+.whats-new-item .vn { font-weight: 600; color: var(--text-light); }
+
+.version-history { display: flex; gap: 8px; flex-wrap: wrap; }
+.version-history .vh-item {
+  background: var(--bg-input); padding: 4px 14px; border-radius: 20px;
+  font-size: 12px; cursor: pointer; transition: var(--transition); border: 1px solid transparent;
+}
+.version-history .vh-item:hover { border-color: var(--primary); }
+
+.permission-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.permission-list .perm {
+  background: var(--bg-input); padding: 4px 12px; border-radius: 12px;
+  font-size: 12px; color: var(--text-gray);
+}
+
+.virus-scan {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(34, 197, 94, 0.1); padding: 10px 16px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(34, 197, 94, 0.2);
+}
+.virus-scan .safe { color: var(--green); font-weight: 600; }
+.virus-scan .hash { font-size: 12px; color: var(--text-muted); font-family: monospace; word-break: break-all; }
+
+.related-apps { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.related-apps .rel-item { flex: 0 0 80px; text-align: center; cursor: pointer; }
+.related-apps .rel-item img {
+  width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
+  border: 1px solid var(--border-color); margin: 0 auto 4px;
+}
+.related-apps .rel-item .rn {
+  font-size: 11px; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.rating-graph { display: flex; flex-direction: column; gap: 4px; margin: 12px 0; }
+.rating-graph .rg-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-gray); }
+.rating-graph .rg-row .rg-bar {
+  flex: 1; height: 6px; border-radius: 4px; background: var(--bg-input); overflow: hidden;
+}
+.rating-graph .rg-row .rg-bar .rg-fill { height: 100%; border-radius: 4px; background: var(--gold); }
+
+.review-card {
+  background: var(--bg-input); border-radius: var(--radius-sm);
+  padding: 14px 16px; margin-bottom: 12px;
+  border: 1px solid var(--border-color); transition: var(--transition);
+}
+.review-card .rev-head { display: flex; justify-content: space-between; align-items: center; }
+.review-card .rev-head .rev-author { font-weight: 600; font-size: 14px; color: var(--text-light); }
+.review-card .rev-head .rev-stars { color: var(--gold); font-size: 13px; }
+.review-card .rev-text { font-size: 13px; color: var(--text-gray); margin: 6px 0; }
+.review-card .rev-actions { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); }
+.review-card .rev-actions button {
+  background: none; color: var(--text-muted); font-size: 12px;
+  padding: 2px 6px; border-radius: 4px; transition: var(--transition);
+}
+.review-card .rev-actions button:hover { color: var(--text-light); background: var(--border-color); }
+.review-card .dev-reply {
+  margin-top: 8px; padding: 8px 12px;
+  background: rgba(37, 99, 235, 0.08);
+  border-left: 2px solid var(--primary); border-radius: 6px;
+  font-size: 13px; color: var(--text-gray);
+}
+.review-card .dev-reply strong { color: var(--primary-light); }
+
+/* READ MORE */
+.description-text {
+  font-size: 14px; color: var(--text-gray); line-height: 1.7;
+  white-space: pre-wrap; max-height: 120px; overflow: hidden;
+  position: relative; transition: max-height 0.4s ease;
+}
+.description-text.expanded { max-height: 5000px; }
+.read-more-btn {
+  color: var(--primary); font-weight: 600; font-size: 13px;
+  cursor: pointer; display: inline-block; margin-top: 6px;
+  background: none; border: none; padding: 0;
+}
+.read-more-btn:hover { text-decoration: underline; }
+
+/* PROFILE */
+.profile-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius); padding: 24px 20px;
+  text-align: center; position: relative;
+}
+.profile-card .pfp {
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 3px solid var(--primary); object-fit: cover; margin: 0 auto 12px;
+}
+.profile-card .prof-name { font-size: 20px; font-weight: 700; color: var(--text-light); }
+.profile-card .prof-handle { color: var(--text-gray); font-size: 14px; }
+.profile-card .prof-bio {
+  color: var(--text-gray); font-size: 13px; margin-top: 4px;
+  max-width: 300px; margin-left: auto; margin-right: auto;
+}
+.profile-stats { display: flex; justify-content: center; gap: 24px; margin: 16px 0; }
+.profile-stats .stat { text-align: center; }
+.profile-stats .stat .num { font-size: 18px; font-weight: 700; color: var(--text-light); }
+.profile-stats .stat .label { font-size: 11px; color: var(--text-gray); }
+.profile-edit-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: var(--bg-input); border: 1px solid var(--border-color);
+  border-radius: 50%; width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition); cursor: pointer;
+}
+.profile-edit-btn:hover { border-color: var(--primary); background: var(--border-color); }
+.profile-edit-btn svg { width: 18px; height: 18px; fill: var(--text-light); }
+
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-card); height: 64px;
+  display: flex; justify-content: space-around; align-items: center;
+  border-top: 1px solid var(--border-color);
+  z-index: 1000; padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; color: var(--text-gray); cursor: pointer;
+  transition: var(--transition); padding: 4px 12px; border-radius: 8px; position: relative;
+}
+.nav-item svg { width: 24px; height: 24px; fill: var(--text-gray); transition: var(--transition); }
+.nav-item.active { color: var(--primary); }
+.nav-item.active svg { fill: var(--primary); }
+.nav-item .nav-badge {
+  position: absolute; top: 0; right: 0;
+  background: var(--red); color: white; font-size: 9px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.btn-primary {
+  background: var(--primary); color: white;
+  padding: 14px 24px; border-radius: var(--radius-sm);
+  font-weight: 600; font-size: 15px; width: 100%;
+  transition: var(--transition); display: flex; align-items: center;
+  justify-content: center; gap: 10px; position: relative;
+  overflow: hidden; border: none; cursor: pointer;
+}
+.btn-primary:hover { background: var(--primary-dark); transform: scale(1.01); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary .progress-bar {
+  position: absolute; bottom: 0; left: 0; height: 4px;
+  background: var(--green); transition: width 0.3s ease; width: 0%;
+}
+.btn-outline {
+  background: transparent; border: 1px solid var(--border-color);
+  color: var(--text-light); padding: 10px 18px; border-radius: var(--radius-sm);
+  font-weight: 500; font-size: 13px; transition: var(--transition); cursor: pointer;
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+.btn-outline.danger:hover { border-color: var(--red); color: var(--red); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+  z-index: 9999; display: none; align-items: center; justify-content: center;
+  padding: 20px; backdrop-filter: blur(8px);
+}
+.modal-overlay.open { display: flex; }
+.modal-content {
+  max-width: 90%; max-height: 85vh; border-radius: var(--radius);
+  background: var(--bg-dark); border: 1px solid var(--border-color);
+  padding: 20px; overflow-y: auto; width: 100%; max-width: 500px;
+  animation: modalIn 0.25s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-close {
+  float: right; background: var(--bg-input); border-radius: 50%;
+  width: 32px; height: 32px; display: flex; align-items: center;
+  justify-content: center; font-size: 18px; color: var(--text-gray);
+  transition: var(--transition); cursor: pointer; border: none;
+}
+.modal-close:hover { background: var(--border-color); color: white; }
+
+.loading-overlay {
+  position: fixed; inset: 0; z-index: 5000; display: none;
+  align-items: center; justify-content: center; flex-direction: column;
+  gap: 30px; background: #f1f5f9; transition: opacity 0.6s ease;
+}
+.loading-overlay.show { display: flex; }
+.loading-overlay .loader-logo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.loading-overlay .loader-logo .logo-icon {
+  width: 72px; height: 72px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 20px; display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 700; color: white;
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.3);
+  animation: logoPulse 2s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 12px 40px rgba(37, 99, 235, 0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 16px 56px rgba(37, 99, 235, 0.4); }
+}
+.loading-overlay .loader-logo .logo-text {
+  font-size: 22px; font-weight: 700; color: #0f172a;
+  letter-spacing: -0.5px; margin-top: 8px;
+}
+.loading-overlay .loader-logo .logo-text span { color: #2563eb; }
+.loading-overlay .loader-spinner-container { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.loading-overlay .loader-spinner {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 4px solid #e2e8f0; border-top-color: #2563eb;
+  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; position: relative;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay .loader-progress {
+  width: 200px; height: 4px; background: #e2e8f0;
+  border-radius: 4px; overflow: hidden; position: relative;
+}
+.loading-overlay .loader-progress .loader-progress-bar {
+  height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed);
+  border-radius: 4px; width: 0%; transition: width 0.3s ease;
+}
+.loading-overlay .loader-text { font-size: 14px; color: #475569; font-weight: 500; letter-spacing: 0.3px; }
+.loading-overlay .loader-text .dot {
+  display: inline-block; animation: dotBounce 1.4s ease-in-out infinite;
+}
+.loading-overlay .loader-text .dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-overlay .loader-text .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+.loading-overlay .loader-tips {
+  font-size: 12px; color: #94a3b8; max-width: 280px;
+  text-align: center; line-height: 1.6; margin-top: 4px;
+}
+
+.dark-mode .loading-overlay { background: #0b0f19; }
+.dark-mode .loading-overlay .loader-logo .logo-text { color: #f9fafb; }
+.dark-mode .loading-overlay .loader-spinner { border-color: #1f2937; border-top-color: #2563eb; }
+.dark-mode .loading-overlay .loader-progress { background: #1f2937; }
+.dark-mode .loading-overlay .loader-text { color: #9ca3af; }
+.dark-mode .loading-overlay .loader-tips { color: #6b7280; }
+
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-group label { display: block; font-size: 13px; color: var(--text-gray); margin-bottom: 4px; font-weight: 500; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid var(--border-color); background: var(--bg-input);
+  color: var(--text-light); font-size: 14px; outline: none; transition: var(--transition);
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-group .preview-box { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.form-group .preview-box img {
+  width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);
+}
+
+.verified-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--green); font-weight: 600; font-size: 12px;
+}
+.verified-badge svg { width: 16px; height: 16px; fill: var(--green); }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-gray); }
+.empty-state svg { width: 64px; height: 64px; fill: var(--text-muted); margin-bottom: 12px; }
+.empty-state h3 { font-size: 18px; color: var(--text-light); margin-bottom: 4px; }
+.empty-state p { font-size: 14px; }
+
+.flex { display: flex; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-12 { margin-bottom: 12px; }
+.text-center { text-align: center; }
+.text-gray { color: var(--text-gray); }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 11px; }
+.fw-600 { font-weight: 600; }
+.items-center { align-items: center; }
+
+.profile-footer {
+  margin-top: 24px; padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+}
+.profile-footer a {
+  color: var(--primary); text-decoration: underline;
+  font-weight: 500; font-size: 14px; transition: var(--transition);
+}
+.profile-footer a:hover { color: var(--primary-dark); }
+
+@media (max-width: 480px) {
+  .banner-slider { height: 150px; }
+  .banner-slide { padding: 16px 20px; }
+  .banner-slide .banner-icon { width: 56px; height: 56px; }
+  .banner-slide .banner-info h3 { font-size: 15px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .detail-header { flex-direction: column; align-items: center; text-align: center; }
+  .detail-icon { width: 72px; height: 72px; }
+  .profile-stats { gap: 14px; }
+  .category-filter .cat-chip { font-size: 12px; padding: 6px 14px; }
+  .detail-wishlist-btn { top: 5px; right: 5px; width: 34px; height: 34px; }
+  .detail-wishlist-btn svg { width: 18px; height: 18px; }
+}
+
+/* LIGHT MODE */
+.light-mode .review-card .rev-head .rev-author { color: #0f172a; }
+.light-mode .review-card .rev-text { color: #1e293b; }
+.light-mode .review-card .dev-reply { color: #1e293b; }
+.light-mode .review-card .dev-reply strong { color: #2563eb; }
+.light-mode .empty-state h3 { color: #0f172a; }
+.light-mode .empty-state p { color: #475569; }
+.light-mode .section-header h4 { color: #0f172a; }
+.light-mode .section-header .see-all { color: #2563eb; }
+.light-mode .profile-card .prof-name { color: #0f172a; }
+.light-mode .profile-card .prof-handle { color: #475569; }
+.light-mode .profile-card .prof-bio { color: #475569; }
+.light-mode .profile-stats .stat .num { color: #0f172a; }
+.light-mode .profile-stats .stat .label { color: #475569; }
+.light-mode .detail-info h2 { color: #0f172a; }
+.light-mode .detail-info .dev { color: #2563eb; }
+.light-mode .detail-info .meta-row { color: #475569; }
+.light-mode .detail-info .rating-big span { color: #475569; }
+.light-mode .detail-section .section-title { color: #0f172a; }
+.light-mode .detail-section p { color: #1e293b; }
+.light-mode .whats-new-item { color: #1e293b; background: #e2e8f0; }
+.light-mode .whats-new-item .vn { color: #0f172a; }
+.light-mode .version-history .vh-item { color: #475569; background: #e2e8f0; }
+.light-mode .permission-list .perm { color: #475569; background: #e2e8f0; }
+.light-mode .virus-scan .safe { color: #16a34a; }
+.light-mode .virus-scan .hash { color: #475569; }
+.light-mode .related-apps .rel-item .rn { color: #475569; }
+.light-mode .rating-graph .rg-row { color: #475569; }
+.light-mode .review-card { background: #f1f5f9; border-color: #cbd5e1; }
+.light-mode .detail-section { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .screenshots-scroll img { border-color: #cbd5e1; }
+.light-mode .virus-scan { background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.2); }
+.light-mode .app-card { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .app-card .app-title { color: #0f172a; }
+.light-mode .app-card .app-meta { color: #475569; }
+.light-mode .app-card .app-downloads { color: #2563eb; }
+.light-mode .mini-card { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .mini-card .name { color: #0f172a; }
+.light-mode .mini-card .sub { color: #475569; }
+.light-mode .category-filter .cat-chip { background: #e2e8f0; border-color: #cbd5e1; color: #475569; }
+.light-mode .category-filter .cat-chip.active { background: #2563eb; border-color: #2563eb; color: white; }
+.light-mode .search-bar { background: #ffffff; border-color: #cbd5e1; color: #0f172a; }
+.light-mode .search-filters button { background: #e2e8f0; color: #475569; }
+.light-mode .search-filters button.active { border-color: #2563eb; color: #2563eb; }
+.light-mode .header { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .header-title { color: #0f172a; }
+.light-mode .header-action { background: #e2e8f0; }
+.light-mode .header-action svg { fill: #0f172a; }
+.light-mode .bottom-nav { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .bottom-nav .nav-item { color: #475569; }
+.light-mode .bottom-nav .nav-item.active { color: #2563eb; }
+.light-mode .bottom-nav .nav-item.active svg { fill: #2563eb; }
+.light-mode .bottom-nav .nav-item svg { fill: #475569; }
+.light-mode .profile-card { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .profile-edit-btn { background: #e2e8f0; border-color: #cbd5e1; }
+.light-mode .profile-edit-btn svg { fill: #0f172a; }
+.light-mode .modal-content { background: #ffffff; border-color: #cbd5e1; }
+.light-mode .modal-content h4 { color: #0f172a; }
+.light-mode .modal-close { background: #e2e8f0; color: #475569; }
+.light-mode .form-group label { color: #475569; }
+.light-mode .form-group input, .light-mode .form-group textarea, .light-mode .form-group select {
+  background: #f1f5f9; border-color: #cbd5e1; color: #0f172a;
+}
+.light-mode .form-group .preview-box img { border-color: #cbd5e1; }
+.light-mode .banner-slide .banner-info p { color: rgba(255, 255, 255, 0.8); }
+.light-mode .banner-slide .banner-info h3 { color: #ffffff; }
+.light-mode .banner-slider { background: linear-gradient(135deg, #1e293b, #0f172a); }
+.light-mode .btn-outline { color: #0f172a; border-color: #cbd5e1; }
+.light-mode .btn-outline:hover { border-color: #2563eb; color: #2563eb; }
+.light-mode .btn-outline.danger:hover { border-color: #ef4444; color: #ef4444; }
+.light-mode .text-gray { color: #475569; }
+.light-mode .verified-badge { color: #16a34a; }
+.light-mode .detail-wishlist-btn { background: #e2e8f0; border-color: #cbd5e1; }
+.light-mode .detail-wishlist-btn svg { fill: #475569; }
+.light-mode .detail-wishlist-btn.active svg { fill: #ef4444; }
+.light-mode .description-text { color: #1e293b; }
+
+/* DARK MODE */
+.dark-mode .description-text { color: #9ca3af; }
+.dark-mode .review-card .rev-head .rev-author { color: #f9fafb; }
+.dark-mode .review-card .rev-text { color: #9ca3af; }
+.dark-mode .review-card .dev-reply { color: #9ca3af; }
+.dark-mode .review-card .dev-reply strong { color: #60a5fa; }
+.dark-mode .empty-state h3 { color: #f9fafb; }
+.dark-mode .empty-state p { color: #9ca3af; }
+.dark-mode .section-header h4 { color: #f9fafb; }
+.dark-mode .section-header .see-all { color: #60a5fa; }
+.dark-mode .profile-card .prof-name { color: #f9fafb; }
+.dark-mode .profile-card .prof-handle { color: #9ca3af; }
+.dark-mode .profile-card .prof-bio { color: #9ca3af; }
+.dark-mode .profile-stats .stat .num { color: #f9fafb; }
+.dark-mode .profile-stats .stat .label { color: #9ca3af; }
+.dark-mode .detail-info h2 { color: #f9fafb; }
+.dark-mode .detail-info .dev { color: #60a5fa; }
+.dark-mode .detail-info .meta-row { color: #9ca3af; }
+.dark-mode .detail-info .rating-big span { color: #9ca3af; }
+.dark-mode .detail-section .section-title { color: #f9fafb; }
+.dark-mode .detail-section p { color: #9ca3af; }
+.dark-mode .whats-new-item { color: #9ca3af; background: #1f2937; }
+.dark-mode .whats-new-item .vn { color: #f9fafb; }
+.dark-mode .version-history .vh-item { color: #9ca3af; background: #1f2937; }
+.dark-mode .permission-list .perm { color: #9ca3af; background: #1f2937; }
+.dark-mode .virus-scan .safe { color: #22c55e; }
+.dark-mode .virus-scan .hash { color: #6b7280; }
+.dark-mode .related-apps .rel-item .rn { color: #9ca3af; }
+.dark-mode .rating-graph .rg-row { color: #9ca3af; }
+.dark-mode .review-card { background: #1f2937; border-color: #374151; }
+.dark-mode .detail-section { background: #111827; border-color: #374151; }
+.dark-mode .app-card { background: #111827; border-color: #374151; }
+.dark-mode .app-card .app-title { color: #f9fafb; }
+.dark-mode .app-card .app-meta { color: #9ca3af; }
+.dark-mode .app-card .app-downloads { color: #60a5fa; }
+.dark-mode .mini-card { background: #111827; border-color: #374151; }
+.dark-mode .mini-card .name { color: #f9fafb; }
+.dark-mode .mini-card .sub { color: #9ca3af; }
+.dark-mode .category-filter .cat-chip { background: #1f2937; border-color: #374151; color: #9ca3af; }
+.dark-mode .category-filter .cat-chip.active { background: #2563eb; border-color: #2563eb; color: white; }
+.dark-mode .search-bar { background: #111827; border-color: #374151; color: #f9fafb; }
+.dark-mode .search-filters button { background: #1f2937; color: #9ca3af; }
+.dark-mode .search-filters button.active { border-color: #2563eb; color: #60a5fa; }
+.dark-mode .header { background: #111827; border-color: #374151; }
+.dark-mode .header-title { color: #f9fafb; }
+.dark-mode .header-action { background: #1f2937; }
+.dark-mode .header-action svg { fill: #f9fafb; }
+.dark-mode .bottom-nav { background: #111827; border-color: #374151; }
+.dark-mode .bottom-nav .nav-item { color: #9ca3af; }
+.dark-mode .bottom-nav .nav-item.active { color: #60a5fa; }
+.dark-mode .bottom-nav .nav-item.active svg { fill: #60a5fa; }
+.dark-mode .bottom-nav .nav-item svg { fill: #9ca3af; }
+.dark-mode .profile-card { background: #111827; border-color: #374151; }
+.dark-mode .profile-edit-btn { background: #1f2937; border-color: #374151; }
+.dark-mode .profile-edit-btn svg { fill: #f9fafb; }
+.dark-mode .modal-content { background: #0b0f19; border-color: #374151; }
+.dark-mode .modal-content h4 { color: #f9fafb; }
+.dark-mode .modal-close { background: #1f2937; color: #9ca3af; }
+.dark-mode .form-group label { color: #9ca3af; }
+.dark-mode .form-group input, .dark-mode .form-group textarea, .dark-mode .form-group select {
+  background: #1f2937; border-color: #374151; color: #f9fafb;
+}
+.dark-mode .banner-slide .banner-info p { color: rgba(255, 255, 255, 0.8); }
+.dark-mode .banner-slide .banner-info h3 { color: #ffffff; }
+.dark-mode .btn-outline { color: #f9fafb; border-color: #374151; }
+.dark-mode .btn-outline:hover { border-color: #60a5fa; color: #60a5fa; }
+.dark-mode .btn-outline.danger:hover { border-color: #ef4444; color: #ef4444; }
+.dark-mode .text-gray { color: #9ca3af; }
+.dark-mode .verified-badge { color: #22c55e; }
+.dark-mode .detail-wishlist-btn { background: #1f2937; border-color: #374151; }
+.dark-mode .detail-wishlist-btn svg { fill: #6b7280; }
+.dark-mode .detail-wishlist-btn.active svg { fill: #ef4444; }
+</style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div class="login-screen" id="loginScreen">
-    <div class="login-box">
-        <div class="logo">🛡️</div>
-        <h1>Stardust Admin</h1>
-        <p>Admin access only</p>
-        <button onclick="signIn()">Sign in with Google</button>
-        <div class="error" id="loginError"></div>
+<header class="header" id="appHeader">
+  <button class="header-back" id="backBtn" onclick="goBack()" style="display:none;">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+  </button>
+  <span class="header-title" id="headerTitle">Stardust Store</span>
+  <div style="display:flex;gap:6px;">
+    <button class="header-action" onclick="switchPage('profile','Profile')" title="Profile">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    </button>
+    <button class="header-action" onclick="toggleTheme()" title="Toggle Theme">
+      <svg viewBox="0 0 24 24" id="themeIcon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6v12c3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- HOME -->
+  <div id="page-home" class="page active">
+    <div class="banner-slider" id="bannerSlider">
+      <div class="banner-slide active" data-index="0">
+        <img src="" class="banner-icon" id="bannerIcon0" alt="">
+        <div class="banner-info">
+          <h3 id="bannerTitle0">Featured App</h3>
+          <p id="bannerDesc0">Top pick of the day</p>
+          <span class="banner-tag" id="bannerTag0">Editor's Choice</span>
+        </div>
+      </div>
+      <div class="banner-slide" data-index="1">
+        <img src="" class="banner-icon" id="bannerIcon1" alt="">
+        <div class="banner-info">
+          <h3 id="bannerTitle1">Trending Now</h3>
+          <p id="bannerDesc1">Most downloaded today</p>
+          <span class="banner-tag" id="bannerTag1">Trending</span>
+        </div>
+      </div>
+      <div class="banner-slide" data-index="2">
+        <img src="" class="banner-icon" id="bannerIcon2" alt="">
+        <div class="banner-info">
+          <h3 id="bannerTitle2">New Release</h3>
+          <p id="bannerDesc2">Fresh from developer</p>
+          <span class="banner-tag" id="bannerTag2">New</span>
+        </div>
+      </div>
+      <div class="banner-dots" id="bannerDots">
+        <span class="active" data-index="0"></span>
+        <span data-index="1"></span>
+        <span data-index="2"></span>
+      </div>
     </div>
-</div>
 
-<!-- ACCESS DENIED -->
-<div class="access-denied" id="accessDenied" style="display:none;">
-    <div class="box">
-        <div class="icon">🚫</div>
-        <h2>Access Denied</h2>
-        <p>You are not an admin. This area is restricted.</p>
-        <p style="margin-top:16px;font-size:12px;">Redirecting to store...</p>
+    <div class="category-filter" id="categoryFilter">
+      <span class="cat-chip active" data-cat="all" onclick="filterHomeByCategory('all')">All</span>
+      <span class="cat-chip" data-cat="games" onclick="filterHomeByCategory('games')">Games</span>
+      <span class="cat-chip" data-cat="social" onclick="filterHomeByCategory('social')">Social</span>
+      <span class="cat-chip" data-cat="ai" onclick="filterHomeByCategory('ai')">AI</span>
+      <span class="cat-chip" data-cat="entertainment" onclick="filterHomeByCategory('entertainment')">Entertainment</span>
+      <span class="cat-chip" data-cat="tools" onclick="filterHomeByCategory('tools')">Tools</span>
+      <span class="cat-chip" data-cat="shopping" onclick="filterHomeByCategory('shopping')">Shopping</span>
+      <span class="cat-chip" data-cat="music" onclick="filterHomeByCategory('music')">Music</span>
+      <span class="cat-chip" data-cat="education" onclick="filterHomeByCategory('education')">Education</span>
+      <span class="cat-chip" data-cat="health" onclick="filterHomeByCategory('health')">Health</span>
+      <span class="cat-chip" data-cat="photography" onclick="filterHomeByCategory('photography')">Photography</span>
+      <span class="cat-chip" data-cat="finance" onclick="filterHomeByCategory('finance')">Finance</span>
+      <span class="cat-chip" data-cat="travel" onclick="filterHomeByCategory('travel')">Travel</span>
     </div>
-</div>
 
-<!-- MAIN APP -->
-<div class="app" id="app">
-    <aside class="sidebar">
-        <div class="brand">
-            <h2>🛡️ Stardust</h2>
-            <span>Admin Panel</span>
-        </div>
-        <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-            <span>📊</span><span>Dashboard</span>
-        </div>
-        <div class="nav-item" data-page="pending" onclick="switchPage('pending')">
-            <span>⏳</span><span>Pending</span>
-            <span class="badge" id="pendingBadge">0</span>
-        </div>
-        <div class="nav-item" data-page="apps" onclick="switchPage('apps')">
-            <span>📱</span><span>All Apps</span>
-            <span class="badge green" id="appsBadge">0</span>
-        </div>
-        <div class="nav-item" data-page="banners" onclick="switchPage('banners')">
-            <span>🎨</span><span>Hero Banners</span>
-        </div>
-        <div class="nav-item" data-page="developers" onclick="switchPage('developers')">
-            <span>👥</span><span>Developers</span>
-        </div>
-        <div class="nav-item" data-page="reviews" onclick="switchPage('reviews')">
-            <span>⭐</span><span>Reviews</span>
-        </div>
-        <div class="nav-item" data-page="activity" onclick="switchPage('activity')">
-            <span>📝</span><span>Activity Log</span>
-        </div>
-        <div class="nav-item" data-page="settings" onclick="switchPage('settings')">
-            <span>⚙️</span><span>Settings</span>
-        </div>
-        <div class="nav-item" onclick="logout()" style="color:var(--red);margin-top:auto;">
-            <span>🚪</span><span>Logout</span>
-        </div>
-    </aside>
+    <div class="section-header">
+      <h4>Editor's Choice</h4>
+      <span class="see-all" onclick="switchPage('ranking','Ranking')">See All</span>
+    </div>
+    <div class="scroll-horizontal" id="editorsChoice"></div>
 
-    <main class="main">
-        <div class="header">
-            <h1 id="pageTitle">Dashboard</h1>
-            <div class="user">
-                <div class="info">
-                    <div class="name" id="adminName">Admin</div>
-                    <div class="email" id="adminEmail"></div>
-                </div>
-                <div class="avatar" id="adminAvatar">A</div>
-            </div>
-        </div>
+    <div class="section-header">
+      <h4>Trending Today</h4>
+      <span class="see-all" onclick="switchPage('ranking','Ranking')">See All</span>
+    </div>
+    <div class="scroll-horizontal" id="trendingApps"></div>
 
-        <!-- DASHBOARD -->
-        <div class="section active" id="section-dashboard">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="icon">📱</div>
-                    <div class="value" id="statTotal">0</div>
-                    <div class="label">Total Apps</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">⏳</div>
-                    <div class="value" id="statPending">0</div>
-                    <div class="label">Pending Review</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">✅</div>
-                    <div class="value" id="statLive">0</div>
-                    <div class="label">Live Apps</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">📥</div>
-                    <div class="value" id="statDownloads">0</div>
-                    <div class="label">Total Downloads</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">👥</div>
-                    <div class="value" id="statDevelopers">0</div>
-                    <div class="label">Developers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">⭐</div>
-                    <div class="value" id="statReviews">0</div>
-                    <div class="label">Total Reviews</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">🎨</div>
-                    <div class="value" id="statBanners">0</div>
-                    <div class="label">Active Banners</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">💰</div>
-                    <div class="value" id="statRevenue">₹0</div>
-                    <div class="label">Banner Revenue</div>
-                </div>
-            </div>
-        </div>
+    <div class="section-header">
+      <h4>New Releases</h4>
+      <span class="see-all" onclick="switchPage('ranking','Ranking')">See All</span>
+    </div>
+    <div class="scroll-horizontal" id="newReleases"></div>
 
-        <!-- PENDING APPS -->
-        <div class="section" id="section-pending">
-            <input type="text" class="search-bar" placeholder="🔍 Search pending apps..." oninput="filterPending(this.value)">
-            <div id="pendingList"></div>
-        </div>
+    <div class="section-header"><h4>Popular Games</h4></div>
+    <div class="scroll-horizontal" id="popularGames"></div>
+    <div class="section-header"><h4>Popular Apps</h4></div>
+    <div class="scroll-horizontal" id="popularApps"></div>
 
-        <!-- ALL APPS -->
-        <div class="section" id="section-apps">
-            <input type="text" class="search-bar" placeholder="🔍 Search all apps..." oninput="filterApps(this.value)">
-            <div class="filter-tabs">
-                <button class="active" onclick="filterAppsByStatus('all', this)">All</button>
-                <button onclick="filterAppsByStatus('approved', this)">Live</button>
-                <button onclick="filterAppsByStatus('pending_review', this)">Pending</button>
-                <button onclick="filterAppsByStatus('rejected', this)">Rejected</button>
-                <button onclick="filterAppsByStatus('draft', this)">Draft</button>
-            </div>
-            <div id="appsList"></div>
-        </div>
+    <div class="section-header"><h4>All Apps</h4></div>
+    <div id="allAppsGrid" class="grid"></div>
+  </div>
 
-        <!-- HERO BANNERS -->
-        <div class="section" id="section-banners">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
-                <p style="color:var(--text-gray);font-size:14px;">Hero banners show on store home page. Monetize with sponsored placements.</p>
-                <button class="btn primary" onclick="openBannerModal()">+ Add Banner</button>
-            </div>
-            <div id="bannersList"></div>
-        </div>
+  <!-- SEARCH -->
+  <div id="page-search" class="page">
+    <div class="search-container">
+      <svg class="search-icon-inside" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search apps, games, developers..." oninput="handleSearch()">
+      <svg class="search-voice" viewBox="0 0 24 24" onclick="startVoiceSearch()"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+    </div>
+    <div class="search-filters">
+      <button class="active" data-filter="all" onclick="setSearchFilter('all')">All</button>
+      <button data-filter="name" onclick="setSearchFilter('name')">Name</button>
+      <button data-filter="developer" onclick="setSearchFilter('developer')">Developer</button>
+      <button data-filter="category" onclick="setSearchFilter('category')">Category</button>
+    </div>
+    <div id="searchResults" class="grid"></div>
+  </div>
 
-        <!-- DEVELOPERS -->
-        <div class="section" id="section-developers">
-            <input type="text" class="search-bar" placeholder="🔍 Search developers..." oninput="filterDevelopers(this.value)">
-            <div id="developersList"></div>
-        </div>
+  <!-- RANKING -->
+  <div id="page-ranking" class="page">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+      <button class="btn-outline active" onclick="setRankingFilter('top-free')" id="rankTopFree">Top Free</button>
+      <button class="btn-outline" onclick="setRankingFilter('top-paid')" id="rankTopPaid">Top Paid</button>
+      <button class="btn-outline" onclick="setRankingFilter('top-grossing')" id="rankTopGrossing">Top Grossing</button>
+      <button class="btn-outline" onclick="setRankingFilter('trending')" id="rankTrending">Trending</button>
+      <button class="btn-outline" onclick="setRankingFilter('top-rated')" id="rankTopRated">Top Rated</button>
+    </div>
+    <div id="rankingApps" class="grid"></div>
+  </div>
 
-        <!-- REVIEWS -->
-        <div class="section" id="section-reviews">
-            <input type="text" class="search-bar" placeholder="🔍 Search reviews..." oninput="filterReviews(this.value)">
-            <div id="reviewsList"></div>
-        </div>
+  <!-- PROFILE -->
+  <div id="page-profile" class="page">
+    <div class="profile-card">
+      <button class="profile-edit-btn" onclick="openEditProfileModal()" title="Edit Profile">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </button>
+      <img src="https://img.icons8.com/clouds/200/user.png" class="pfp" id="profilePfp" alt="Profile">
+      <div class="prof-name" id="profileName">Guest User</div>
+      <div class="prof-handle" id="profileHandle">@guest</div>
+      <div class="prof-bio" id="profileBio">Explore amazing apps on Stardust Store</div>
+      <div class="profile-stats">
+        <div class="stat"><div class="num" id="statDownloads">0</div><div class="label">My Downloads</div></div>
+        <div class="stat"><div class="num" id="statWishlist">0</div><div class="label">Wishlist</div></div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--border-color);margin:20px 0;">
+      <div style="text-align:left;">
+        <h4 style="font-size:14px;margin-bottom:8px;">Download History</h4>
+        <div id="downloadHistory" class="flex flex-wrap gap-8"></div>
+        <h4 style="font-size:14px;margin:16px 0 8px;">Review Logs</h4>
+        <div id="reviewLogs"></div>
+      </div>
 
-        <!-- ACTIVITY LOG -->
-        <div class="section" id="section-activity">
-            <div id="activityList"></div>
-        </div>
+      <div class="profile-footer">
+        <a href="privacy.html" target="_blank">Privacy Policy</a>
+        <a href="terms.html" target="_blank">Terms of Service</a>
+      </div>
+    </div>
+  </div>
 
-        <!-- SETTINGS -->
-        <div class="section" id="section-settings">
-            <div class="stat-card" style="max-width:600px;">
-                <h3 style="margin-bottom:16px;">Site Settings</h3>
-                <div class="form-group">
-                    <label>Site Announcement</label>
-                    <textarea id="siteAnnouncement" placeholder="Show a message to all users..."></textarea>
-                </div>
-                <button class="btn primary" onclick="saveSettings()">Save Settings</button>
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- BANNER MODAL -->
-<div class="modal" id="bannerModal">
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="editProfileModal" onclick="if(event.target===this)closeEditProfileModal()">
     <div class="modal-content">
-        <button class="close" onclick="closeBannerModal()">✕</button>
-        <h3 id="bannerModalTitle">Add Hero Banner</h3>
-        
-        <div class="banner-preview" id="bannerPreview">
-            <img src="" id="bannerPreviewIcon" style="display:none;">
-            <div class="info">
-                <h4 id="bannerPreviewTitle">Banner Title</h4>
-                <p id="bannerPreviewSubtitle">Subtitle goes here</p>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Select App *</label>
-            <select id="bannerAppId" onchange="updateBannerPreview()">
-                <option value="">-- Select App --</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Banner Title</label>
-            <input type="text" id="bannerTitle" placeholder="Featured: WhatsApp" oninput="updateBannerPreview()">
-        </div>
-        
-        <div class="form-group">
-            <label>Subtitle</label>
-            <input type="text" id="bannerSubtitle" placeholder="Download now — Free" oninput="updateBannerPreview()">
-        </div>
-        
-        <div class="form-group">
-            <label>Custom Banner Image (optional)</label>
-            <input type="file" id="bannerImage" accept="image/*" onchange="uploadBannerImage(this)">
-            <div id="bannerImagePreview" style="margin-top:8px;"></div>
-        </div>
-        
-        <div class="form-group">
-            <label>CTA Text</label>
-            <input type="text" id="bannerCta" placeholder="Download" value="Download">
-        </div>
-        
-        <div class="form-group">
-            <label>Background Color</label>
-            <input type="color" id="bannerBg" value="#2563eb" style="height:44px;">
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="form-group">
-                <label>Position (Order)</label>
-                <input type="number" id="bannerPosition" value="1" min="1">
-            </div>
-            <div class="form-group">
-                <label>Active</label>
-                <select id="bannerActive">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-        </div>
-        
-        <h4 style="margin:16px 0 12px;font-size:14px;">💰 Monetization</h4>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="form-group">
-                <label>Type</label>
-                <select id="bannerMonetType">
-                    <option value="free">Free</option>
-                    <option value="sponsored">Sponsored</option>
-                    <option value="paid">Paid Ad</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Price (₹)</label>
-                <input type="number" id="bannerMonetPrice" value="0">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Advertiser Name</label>
-            <input type="text" id="bannerAdvertiser" placeholder="WhatsApp Inc">
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="form-group">
-                <label>Start Date</label>
-                <input type="date" id="bannerStart">
-            </div>
-            <div class="form-group">
-                <label>End Date</label>
-                <input type="date" id="bannerEnd">
-            </div>
-        </div>
-        
-        <input type="hidden" id="bannerEditId">
-        <button class="btn primary" onclick="saveBanner()" style="width:100%;padding:14px;margin-top:8px;">Save Banner</button>
+      <button class="modal-close" onclick="closeEditProfileModal()">✕</button>
+      <h4 style="margin-bottom:16px;">Edit Profile</h4>
+      <div class="form-group">
+        <label>Profile Picture</label>
+        <input type="file" id="editPfpInput" accept="image/*" onchange="editProfilePfp(this)">
+        <div class="preview-box" id="editPfpPreview"></div>
+      </div>
+      <div class="form-group">
+        <label>Display Name</label>
+        <input type="text" id="editNameInput" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label>Handle</label>
+        <input type="text" id="editHandleInput" placeholder="@username">
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="editBioInput" rows="3" placeholder="Tell us about yourself"></textarea>
+      </div>
+      <button class="btn-primary" onclick="saveProfileEdit()">Save Profile</button>
     </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div id="page-details" class="page">
+    <div class="detail-header">
+      <img src="" class="detail-icon" id="detIcon" alt="">
+      <div class="detail-info">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-right:50px;">
+          <h2 id="detTitle">App Name</h2>
+          <span class="verified-badge" id="detVerified" style="display:none;"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Verified</span>
+        </div>
+        <div class="dev" id="detDeveloper">by Developer</div>
+        <div class="meta-row">
+          <span id="detVersion">v1.0</span>
+          <span id="detSize">0 MB</span>
+          <span id="detCategory">Category</span>
+          <span id="detDownloads">0 downloads</span>
+        </div>
+        <div class="meta-row">
+          <span class="rating-big" id="detRating">4.8 <span>★</span></span>
+          <span id="detReviewCount">(0 reviews)</span>
+        </div>
+      </div>
+      <button class="detail-wishlist-btn" id="detWishlistBtn" onclick="toggleWishlist()" title="Add to Wishlist">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </button>
+    </div>
+
+    <button class="btn-primary" id="detInstallBtn" onclick="installApp()">
+      <span id="installBtnText">Install APK</span>
+      <span class="progress-bar" id="installProgress"></span>
+    </button>
+
+    <div class="detail-section">
+      <div class="section-title">Screenshots</div>
+      <div class="screenshots-scroll" id="detScreenshots"></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Description</div>
+      <div class="description-text" id="detDescription">No description available.</div>
+      <button class="read-more-btn" id="readMoreBtn" onclick="toggleDescription()" style="display:none;">Read More</button>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">What's New</div>
+      <div id="detWhatsNew"></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Version History</div>
+      <div class="version-history" id="detVersionHistory"></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Permissions</div>
+      <div class="permission-list" id="detPermissions"></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">App Information</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;color:var(--text-gray);">
+        <span><strong>Package:</strong> <span id="detPackage">com.example.app</span></span>
+        <span><strong>Version:</strong> <span id="detVersionInfo">1.0.0</span></span>
+        <span><strong>Size:</strong> <span id="detSizeInfo">0 MB</span></span>
+        <span><strong>Release:</strong> <span id="detReleaseDate">2024-01-01</span></span>
+        <span><strong>Updated:</strong> <span id="detUpdatedDate">2024-01-01</span></span>
+        <span><strong>Android:</strong> <span id="detAndroidVer">5.0+</span></span>
+        <span><strong>Language:</strong> <span id="detLanguage">English</span></span>
+      </div>
+    </div>
+
+    <div class="detail-section" id="linksSection">
+      <div class="section-title">Links</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <a id="detWebsiteLink" href="#" target="_blank" style="color:var(--primary);display:none;">🌐 Website</a>
+        <a id="detPrivacyLink" href="#" target="_blank" style="color:var(--primary);display:none;">🔒 Privacy Policy</a>
+        <a id="detSupportLink" href="#" style="color:var(--primary);display:none;">📧 Support Email</a>
+      </div>
+      <p id="noLinksMsg" style="color:var(--text-gray);font-size:13px;">No links available</p>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Virus Scan</div>
+      <div class="virus-scan">
+        <span style="font-size:24px;">✅</span>
+        <div>
+          <div class="safe">Safe — VirusTotal Passed</div>
+          <div class="hash">SHA256: <span id="detSHA256">a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Related Apps</div>
+      <div class="related-apps" id="detRelatedApps"></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="section-title">Reviews</div>
+      <div id="detReviewsList"></div>
+
+      <div style="margin-top:16px;background:var(--bg-input);padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border-color);">
+        <div style="display:flex;gap:4px;margin-bottom:8px;" id="reviewStars">
+          <span onclick="setReviewRating(1)" style="font-size:22px;cursor:pointer;color:var(--border-color);" data-star="1">★</span>
+          <span onclick="setReviewRating(2)" style="font-size:22px;cursor:pointer;color:var(--border-color);" data-star="2">★</span>
+          <span onclick="setReviewRating(3)" style="font-size:22px;cursor:pointer;color:var(--border-color);" data-star="3">★</span>
+          <span onclick="setReviewRating(4)" style="font-size:22px;cursor:pointer;color:var(--border-color);" data-star="4">★</span>
+          <span onclick="setReviewRating(5)" style="font-size:22px;cursor:pointer;color:var(--gold);" data-star="5">★</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <input type="text" class="search-bar" id="reviewInput" placeholder="Write your review..." style="flex:1;padding:10px 14px;">
+          <button class="btn-primary" onclick="submitReview()" style="width:auto;padding:10px 24px;font-size:13px;">Post</button>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;">
+          <label style="font-size:12px;color:var(--text-gray);cursor:pointer;">
+            <input type="file" accept="image/*" multiple id="reviewImageInput" style="display:none;" onchange="uploadReviewImages(this)">
+            Attach Screenshots
+          </label>
+        </div>
+        <div id="reviewImagePreviews" class="flex gap-8 mt-12" style="flex-wrap:wrap;"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- APP DETAILS MODAL -->
-<div class="modal" id="appModal">
-    <div class="modal-content" id="appModalContent"></div>
+<!-- IMAGE VIEWER -->
+<div class="modal-overlay" id="imageViewer" onclick="closeImageViewer()">
+  <img src="" class="modal-content" id="viewerImage" style="max-width:90%;max-height:85vh;object-fit:contain;padding:0;background:transparent;border:none;">
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="switchPage('home','Stardust Store')" id="navHome">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" onclick="switchPage('search','Search')" id="navSearch">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <span>Search</span>
+  </div>
+  <div class="nav-item" onclick="switchPage('ranking','Ranking')" id="navRanking">
+    <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+    <span>Ranking</span>
+  </div>
+  <div class="nav-item" onclick="switchPage('profile','Profile')" id="navProfile">
+    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    <span>Profile</span>
+  </div>
+</nav>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-logo">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">Stardust<span>Store</span></div>
+  </div>
+  <div class="loader-spinner-container">
+    <div class="loader-spinner"></div>
+    <div class="loader-progress"><div class="loader-progress-bar" id="loaderProgressBar"></div></div>
+    <div class="loader-text" id="loadingText">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+  </div>
+  <div class="loader-tips" id="loadingTip">✨ Discover amazing apps from around the world</div>
 </div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <script>
@@ -896,871 +1050,997 @@
 // FIREBASE CONFIG
 // ============================================
 const firebaseConfig = {
-    apiKey: "AIzaSyDCOq720_5pxOsUYXovvi4DaUsryv1oPeA",
-    authDomain: "stardust-store.firebaseapp.com",
-    databaseURL: "https://stardust-store-default-rtdb.firebaseio.com",
-    projectId: "stardust-store",
-    storageBucket: "stardust-store.firebasestorage.app",
-    messagingSenderId: "979834482722",
-    appId: "1:979834482722:web:dabbc453543b7e03c91a7b"
+  apiKey: "AIzaSyDCOq720_5pxOsUYXovvi4DaUsryv1oPeA",
+  authDomain: "stardust-store.firebaseapp.com",
+  databaseURL: "https://stardust-store-default-rtdb.firebaseio.com",
+  projectId: "stardust-store",
+  storageBucket: "stardust-store.firebasestorage.app",
+  messagingSenderId: "979834482722",
+  appId: "1:979834482722:web:dabbc453543b7e03c91a7b",
+  measurementId: "G-YKYR514S87"
 };
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 const db = firebase.database();
 
 const IMGBB_KEY = "550a3bcd47c1b0a86a9f2ba7a41770b6";
-const STORE_URL = "https://stardustapkstore.zishuai.cloud";
 
 // ============================================
 // STATE
 // ============================================
-let adminUser = null;
 let allApps = [];
-let allDevelopers = [];
-let allBanners = [];
-let allReviews = [];
-let allActivity = [];
-let currentPage = 'dashboard';
-let currentAppsFilter = 'all';
-let currentSearchApps = '';
-let currentSearchPending = '';
-let currentSearchDevelopers = '';
-let currentSearchReviews = '';
-let tempBannerImage = null;
+let navigationHistory = ['home'];
+let activeAppId = null;
+let reviewRating = 5;
+let currentSearchFilter = 'all';
+let currentRankingFilter = 'top-free';
+let currentCategory = 'all';
+let downloadLogs = JSON.parse(localStorage.getItem('stardust_download_logs') || '[]');
+let reviewImages = [];
+let isDarkMode = false;
+let wishlist = JSON.parse(localStorage.getItem('stardust_wishlist') || '[]');
+let heroBannerApps = [];
+let currentDescriptionFull = '';
+let isDescriptionExpanded = false;
+
+const loadingTips = [
+  '✨ Discover amazing apps from around the world',
+  '🚀 Find your next favorite app today',
+  '📱 Curated collection of best apps',
+  '⭐ Trusted by millions of users',
+  '🔒 Safe & secure downloads',
+  '🎮 Games, tools, entertainment and more',
+  '🌟 Quality apps with verified developers'
+];
 
 const $ = id => document.getElementById(id);
+const headerTitle = $('headerTitle');
+const backBtn = $('backBtn');
 
 // ============================================
-// AUTH
+// THEME
 // ============================================
-function signIn() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(err => {
-        $('loginError').textContent = err.message;
-    });
+function applyTheme(darkMode) {
+  isDarkMode = darkMode;
+  const body = document.body;
+  if (darkMode) {
+    body.classList.remove('light-mode');
+    body.classList.add('dark-mode');
+    document.documentElement.style.setProperty('--bg-dark', '#0b0f19');
+    document.documentElement.style.setProperty('--bg-card', '#111827');
+    document.documentElement.style.setProperty('--bg-input', '#1f2937');
+    document.documentElement.style.setProperty('--text-light', '#f9fafb');
+    document.documentElement.style.setProperty('--text-gray', '#9ca3af');
+    document.documentElement.style.setProperty('--text-muted', '#6b7280');
+    document.documentElement.style.setProperty('--border-color', '#374151');
+    $('themeIcon').innerHTML = '<path d="M9 2c-3.87 3.87-4.38 9.39-1.5 13.5C6.5 12.5 8.5 6.5 14 4c-1.58-1.29-3.86-2-5-2zm0 0c-3.87 3.87-4.38 9.39-1.5 13.5-1.5-2-3-4-3-6.5s1.5-4.5 3-6.5z"/>';
+  } else {
+    body.classList.remove('dark-mode');
+    body.classList.add('light-mode');
+    document.documentElement.style.setProperty('--bg-dark', '#f1f5f9');
+    document.documentElement.style.setProperty('--bg-card', '#ffffff');
+    document.documentElement.style.setProperty('--bg-input', '#e2e8f0');
+    document.documentElement.style.setProperty('--text-light', '#0f172a');
+    document.documentElement.style.setProperty('--text-gray', '#475569');
+    document.documentElement.style.setProperty('--text-muted', '#64748b');
+    document.documentElement.style.setProperty('--border-color', '#cbd5e1');
+    $('themeIcon').innerHTML = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6v12c3.31 0 6-2.69 6-6s-2.69-6-6-6z"/>';
+  }
+  localStorage.setItem('stardust_theme', darkMode ? 'dark' : 'light');
 }
 
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        $('loginScreen').style.display = 'flex';
-        $('accessDenied').style.display = 'none';
-        $('app').classList.remove('show');
-        return;
-    }
-    
-    // Check admin status
-    const snap = await db.ref(`admins/${user.uid}`).once('value');
-    const isAdmin = snap.val() === true;
-    
-    if (!isAdmin) {
-        $('loginScreen').style.display = 'none';
-        $('accessDenied').style.display = 'flex';
-        $('app').classList.remove('show');
-        setTimeout(() => {
-            window.location.href = STORE_URL;
-        }, 3000);
-        return;
-    }
-    
-    // Admin confirmed
-    adminUser = user;
-    $('loginScreen').style.display = 'none';
-    $('accessDenied').style.display = 'none';
-    $('app').classList.add('show');
-    
-    $('adminName').textContent = user.displayName || 'Admin';
-    $('adminEmail').textContent = user.email;
-    $('adminAvatar').textContent = (user.displayName || 'A').charAt(0).toUpperCase();
-    
-    loadAllData();
-    logActivity('Admin logged in');
-});
+function toggleTheme() { applyTheme(!isDarkMode); }
 
-function logout() {
-    if (confirm('Logout from admin panel?')) {
-        logActivity('Admin logged out');
-        auth.signOut();
-    }
+// ============================================
+// LOADING
+// ============================================
+function showLoading(show, text = 'Loading...') {
+  const overlay = $('loadingOverlay');
+  if (show) {
+    const tip = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    $('loadingTip').textContent = tip;
+    $('loadingText').innerHTML = text + '<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+    overlay.classList.add('show');
+    const progressBar = $('loaderProgressBar');
+    progressBar.style.width = '0%';
+    let pct = 0;
+    const interval = setInterval(() => {
+      pct += Math.random() * 8 + 2;
+      if (pct >= 100) { pct = 100; clearInterval(interval); }
+      progressBar.style.width = Math.min(pct, 100) + '%';
+    }, 200);
+    window._loadingProgressInterval = interval;
+  } else {
+    overlay.classList.remove('show');
+    if (window._loadingProgressInterval) clearInterval(window._loadingProgressInterval);
+  }
 }
 
 // ============================================
 // NAVIGATION
 // ============================================
-function switchPage(page) {
-    currentPage = page;
-    document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.page === page);
-    });
-    document.querySelectorAll('.section').forEach(el => {
-        el.classList.toggle('active', el.id === `section-${page}`);
-    });
-    
-    const titles = {
-        dashboard: 'Dashboard',
-        pending: 'Pending Review',
-        apps: 'All Apps',
-        banners: 'Hero Banners',
-        developers: 'Developers',
-        reviews: 'Reviews',
-        activity: 'Activity Log',
-        settings: 'Settings'
+const pageTitles = {
+  home: 'Stardust Store', search: 'Search', ranking: 'Ranking',
+  profile: 'Profile', details: 'App Details'
+};
+
+function switchPage(pageId, title) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = $(`page-${pageId}`);
+  if (target) target.classList.add('active');
+  headerTitle.textContent = title || pageTitles[pageId] || pageId;
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navBtn = $(`nav${pageId.charAt(0).toUpperCase() + pageId.slice(1)}`);
+  if (navBtn) navBtn.classList.add('active');
+
+  const isRoot = ['home', 'search', 'ranking', 'profile'].includes(pageId);
+  backBtn.style.display = isRoot ? 'none' : 'flex';
+  document.querySelector('.bottom-nav').style.display = isRoot ? 'flex' : 'none';
+
+  if (navigationHistory[navigationHistory.length - 1] !== pageId) navigationHistory.push(pageId);
+
+  if (pageId === 'ranking') loadRankings();
+  if (pageId === 'profile') loadProfile();
+}
+
+function goBack() {
+  if (navigationHistory.length > 1) {
+    navigationHistory.pop();
+    const prev = navigationHistory[navigationHistory.length - 1];
+    switchPage(prev);
+  }
+}
+
+// ============================================
+// BANNER (Admin-controlled)
+// ============================================
+let bannerIndex = 0, bannerInterval;
+
+function initBanner(apps) {
+  let featured = [];
+  // Use admin-selected hero banner apps if available
+  if (heroBannerApps.length > 0) {
+    featured = heroBannerApps.map(id => apps.find(a => a.id === id)).filter(Boolean);
+  }
+  // Fill remaining with top apps
+  const topApps = [...apps].sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0));
+  while (featured.length < 3) {
+    const next = topApps.find(a => !featured.includes(a));
+    if (next) featured.push(next);
+    else featured.push({ name: 'Featured App', icon: 'https://img.icons8.com/color/144/android-os.png', shortDescription: 'Top pick', id: 'dummy' });
+  }
+  featured = featured.slice(0, 3);
+
+  const tags = ['Editor\'s Choice', 'Trending', 'New Release'];
+  featured.forEach((app, i) => {
+    $(`bannerIcon${i}`).src = app.icon || 'https://img.icons8.com/color/144/android-os.png';
+    $(`bannerTitle${i}`).textContent = app.name || 'App';
+    $(`bannerDesc${i}`).textContent = app.shortDescription || app.description || 'Awesome app';
+    $(`bannerTag${i}`).textContent = tags[i];
+    document.querySelectorAll('.banner-slide')[i].onclick = () => {
+      if (app.id && app.id !== 'dummy') viewAppDetails(app.id);
     };
-    $('pageTitle').textContent = titles[page] || page;
+  });
+  document.querySelectorAll('#bannerDots span').forEach((dot, i) => { dot.onclick = () => goToBanner(i); });
+  clearInterval(bannerInterval);
+  bannerInterval = setInterval(() => goToBanner((bannerIndex + 1) % 3), 5000);
+}
+
+function goToBanner(index) {
+  bannerIndex = index;
+  document.querySelectorAll('.banner-slide').forEach((el, i) => el.classList.toggle('active', i === index));
+  document.querySelectorAll('#bannerDots span').forEach((el, i) => el.classList.toggle('active', i === index));
 }
 
 // ============================================
-// LOAD DATA
+// CATEGORY FILTER
 // ============================================
-function loadAllData() {
-    // Apps
-    db.ref('apps').on('value', snapshot => {
-        const data = snapshot.val();
-        allApps = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
-        updateDashboard();
-        renderPending();
-        renderApps();
-    });
-    
-    // Developers
-    db.ref('developers').on('value', snapshot => {
-        const data = snapshot.val();
-        allDevelopers = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
-        renderDevelopers();
-        updateDashboard();
-    });
-    
-    // Banners
-    db.ref('hero_banners').on('value', snapshot => {
-        const data = snapshot.val();
-        allBanners = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
-        renderBanners();
-        updateDashboard();
-    });
-    
-    // Reviews
-    db.ref('reviews').on('value', snapshot => {
-        const data = snapshot.val();
-        allReviews = [];
-        if (data) {
-            Object.keys(data).forEach(appId => {
-                Object.keys(data[appId]).forEach(revId => {
-                    allReviews.push({ id: revId, appId, ...data[appId][revId] });
-                });
-            });
-        }
-        renderReviews();
-        updateDashboard();
-    });
-    
-    // Activity Log
-    db.ref('activity_log').limitToLast(100).on('value', snapshot => {
-        const data = snapshot.val();
-        allActivity = data ? Object.keys(data).map(id => ({ id, ...data[id] })).sort((a,b) => b.timestamp - a.timestamp) : [];
-        renderActivity();
-    });
+function filterHomeByCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.category-filter .cat-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.cat === cat);
+  });
+  renderHomeSections(allApps);
 }
 
 // ============================================
-// DASHBOARD
+// RENDER HOME
 // ============================================
-function updateDashboard() {
-    const total = allApps.length;
-    const pending = allApps.filter(a => a.status === 'pending_review').length;
-    const live = allApps.filter(a => a.status === 'approved' || a.status === 'live').length;
-    const downloads = allApps.reduce((s, a) => s + (a.downloadCount || 0), 0);
-    const reviews = allApps.reduce((s, a) => s + (a.reviewCount || 0), 0);
-    const activeBanners = allBanners.filter(b => b.active === true).length;
-    const revenue = allBanners.reduce((s, b) => s + (b.monetization?.price || 0), 0);
-    
-    $('statTotal').textContent = total;
-    $('statPending').textContent = pending;
-    $('statLive').textContent = live;
-    $('statDownloads').textContent = downloads.toLocaleString();
-    $('statDevelopers').textContent = allDevelopers.length;
-    $('statReviews').textContent = reviews;
-    $('statBanners').textContent = activeBanners;
-    $('statRevenue').textContent = '₹' + revenue.toLocaleString();
-    
-    $('pendingBadge').textContent = pending;
-    $('appsBadge').textContent = total;
+function renderHomeSections(apps) {
+  const liveApps = apps.filter(a => a.status === 'live' || a.status === 'approved');
+  const filtered = currentCategory === 'all' ? liveApps : liveApps.filter(a => (a.category || '').toLowerCase() === currentCategory);
+  const sortedByDownloads = [...filtered].sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0));
+  const sortedByDate = [...filtered].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const games = filtered.filter(a => (a.category || '').toLowerCase() === 'games');
+  const nonGames = filtered.filter(a => (a.category || '').toLowerCase() !== 'games');
+
+  renderHorizontal('editorsChoice', sortedByDownloads.slice(0, 5));
+  renderHorizontal('trendingApps', sortedByDownloads.slice(5, 10));
+  renderHorizontal('newReleases', sortedByDate.slice(0, 5));
+  renderHorizontal('popularGames', games.slice(0, 6));
+  renderHorizontal('popularApps', nonGames.slice(0, 6));
+  renderAppGrid(filtered.slice(0, 12), $('allAppsGrid'));
 }
 
-// ============================================
-// PENDING APPS
-// ============================================
-function renderPending() {
-    const container = $('pendingList');
-    const pending = allApps.filter(a => a.status === 'pending_review');
-    
-    const filtered = currentSearchPending 
-        ? pending.filter(a => 
-            (a.name || '').toLowerCase().includes(currentSearchPending) ||
-            (a.developerName || '').toLowerCase().includes(currentSearchPending) ||
-            (a.package || '').toLowerCase().includes(currentSearchPending)
-          )
-        : pending;
-    
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">🎉</div><p>No pending apps. All caught up!</p></div>`;
-        return;
-    }
-    
-    container.innerHTML = filtered.map(app => `
-        <div class="app-card">
-            <img src="${app.icon || 'https://img.icons8.com/color/144/android-os.png'}" onerror="this.src='https://img.icons8.com/color/144/android-os.png'">
-            <div class="info">
-                <div class="name">${app.name || 'Untitled'}</div>
-                <div class="meta">${app.package || ''} • v${app.version || '1.0'} • by ${app.developerName || 'Unknown'}</div>
-                <div class="meta">Submitted: ${formatDate(app.submittedAt || app.timestamp)}</div>
-            </div>
-            <span class="status pending">Pending</span>
-            <div class="actions">
-                <button class="btn" onclick="viewApp('${app.id}')">👁️ View</button>
-                <button class="btn success" onclick="approveApp('${app.id}')">✅ Approve</button>
-                <button class="btn danger" onclick="openRejectModal('${app.id}')">❌ Reject</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function filterPending(val) {
-    currentSearchPending = val.toLowerCase().trim();
-    renderPending();
-}
-
-// ============================================
-// ALL APPS
-// ============================================
-function renderApps() {
-    const container = $('appsList');
-    
-    let filtered = allApps;
-    
-    if (currentAppsFilter !== 'all') {
-        if (currentAppsFilter === 'approved') {
-            filtered = filtered.filter(a => a.status === 'approved' || a.status === 'live');
-        } else {
-            filtered = filtered.filter(a => a.status === currentAppsFilter);
-        }
-    }
-    
-    if (currentSearchApps) {
-        filtered = filtered.filter(a =>
-            (a.name || '').toLowerCase().includes(currentSearchApps) ||
-            (a.developerName || '').toLowerCase().includes(currentSearchApps) ||
-            (a.package || '').toLowerCase().includes(currentSearchApps)
-        );
-    }
-    
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">📭</div><p>No apps found.</p></div>`;
-        return;
-    }
-    
-    const statusMap = {
-        'approved': { class: 'approved', label: 'Live' },
-        'live': { class: 'approved', label: 'Live' },
-        'pending_review': { class: 'pending', label: 'Pending' },
-        'rejected': { class: 'rejected', label: 'Rejected' },
-        'draft': { class: 'draft', label: 'Draft' }
-    };
-    
-    container.innerHTML = filtered.map(app => {
-        const st = statusMap[app.status] || statusMap['draft'];
-        return `
-            <div class="app-card">
-                <img src="${app.icon || 'https://img.icons8.com/color/144/android-os.png'}" onerror="this.src='https://img.icons8.com/color/144/android-os.png'">
-                <div class="info">
-                    <div class="name">${app.name || 'Untitled'}</div>
-                    <div class="meta">${app.package || ''} • v${app.version || '1.0'} • 📥 ${app.downloadCount || 0} • ⭐ ${app.rating || 0}</div>
-                    <div class="meta">${app.featured ? '🎨 Featured • ' : ''}${app.editorsChoice ? '🏆 Editor\'s Choice • ' : ''}by ${app.developerName || 'Unknown'}</div>
-                </div>
-                <span class="status ${st.class}">${st.label}</span>
-                <div class="actions">
-                    <button class="btn" onclick="viewApp('${app.id}')">👁️</button>
-                    ${app.status === 'approved' || app.status === 'live' 
-                        ? `<button class="btn warning" onclick="toggleFeatured('${app.id}', ${!app.featured})">${app.featured ? '⭐ Unfeature' : '⭐ Feature'}</button>`
-                        : `<button class="btn success" onclick="approveApp('${app.id}')">✅ Approve</button>`
-                    }
-                    <button class="btn danger" onclick="deleteApp('${app.id}')">🗑️</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function filterApps(val) {
-    currentSearchApps = val.toLowerCase().trim();
-    renderApps();
-}
-
-function filterAppsByStatus(status, btn) {
-    currentAppsFilter = status;
-    document.querySelectorAll('#section-apps .filter-tabs button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderApps();
-}
-
-// ============================================
-// APPROVE / REJECT
-// ============================================
-async function approveApp(appId) {
-    if (!confirm('Approve and publish this app?')) return;
-    
-    const app = allApps.find(a => a.id === appId);
-    if (!app) return;
-    
-    // Generate slug if not exists
-    let slug = app.slug;
-    if (!slug) {
-        slug = (app.name || 'app').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        // Check uniqueness
-        const slugSnap = await db.ref(`slugs/${slug}`).once('value');
-        if (slugSnap.exists() && slugSnap.val() !== appId) {
-            slug = slug + '-' + Date.now().toString(36);
-        }
-    }
-    
-    const now = Date.now();
-    
-    await db.ref(`apps/${appId}`).update({
-        status: 'approved',
-        slug: slug,
-        publishedAt: now,
-        releaseDate: new Date(now).toISOString().split('T')[0],
-        updatedAt: now
-    });
-    
-    await db.ref(`slugs/${slug}`).set(appId);
-    
-    // Notify developer
-    if (app.developerUid) {
-        await db.ref(`notifications/${app.developerUid}`).push({
-            text: `✅ Your app "${app.name}" has been APPROVED and is now LIVE!`,
-            timestamp: now,
-            read: false,
-            type: 'approval'
-        });
-    }
-    
-    logActivity(`Approved app: ${app.name} (slug: ${slug})`);
-    alert(`✅ App approved!\n\nURL: ${STORE_URL}/app/${slug}`);
-}
-
-function openRejectModal(appId) {
-    const reason = prompt('Enter rejection reason for developer:');
-    if (reason === null) return;
-    rejectApp(appId, reason || 'No reason provided');
-}
-
-async function rejectApp(appId, reason) {
-    const app = allApps.find(a => a.id === appId);
-    if (!app) return;
-    
-    await db.ref(`apps/${appId}`).update({
-        status: 'rejected',
-        rejectionReason: reason,
-        rejectedAt: Date.now()
-    });
-    
-    if (app.developerUid) {
-        await db.ref(`notifications/${app.developerUid}`).push({
-            text: `❌ Your app "${app.name}" was rejected. Reason: ${reason}`,
-            timestamp: Date.now(),
-            read: false,
-            type: 'rejection'
-        });
-    }
-    
-    logActivity(`Rejected app: ${app.name} — ${reason}`);
-    alert('App rejected. Developer notified.');
-}
-
-async function deleteApp(appId) {
-    const app = allApps.find(a => a.id === appId);
-    if (!app) return;
-    if (!confirm(`DELETE "${app.name}" permanently? This cannot be undone!`)) return;
-    
-    if (app.slug) {
-        await db.ref(`slugs/${app.slug}`).remove();
-    }
-    await db.ref(`apps/${appId}`).remove();
-    
-    logActivity(`Deleted app: ${app.name}`);
-    alert('App deleted.');
-}
-
-async function toggleFeatured(appId, featured) {
-    await db.ref(`apps/${appId}/featured`).set(featured);
-    logActivity(`${featured ? 'Featured' : 'Unfeatured'} app: ${allApps.find(a => a.id === appId)?.name}`);
-}
-
-// ============================================
-// VIEW APP MODAL
-// ============================================
-function viewApp(appId) {
-    const app = allApps.find(a => a.id === appId);
-    if (!app) return;
-    
-    const screenshots = (app.screenshots || []).map(s => 
-        `<img src="${s}" style="height:120px;border-radius:8px;margin:4px;cursor:pointer;" onclick="window.open('${s}','_blank')">`
-    ).join('');
-    
-    const permissions = app.permissions ? Object.keys(app.permissions)
-        .filter(k => app.permissions[k])
-        .map(k => `<span style="background:var(--bg-input);padding:4px 10px;border-radius:12px;font-size:12px;margin:2px;display:inline-block;">${k}</span>`)
-        .join('') : 'None';
-    
-    $('appModalContent').innerHTML = `
-        <button class="close" onclick="closeAppModal()">✕</button>
-        <div style="display:flex;gap:16px;margin-bottom:20px;">
-            <img src="${app.icon}" style="width:80px;height:80px;border-radius:16px;border:2px solid var(--border);">
-            <div>
-                <h3 style="margin-bottom:4px;">${app.name}</h3>
-                <div style="color:var(--text-gray);font-size:13px;">${app.package || ''}</div>
-                <div style="color:var(--text-gray);font-size:13px;">by ${app.developerName || 'Unknown'}</div>
-                <div style="margin-top:8px;">
-                    <span class="status approved">${app.status}</span>
-                    ${app.featured ? '<span class="status pending" style="margin-left:4px;">Featured</span>' : ''}
-                </div>
-            </div>
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:13px;">
-            <div><strong>Version:</strong> ${app.version || 'N/A'}</div>
-            <div><strong>Size:</strong> ${app.size || 'N/A'}</div>
-            <div><strong>Category:</strong> ${app.category || 'N/A'}</div>
-            <div><strong>Rating:</strong> ⭐ ${app.rating || 0}</div>
-            <div><strong>Downloads:</strong> ${app.downloadCount || 0}</div>
-            <div><strong>Reviews:</strong> ${app.reviewCount || 0}</div>
-            <div><strong>Submitted:</strong> ${formatDate(app.submittedAt || app.timestamp)}</div>
-            <div><strong>Published:</strong> ${formatDate(app.publishedAt)}</div>
-        </div>
-        
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">Short Description:</strong>
-            <p style="color:var(--text-gray);font-size:13px;">${app.shortDescription || 'N/A'}</p>
-        </div>
-        
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">Full Description:</strong>
-            <p style="color:var(--text-gray);font-size:13px;white-space:pre-wrap;max-height:200px;overflow-y:auto;">${app.description || 'N/A'}</p>
-        </div>
-        
-        ${app.supportEmail || app.privacyPolicy || app.website ? `
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">Contact & Legal:</strong>
-            <div style="font-size:13px;color:var(--text-gray);">
-                ${app.supportEmail ? `📧 ${app.supportEmail}<br>` : ''}
-                ${app.privacyPolicy ? `🔒 <a href="${app.privacyPolicy}" target="_blank" style="color:var(--primary);">Privacy Policy</a><br>` : ''}
-                ${app.website ? `🌐 <a href="${app.website}" target="_blank" style="color:var(--primary);">Website</a>` : ''}
-            </div>
-        </div>
-        ` : ''}
-        
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">APK Download:</strong>
-            <a href="${app.downloadUrl || '#'}" target="_blank" style="color:var(--primary);font-size:13px;word-break:break-all;">${app.downloadUrl || 'N/A'}</a>
-        </div>
-        
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">Permissions:</strong>
-            <div>${permissions}</div>
-        </div>
-        
-        ${screenshots ? `
-        <div style="margin-bottom:16px;">
-            <strong style="display:block;margin-bottom:8px;">Screenshots:</strong>
-            <div style="display:flex;flex-wrap:wrap;">${screenshots}</div>
-        </div>
-        ` : ''}
-        
-        <div style="display:flex;gap:8px;margin-top:20px;">
-            ${app.status === 'pending_review' ? `
-                <button class="btn success" style="flex:1;" onclick="approveApp('${app.id}');closeAppModal();">✅ Approve</button>
-                <button class="btn danger" style="flex:1;" onclick="closeAppModal();openRejectModal('${app.id}');">❌ Reject</button>
-            ` : ''}
-            ${app.status === 'approved' || app.status === 'live' ? `
-                <a href="${STORE_URL}/app/${app.slug}" target="_blank" class="btn primary" style="flex:1;text-align:center;text-decoration:none;padding:8px 14px;">🌐 View in Store</a>
-            ` : ''}
-        </div>
+function renderHorizontal(containerId, apps) {
+  const container = $(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  if (apps.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-gray);font-size:13px;padding:10px 0;">No apps available</div>';
+    return;
+  }
+  apps.forEach(app => {
+    const div = document.createElement('div');
+    div.className = 'mini-card';
+    div.innerHTML = `
+      <img src="${app.icon || 'https://img.icons8.com/color/144/android-os.png'}" onerror="this.src='https://img.icons8.com/color/144/android-os.png'">
+      <div class="name">${app.name || 'App'}</div>
+      <div class="sub">${app.downloadCount || 0} downloads</div>
     `;
-    
-    $('appModal').classList.add('open');
-}
-
-function closeAppModal() {
-    $('appModal').classList.remove('open');
+    div.onclick = () => { if (app.id) viewAppDetails(app.id); };
+    container.appendChild(div);
+  });
 }
 
 // ============================================
-// HERO BANNERS
+// APP GRID
 // ============================================
-function renderBanners() {
-    const container = $('bannersList');
-    
-    if (allBanners.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">🎨</div><p>No banners yet. Add your first hero banner!</p></div>`;
-        return;
+function renderAppGrid(apps, container) {
+  container.innerHTML = '';
+  if (!apps || apps.length === 0) {
+    container.innerHTML = `<p style="grid-column:1/-1;color:var(--text-gray);text-align:center;padding:40px 0;">No apps available in this category.</p>`;
+    return;
+  }
+  apps.forEach(app => {
+    const card = document.createElement('div');
+    card.className = 'app-card';
+    card.innerHTML = `
+      <img src="${app.icon || 'https://img.icons8.com/color/144/android-os.png'}" class="app-icon" onerror="this.src='https://img.icons8.com/color/144/android-os.png'">
+      <div class="app-title">${app.name || 'App'}</div>
+      <div class="app-meta">${app.version || 'v1.0'} • ${app.size || '0 MB'}</div>
+      <div class="app-rating">${'★'.repeat(Math.min(5, Math.round(app.rating || 4.5)))}</div>
+      <div class="app-downloads">${app.downloadCount || 0} downloads</div>
+    `;
+    card.onclick = () => { if (app.id) viewAppDetails(app.id); };
+    container.appendChild(card);
+  });
+}
+
+// ============================================
+// SEARCH
+// ============================================
+function handleSearch() {
+  const query = $('searchInput').value.toLowerCase().trim();
+  if (!query) { $('searchResults').innerHTML = ''; return; }
+  const liveApps = allApps.filter(a => a.status === 'live' || a.status === 'approved');
+  let results = liveApps.filter(app => {
+    const name = (app.name || '').toLowerCase();
+    const dev = (app.developer || app.developerName || '').toLowerCase();
+    const cat = (app.category || '').toLowerCase();
+    switch (currentSearchFilter) {
+      case 'name': return name.includes(query);
+      case 'developer': return dev.includes(query);
+      case 'category': return cat.includes(query);
+      default: return name.includes(query) || dev.includes(query) || cat.includes(query);
     }
-    
-    const sorted = [...allBanners].sort((a,b) => (a.position || 99) - (b.position || 99));
-    
-    container.innerHTML = sorted.map(banner => {
-        const app = allApps.find(a => a.id === banner.appId);
-        const monet = banner.monetization || {};
-        return `
-            <div class="app-card" style="flex-direction:column;align-items:stretch;">
-                <div class="banner-preview" style="background:${banner.backgroundColor || 'linear-gradient(135deg, #2563eb, #7c3aed)'};">
-                    ${app ? `<img src="${app.icon}">` : ''}
-                    <div class="info">
-                        <h4>${banner.title || app?.name || 'Banner'}</h4>
-                        <p>${banner.subtitle || ''}</p>
-                        ${monet.type && monet.type !== 'free' ? `<span style="background:rgba(255,255,255,0.2);padding:2px 10px;border-radius:12px;font-size:11px;margin-top:6px;display:inline-block;">${monet.type === 'sponsored' ? '⚡ Sponsored' : '💰 Paid Ad'}</span>` : ''}
-                    </div>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px;">
-                    <div style="font-size:12px;color:var(--text-gray);">
-                        Position: ${banner.position || 1} • 
-                        Status: <span style="color:${banner.active ? 'var(--green)' : 'var(--text-gray)'};">${banner.active ? 'Active' : 'Inactive'}</span>
-                        ${monet.price ? ` • 💰 ₹${monet.price}` : ''}
-                        ${monet.advertiser ? ` • ${monet.advertiser}` : ''}
-                    </div>
-                    <div class="actions">
-                        <button class="btn" onclick="editBanner('${banner.id}')">✏️ Edit</button>
-                        <button class="btn" onclick="toggleBannerActive('${banner.id}', ${!banner.active})">${banner.active ? '⏸️ Deactivate' : '▶️ Activate'}</button>
-                        <button class="btn danger" onclick="deleteBanner('${banner.id}')">🗑️</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
+  });
+  renderAppGrid(results, $('searchResults'));
 }
 
-function openBannerModal(editId = null) {
-    // Populate apps dropdown
-    const select = $('bannerAppId');
-    select.innerHTML = '<option value="">-- Select App --</option>';
-    allApps.filter(a => a.status === 'approved' || a.status === 'live').forEach(app => {
-        select.innerHTML += `<option value="${app.id}">${app.name}</option>`;
+function setSearchFilter(filter) {
+  currentSearchFilter = filter;
+  document.querySelectorAll('.search-filters button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.search-filters button[data-filter="${filter}"]`).classList.add('active');
+  handleSearch();
+}
+
+function startVoiceSearch() {
+  if ('webkitSpeechRecognition' in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.start();
+    recognition.onresult = (e) => { $('searchInput').value = e.results[0][0].transcript; handleSearch(); };
+  } else alert('Voice search not supported.');
+}
+
+// ============================================
+// RANKINGS
+// ============================================
+function setRankingFilter(filter) {
+  currentRankingFilter = filter;
+  document.querySelectorAll('#page-ranking .btn-outline').forEach(b => b.classList.remove('active'));
+  const btn = $(`rank${filter.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`);
+  if (btn) btn.classList.add('active');
+  loadRankings();
+}
+
+function loadRankings() {
+  const liveApps = allApps.filter(a => a.status === 'live' || a.status === 'approved');
+  let sorted = [...liveApps];
+  switch (currentRankingFilter) {
+    case 'top-free': sorted.sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0)); break;
+    case 'top-paid': sorted.sort((a, b) => (b.price || 0) - (a.price || 0)); break;
+    case 'top-grossing': sorted.sort((a, b) => ((b.downloadCount || 0) * (b.price || 0)) - ((a.downloadCount || 0) * (a.price || 0))); break;
+    case 'trending': sorted.sort((a, b) => (b.trendingScore || 0) - (a.trendingScore || 0)); break;
+    case 'top-rated': sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
+    default: sorted.sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0));
+  }
+  renderAppGrid(sorted, $('rankingApps'));
+}
+
+// ============================================
+// PROFILE - FIXED: Per-user download count
+// ============================================
+function loadProfile() {
+  const name = localStorage.getItem('stardust_profile_name') || 'Guest User';
+  const handle = localStorage.getItem('stardust_profile_handle') || '@guest';
+  const pfp = localStorage.getItem('stardust_profile_pfp') || 'https://img.icons8.com/clouds/200/user.png';
+  const bio = localStorage.getItem('stardust_profile_bio') || 'Explore amazing apps on Stardust Store';
+  $('profileName').textContent = name;
+  $('profileHandle').textContent = handle;
+  $('profilePfp').src = pfp;
+  $('profileBio').textContent = bio;
+
+  // FIXED: Only show THIS user's downloads, not total app store downloads
+  const userDownloads = JSON.parse(localStorage.getItem('stardust_user_downloads') || '[]');
+  $('statDownloads').textContent = userDownloads.length.toLocaleString();
+  $('statWishlist').textContent = wishlist.length;
+
+  downloadLogs = JSON.parse(localStorage.getItem('stardust_download_logs') || '[]');
+  const container = $('downloadHistory');
+  container.innerHTML = '';
+  if (downloadLogs.length === 0) {
+    container.innerHTML = '<span style="color:var(--text-gray);font-size:13px;">No downloads yet</span>';
+  } else {
+    downloadLogs.slice(0, 10).forEach(name => {
+      const span = document.createElement('span');
+      span.style.cssText = 'background:var(--bg-input);border:1px solid var(--border-color);padding:4px 12px;border-radius:20px;font-size:12px;color:var(--text-light);';
+      span.textContent = name;
+      container.appendChild(span);
     });
-    
-    if (editId) {
-        const banner = allBanners.find(b => b.id === editId);
-        if (banner) {
-            $('bannerModalTitle').textContent = 'Edit Hero Banner';
-            $('bannerEditId').value = editId;
-            $('bannerAppId').value = banner.appId || '';
-            $('bannerTitle').value = banner.title || '';
-            $('bannerSubtitle').value = banner.subtitle || '';
-            $('bannerCta').value = banner.ctaText || 'Download';
-            $('bannerBg').value = banner.backgroundColor || '#2563eb';
-            $('bannerPosition').value = banner.position || 1;
-            $('bannerActive').value = banner.active ? 'true' : 'false';
-            $('bannerMonetType').value = banner.monetization?.type || 'free';
-            $('bannerMonetPrice').value = banner.monetization?.price || 0;
-            $('bannerAdvertiser').value = banner.monetization?.advertiser || '';
-            $('bannerStart').value = banner.monetization?.startDate || '';
-            $('bannerEnd').value = banner.monetization?.endDate || '';
-            tempBannerImage = banner.imageUrl || null;
+  }
+
+  const revLogs = JSON.parse(localStorage.getItem('stardust_reviews_logs') || '[]');
+  const revContainer = $('reviewLogs');
+  revContainer.innerHTML = '';
+  if (revLogs.length === 0) {
+    revContainer.innerHTML = '<p style="color:var(--text-gray);font-size:13px;">No reviews yet</p>';
+  } else {
+    revLogs.slice(0, 10).forEach(log => {
+      const div = document.createElement('div');
+      div.style.cssText = 'background:var(--bg-input);border-left:3px solid var(--primary);padding:8px 12px;border-radius:6px;font-size:13px;color:var(--text-light);margin-bottom:6px;';
+      div.textContent = log;
+      revContainer.appendChild(div);
+    });
+  }
+}
+
+// ============================================
+// EDIT PROFILE
+// ============================================
+function openEditProfileModal() {
+  $('editNameInput').value = localStorage.getItem('stardust_profile_name') || 'Guest User';
+  $('editHandleInput').value = localStorage.getItem('stardust_profile_handle') || '@guest';
+  $('editBioInput').value = localStorage.getItem('stardust_profile_bio') || 'Explore amazing apps on Stardust Store';
+  $('editPfpPreview').innerHTML = '';
+  const pfp = localStorage.getItem('stardust_profile_pfp') || 'https://img.icons8.com/clouds/200/user.png';
+  const img = document.createElement('img');
+  img.src = pfp;
+  $('editPfpPreview').appendChild(img);
+  $('editProfileModal').classList.add('open');
+}
+
+function closeEditProfileModal() { $('editProfileModal').classList.remove('open'); }
+
+function editProfilePfp(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const container = $('editPfpPreview');
+    container.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    container.appendChild(img);
+    window._tempPfp = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfileEdit() {
+  const name = $('editNameInput').value.trim() || 'Guest User';
+  const handle = $('editHandleInput').value.trim() || '@guest';
+  const bio = $('editBioInput').value.trim() || 'Explore amazing apps on Stardust Store';
+  localStorage.setItem('stardust_profile_name', name);
+  localStorage.setItem('stardust_profile_handle', handle);
+  localStorage.setItem('stardust_profile_bio', bio);
+  if (window._tempPfp) {
+    localStorage.setItem('stardust_profile_pfp', window._tempPfp);
+    window._tempPfp = null;
+  }
+  loadProfile();
+  closeEditProfileModal();
+  alert('Profile updated successfully!');
+}
+
+// ============================================
+// WISHLIST
+// ============================================
+function toggleWishlist() {
+  if (!activeAppId) return;
+  const index = wishlist.indexOf(activeAppId);
+  const btn = $('detWishlistBtn');
+  if (index > -1) {
+    wishlist.splice(index, 1);
+    btn.classList.remove('active');
+  } else {
+    wishlist.push(activeAppId);
+    btn.classList.add('active');
+  }
+  localStorage.setItem('stardust_wishlist', JSON.stringify(wishlist));
+  $('statWishlist').textContent = wishlist.length;
+}
+
+// ============================================
+// DESCRIPTION READ MORE
+// ============================================
+function toggleDescription() {
+  const descEl = $('detDescription');
+  const btn = $('readMoreBtn');
+  isDescriptionExpanded = !isDescriptionExpanded;
+  if (isDescriptionExpanded) {
+    descEl.classList.add('expanded');
+    btn.textContent = 'Show Less';
+  } else {
+    descEl.classList.remove('expanded');
+    btn.textContent = 'Read More';
+  }
+}
+
+// ============================================
+// APP DETAILS
+// ============================================
+function viewAppDetails(appId) {
+  activeAppId = appId;
+  const app = allApps.find(a => a.id === appId);
+  if (!app) { alert('App not found!'); return; }
+
+  db.ref(`apps/${appId}`).on('value', snapshot => {
+    const appData = snapshot.val();
+    if (!appData) return;
+    updateDetailUI(appId, appData);
+  });
+
+  switchPage('details', app.name || 'App');
+  
+  // Update URL with clean format
+  const slug = (app.name || 'app').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const newUrl = `${window.location.pathname.replace('index.html', '')}app/${slug}?appuid=${appId}`;
+  window.history.pushState({ appuid: appId }, '', newUrl);
+}
+
+function updateDetailUI(appId, app) {
+  $('detIcon').src = app.icon || 'https://img.icons8.com/color/144/android-os.png';
+  $('detTitle').textContent = app.name || 'App';
+  $('detDeveloper').textContent = `by ${app.developerName || app.developer || 'Unknown Developer'}`;
+  $('detVersion').textContent = app.version || 'v1.0';
+  $('detSize').textContent = app.size || '0 MB';
+  $('detCategory').textContent = app.category || 'General';
+  $('detDownloads').textContent = `${app.downloadCount || 0} downloads`;
+
+  const rating = app.rating || 4.5;
+  $('detRating').innerHTML = `${rating.toFixed(1)} <span>★</span>`;
+  $('detReviewCount').textContent = `(${app.reviewCount || 0} reviews)`;
+  $('detVerified').style.display = app.verified ? 'inline-flex' : 'none';
+  $('installBtnText').textContent = 'Install APK';
+  $('installProgress').style.width = '0%';
+
+  // FIXED: Description with read more
+  currentDescriptionFull = app.description || 'No description available.';
+  const descEl = $('detDescription');
+  descEl.textContent = currentDescriptionFull;
+  descEl.classList.remove('expanded');
+  isDescriptionExpanded = false;
+  $('readMoreBtn').textContent = 'Read More';
+  
+  // Show read more button only if description is long
+  if (currentDescriptionFull.length > 200) {
+    $('readMoreBtn').style.display = 'inline-block';
+  } else {
+    $('readMoreBtn').style.display = 'none';
+  }
+
+  // FIXED: Real-time release date
+  $('detReleaseDate').textContent = app.releaseDate || new Date(app.timestamp || Date.now()).toISOString().split('T')[0];
+  $('detUpdatedDate').textContent = app.updatedDate || new Date(app.timestamp || Date.now()).toISOString().split('T')[0];
+
+  // Wishlist
+  const wishlistBtn = $('detWishlistBtn');
+  if (wishlist.includes(appId)) wishlistBtn.classList.add('active');
+  else wishlistBtn.classList.remove('active');
+
+  // Screenshots
+  const screenContainer = $('detScreenshots');
+  screenContainer.innerHTML = '';
+  if (app.screenshot) {
+    const imgs = app.screenshot.split(',');
+    imgs.forEach(url => {
+      if (url.trim()) {
+        const img = document.createElement('img');
+        img.src = url.trim();
+        img.onclick = () => openImageViewer(url.trim());
+        screenContainer.appendChild(img);
+      }
+    });
+  } else {
+    screenContainer.innerHTML = '<p style="color:var(--text-gray);font-size:13px;">No screenshots available.</p>';
+  }
+
+  // What's New
+  const wnContainer = $('detWhatsNew');
+  wnContainer.innerHTML = '';
+  if (app.whatsNew) {
+    app.whatsNew.split('\n').forEach(item => {
+      if (item.trim()) {
+        const div = document.createElement('div');
+        div.className = 'whats-new-item';
+        div.innerHTML = `<span class="vn">✓</span> ${item.trim()}`;
+        wnContainer.appendChild(div);
+      }
+    });
+  } else {
+    wnContainer.innerHTML = '<p style="color:var(--text-gray);font-size:13px;">No update notes available.</p>';
+  }
+
+  // Version History
+  const vhContainer = $('detVersionHistory');
+  vhContainer.innerHTML = '';
+  if (app.versionHistory) {
+    const versions = Array.isArray(app.versionHistory) ? app.versionHistory : app.versionHistory.split(',');
+    versions.forEach(v => {
+      if (v && v.trim()) {
+        const span = document.createElement('span');
+        span.className = 'vh-item';
+        span.textContent = v.trim();
+        vhContainer.appendChild(span);
+      }
+    });
+  } else {
+    vhContainer.innerHTML = '<span style="color:var(--text-gray);font-size:13px;">v1.0</span>';
+  }
+
+  // FIXED: Permissions from developer console
+  const permContainer = $('detPermissions');
+  permContainer.innerHTML = '';
+  if (app.permissions && app.permissions.trim()) {
+    app.permissions.split(',').forEach(p => {
+      if (p.trim()) {
+        const span = document.createElement('span');
+        span.className = 'perm';
+        span.textContent = p.trim();
+        permContainer.appendChild(span);
+      }
+    });
+  } else {
+    permContainer.innerHTML = '<span class="perm">No special permissions required</span>';
+  }
+
+  // App Info
+  $('detPackage').textContent = app.package || 'com.example.app';
+  $('detVersionInfo').textContent = app.version || '1.0.0';
+  $('detSizeInfo').textContent = app.size || '0 MB';
+  $('detAndroidVer').textContent = app.minAndroid || '5.0+';
+  $('detLanguage').textContent = app.language || 'English';
+  $('detSHA256').textContent = app.sha256 || 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0';
+
+  // FIXED: Links section (Website, Privacy, Support)
+  const websiteLink = $('detWebsiteLink');
+  const privacyLink = $('detPrivacyLink');
+  const supportLink = $('detSupportLink');
+  const noLinksMsg = $('noLinksMsg');
+  let hasLinks = false;
+
+  if (app.website && app.website.trim()) {
+    websiteLink.href = app.website;
+    websiteLink.style.display = 'block';
+    hasLinks = true;
+  } else websiteLink.style.display = 'none';
+
+  if (app.privacyPolicy && app.privacyPolicy.trim()) {
+    privacyLink.href = app.privacyPolicy;
+    privacyLink.style.display = 'block';
+    hasLinks = true;
+  } else privacyLink.style.display = 'none';
+
+  if (app.supportEmail && app.supportEmail.trim()) {
+    supportLink.href = 'mailto:' + app.supportEmail;
+    supportLink.style.display = 'block';
+    hasLinks = true;
+  } else supportLink.style.display = 'none';
+
+  noLinksMsg.style.display = hasLinks ? 'none' : 'block';
+
+  // Related Apps
+  const relContainer = $('detRelatedApps');
+  relContainer.innerHTML = '';
+  const liveApps = allApps.filter(a => a.status === 'live' || a.status === 'approved');
+  const related = liveApps.filter(a => a.id !== appId && a.category === app.category).slice(0, 6);
+  if (related.length === 0) {
+    relContainer.innerHTML = '<span style="color:var(--text-gray);font-size:13px;">No related apps found.</span>';
+  } else {
+    related.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'rel-item';
+      div.innerHTML = `
+        <img src="${a.icon || 'https://img.icons8.com/color/144/android-os.png'}" onerror="this.src='https://img.icons8.com/color/144/android-os.png'">
+        <div class="rn">${a.name || 'App'}</div>
+      `;
+      div.onclick = () => viewAppDetails(a.id);
+      relContainer.appendChild(div);
+    });
+  }
+
+  loadReviews(appId);
+  $('detInstallBtn').onclick = () => installApp();
+}
+
+// ============================================
+// INSTALL - Per-user tracking
+// ============================================
+function installApp() {
+  const app = allApps.find(a => a.id === activeAppId);
+  if (!app) return;
+
+  const btnText = $('installBtnText');
+  const progress = $('installProgress');
+
+  // Increment global download count
+  db.ref(`apps/${app.id}/downloadCount`).transaction(current => (current || 0) + 1);
+  db.ref(`apps/${app.id}/downloadDate`).set(new Date().toISOString().split('T')[0]);
+  db.ref(`apps/${app.id}/views`).transaction(current => (current || 0) + 1);
+
+  // FIXED: Track per-user downloads
+  const userDownloads = JSON.parse(localStorage.getItem('stardust_user_downloads') || '[]');
+  if (!userDownloads.includes(app.id)) {
+    userDownloads.push(app.id);
+    localStorage.setItem('stardust_user_downloads', JSON.stringify(userDownloads));
+  }
+
+  // Update local download logs
+  if (!downloadLogs.includes(app.name)) {
+    downloadLogs.push(app.name);
+    localStorage.setItem('stardust_download_logs', JSON.stringify(downloadLogs));
+  }
+
+  btnText.textContent = 'Downloading...';
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct += Math.random() * 15 + 5;
+    if (pct >= 100) {
+      pct = 100;
+      clearInterval(interval);
+      progress.style.width = '100%';
+      btnText.textContent = 'Opening...';
+      setTimeout(() => {
+        btnText.textContent = 'Install APK';
+        progress.style.width = '0%';
+        if (app.downloadUrl) {
+          window.open(app.downloadUrl, '_blank');
+        } else {
+          alert(`Download link for ${app.name} is not available.`);
         }
-    } else {
-        $('bannerModalTitle').textContent = 'Add Hero Banner';
-        $('bannerEditId').value = '';
-        $('bannerAppId').value = '';
-        $('bannerTitle').value = '';
-        $('bannerSubtitle').value = '';
-        $('bannerCta').value = 'Download';
-        $('bannerBg').value = '#2563eb';
-        $('bannerPosition').value = allBanners.length + 1;
-        $('bannerActive').value = 'true';
-        $('bannerMonetType').value = 'free';
-        $('bannerMonetPrice').value = 0;
-        $('bannerAdvertiser').value = '';
-        $('bannerStart').value = '';
-        $('bannerEnd').value = '';
-        tempBannerImage = null;
+      }, 500);
     }
-    
-    updateBannerPreview();
-    $('bannerModal').classList.add('open');
+    progress.style.width = `${Math.min(pct, 100)}%`;
+  }, 150);
+
+  loadProfile();
 }
 
-function closeBannerModal() {
-    $('bannerModal').classList.remove('open');
-    tempBannerImage = null;
+// ============================================
+// REVIEWS - Sent to developer + admin
+// ============================================
+function setReviewRating(stars) {
+  reviewRating = stars;
+  document.querySelectorAll('#reviewStars span').forEach(el => {
+    el.style.color = parseInt(el.dataset.star) <= stars ? 'var(--gold)' : 'var(--border-color)';
+  });
 }
 
-function updateBannerPreview() {
-    const appId = $('bannerAppId').value;
-    const app = allApps.find(a => a.id === appId);
-    const title = $('bannerTitle').value || app?.name || 'Banner Title';
-    const subtitle = $('bannerSubtitle').value || 'Subtitle goes here';
-    const bg = $('bannerBg').value;
-    
-    $('bannerPreview').style.background = bg;
-    $('bannerPreviewTitle').textContent = title;
-    $('bannerPreviewSubtitle').textContent = subtitle;
-    
-    const iconEl = $('bannerPreviewIcon');
-    if (app && app.icon) {
-        iconEl.src = app.icon;
-        iconEl.style.display = 'block';
-    } else {
-        iconEl.style.display = 'none';
+function submitReview() {
+  const input = $('reviewInput');
+  if (!input.value.trim() || !activeAppId) {
+    alert('Please write a review before submitting.');
+    return;
+  }
+
+  const app = allApps.find(a => a.id === activeAppId);
+  const reviewData = {
+    author: localStorage.getItem('stardust_profile_name') || 'Guest User',
+    handle: localStorage.getItem('stardust_profile_handle') || '@guest',
+    text: input.value.trim(),
+    rating: reviewRating,
+    timestamp: Date.now(),
+    images: reviewImages.join('')
+  };
+
+  // Save review to app
+  db.ref(`reviews/${activeAppId}`).push(reviewData).then(() => {
+    db.ref(`apps/${activeAppId}/reviewCount`).transaction(current => (current || 0) + 1);
+
+    // Recalculate average rating
+    db.ref(`reviews/${activeAppId}`).once('value').then(snap => {
+      const data = snap.val();
+      if (data) {
+        const reviews = Object.values(data);
+        const total = reviews.length;
+        const sum = reviews.reduce((s, r) => s + (r.rating || 5), 0);
+        const avg = sum / total;
+        db.ref(`apps/${activeAppId}/rating`).set(Math.round(avg * 10) / 10);
+      }
+    });
+
+    // FIXED: Send notification to developer
+    if (app && app.developerUid) {
+      db.ref(`notifications/${app.developerUid}`).push({
+        text: `New ${reviewRating}★ review for "${app.name}"`,
+        timestamp: Date.now(),
+        read: false,
+        type: 'review'
+      });
     }
+
+    // FIXED: Send notification to admin
+    db.ref('admin_notifications').push({
+      text: `New ${reviewRating}★ review for "${app ? app.name : 'App'}" by ${reviewData.author}`,
+      timestamp: Date.now(),
+      read: false,
+      type: 'review',
+      appId: activeAppId
+    });
+
+    // Save to local logs
+    const logs = JSON.parse(localStorage.getItem('stardust_reviews_logs') || '[]');
+    logs.push(`[${reviewRating}★] ${app ? app.name : 'App'}: "${input.value.trim()}"`);
+    localStorage.setItem('stardust_reviews_logs', JSON.stringify(logs));
+
+    input.value = '';
+    reviewImages = [];
+    $('reviewImagePreviews').innerHTML = '';
+    loadReviews(activeAppId);
+    alert('Review submitted successfully!');
+  }).catch(err => {
+    alert('Error submitting review: ' + err.message);
+  });
 }
 
-async function uploadBannerImage(input) {
-    if (!input.files || !input.files[0]) return;
-    const file = input.files[0];
+function loadReviews(appId) {
+  db.ref(`reviews/${appId}`).off();
+  db.ref(`reviews/${appId}`).on('value', snapshot => {
+    const data = snapshot.val();
+    const container = $('detReviewsList');
+    container.innerHTML = '';
+    if (!data) {
+      container.innerHTML = '<p style="color:var(--text-gray);text-align:center;padding:20px 0;">No reviews yet. Be the first!</p>';
+      return;
+    }
+    const reviews = Object.values(data).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    let ratings = [0, 0, 0, 0, 0];
+    reviews.forEach(r => {
+      const star = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+      ratings[star - 1]++;
+    });
+    const total = reviews.length;
+    let graphHtml = `<div class="rating-graph">`;
+    for (let i = 5; i >= 1; i--) {
+      const count = ratings[i - 1] || 0;
+      const pct = total > 0 ? (count / total) * 100 : 0;
+      graphHtml += `<div class="rg-row"><span>${i}★</span><div class="rg-bar"><div class="rg-fill" style="width:${pct}%;"></div></div><span>${count}</span></div>`;
+    }
+    graphHtml += `</div>`;
+    container.innerHTML = graphHtml;
+
+    reviews.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'review-card';
+      let stars = '';
+      for (let i = 0; i < 5; i++) stars += i < Math.round(r.rating || 5) ? '★' : '☆';
+      let imagesHtml = '';
+      if (r.images) {
+        r.images.split(',').forEach(url => {
+          if (url.trim()) {
+            imagesHtml += `<img src="${url.trim()}" style="height:50px;border-radius:6px;object-fit:cover;cursor:pointer;margin:4px;" onclick="openImageViewer('${url.trim()}')">`;
+          }
+        });
+      }
+      const isDev = r.reply;
+      div.innerHTML = `
+        <div class="rev-head">
+          <span class="rev-author">${r.author || 'Anonymous'}</span>
+          <span class="rev-stars">${stars}</span>
+        </div>
+        <div class="rev-text">${r.text || ''}</div>
+        ${imagesHtml ? `<div class="flex gap-8 mt-12" style="flex-wrap:wrap;">${imagesHtml}</div>` : ''}
+        <div class="rev-actions">
+          <span style="color:var(--text-muted);font-size:11px;">${new Date(r.timestamp).toLocaleDateString()}</span>
+        </div>
+        ${isDev ? `<div class="dev-reply"><strong>Developer:</strong> ${r.reply}</div>` : ''}
+      `;
+      container.appendChild(div);
+    });
+  });
+}
+
+function uploadReviewImages(input) {
+  const files = Array.from(input.files);
+  const container = $('reviewImagePreviews');
+  files.forEach(file => {
     const formData = new FormData();
     formData.append('image', file);
-    
-    try {
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
-            method: 'POST',
-            body: formData
-        });
-        const data = await res.json();
+    fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData })
+      .then(res => res.json()).then(data => {
         if (data.success) {
-            tempBannerImage = data.data.url;
-            $('bannerImagePreview').innerHTML = `<img src="${tempBannerImage}" style="max-width:100%;border-radius:8px;">`;
+          const url = data.data.url;
+          reviewImages.push(url);
+          const img = document.createElement('img');
+          img.src = url;
+          img.style.cssText = 'height:60px;border-radius:6px;object-fit:cover;border:1px solid var(--border-color);';
+          container.appendChild(img);
         }
-    } catch (err) {
-        alert('Image upload failed');
+      }).catch(() => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          reviewImages.push(e.target.result);
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.cssText = 'height:60px;border-radius:6px;object-fit:cover;border:1px solid var(--border-color);';
+          container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+  });
+}
+
+// ============================================
+// IMAGE VIEWER
+// ============================================
+function openImageViewer(src) { $('imageViewer').classList.add('open'); $('viewerImage').src = src; }
+function closeImageViewer() { $('imageViewer').classList.remove('open'); }
+
+// ============================================
+// FIREBASE LISTENER
+// ============================================
+db.ref('apps').on('value', snapshot => {
+  const data = snapshot.val();
+  allApps = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+  const liveApps = allApps.filter(a => a.status === 'live' || a.status === 'approved');
+
+  if (liveApps.length > 0) {
+    initBanner(liveApps);
+    renderHomeSections(liveApps);
+    renderAppGrid(liveApps.slice(0, 12), $('allAppsGrid'));
+  } else {
+    $('allAppsGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>
+        <h3>No Apps Available</h3>
+        <p>Check back later for new apps.</p>
+      </div>
+    `;
+  }
+
+  const activePage = document.querySelector('.page.active');
+  if (activePage) {
+    const id = activePage.id.replace('page-', '');
+    if (id === 'ranking') loadRankings();
+    if (id === 'profile') loadProfile();
+    if (id === 'details' && activeAppId) {
+      const exists = allApps.some(a => a.id === activeAppId && (a.status === 'live' || a.status === 'approved'));
+      if (exists) {
+        db.ref(`apps/${activeAppId}`).once('value', snap => {
+          const appData = snap.val();
+          if (appData) updateDetailUI(activeAppId, appData);
+        });
+      } else {
+        switchPage('home', 'Stardust Store');
+      }
     }
-}
+  }
+  showLoading(false);
+}, error => { showLoading(false); console.error(error); });
 
-async function saveBanner() {
-    const appId = $('bannerAppId').value;
-    if (!appId) {
-        alert('Please select an app');
-        return;
-    }
-    
-    const editId = $('bannerEditId').value;
-    const bannerData = {
-        appId: appId,
-        title: $('bannerTitle').value,
-        subtitle: $('bannerSubtitle').value,
-        ctaText: $('bannerCta').value,
-        backgroundColor: $('bannerBg').value,
-        position: parseInt($('bannerPosition').value) || 1,
-        active: $('bannerActive').value === 'true',
-        monetization: {
-            type: $('bannerMonetType').value,
-            price: parseFloat($('bannerMonetPrice').value) || 0,
-            advertiser: $('bannerAdvertiser').value,
-            startDate: $('bannerStart').value,
-            endDate: $('bannerEnd').value
-        },
-        updatedAt: Date.now()
-    };
-    
-    if (tempBannerImage) bannerData.imageUrl = tempBannerImage;
-    
-    if (editId) {
-        await db.ref(`hero_banners/${editId}`).update(bannerData);
-        logActivity(`Updated banner: ${bannerData.title}`);
-    } else {
-        bannerData.createdAt = Date.now();
-        bannerData.createdBy = adminUser.uid;
-        await db.ref('hero_banners').push(bannerData);
-        logActivity(`Created banner: ${bannerData.title}`);
-    }
-    
-    closeBannerModal();
-    alert('Banner saved!');
-}
-
-function editBanner(id) {
-    openBannerModal(id);
-}
-
-async function toggleBannerActive(id, active) {
-    await db.ref(`hero_banners/${id}/active`).set(active);
-}
-
-async function deleteBanner(id) {
-    if (!confirm('Delete this banner?')) return;
-    await db.ref(`hero_banners/${id}`).remove();
-    logActivity('Deleted banner');
-}
-
-// ============================================
-// DEVELOPERS
-// ============================================
-function renderDevelopers() {
-    const container = $('developersList');
-    
-    let filtered = allDevelopers;
-    if (currentSearchDevelopers) {
-        filtered = filtered.filter(d =>
-            (d.name || '').toLowerCase().includes(currentSearchDevelopers) ||
-            (d.email || '').toLowerCase().includes(currentSearchDevelopers)
-        );
-    }
-    
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">👥</div><p>No developers found.</p></div>`;
-        return;
-    }
-    
-    container.innerHTML = filtered.map(dev => {
-        const appCount = allApps.filter(a => a.developerUid === dev.id).length;
-        return `
-            <div class="app-card">
-                <img src="${dev.photoURL || 'https://img.icons8.com/clouds/200/user.png'}">
-                <div class="info">
-                    <div class="name">${dev.name || 'Unknown'} ${dev.verified ? '✅' : ''}</div>
-                    <div class="meta">${dev.email || ''} • ${appCount} apps</div>
-                </div>
-                <div class="actions">
-                    <button class="btn ${dev.verified ? 'warning' : 'success'}" onclick="toggleVerified('${dev.id}', ${!dev.verified})">
-                        ${dev.verified ? '⭐ Unverify' : '✅ Verify'}
-                    </button>
-                    <button class="btn danger" onclick="toggleBan('${dev.id}', ${!dev.banned})">
-                        ${dev.banned ? '🔓 Unban' : '🚫 Ban'}
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function filterDevelopers(val) {
-    currentSearchDevelopers = val.toLowerCase().trim();
-    renderDevelopers();
-}
-
-async function toggleVerified(uid, verified) {
-    await db.ref(`developers/${uid}/verified`).set(verified);
-    logActivity(`${verified ? 'Verified' : 'Unverified'} developer`);
-}
-
-async function toggleBan(uid, banned) {
-    await db.ref(`developers/${uid}/banned`).set(banned);
-    logActivity(`${banned ? 'Banned' : 'Unbanned'} developer`);
-}
-
-// ============================================
-// REVIEWS
-// ============================================
-function renderReviews() {
-    const container = $('reviewsList');
-    
-    let filtered = allReviews;
-    if (currentSearchReviews) {
-        filtered = filtered.filter(r =>
-            (r.author || '').toLowerCase().includes(currentSearchReviews) ||
-            (r.text || '').toLowerCase().includes(currentSearchReviews)
-        );
-    }
-    
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">⭐</div><p>No reviews found.</p></div>`;
-        return;
-    }
-    
-    filtered.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-    
-    container.innerHTML = filtered.slice(0, 50).map(rev => {
-        const app = allApps.find(a => a.id === rev.appId);
-        const stars = '★'.repeat(Math.round(rev.rating || 5)) + '☆'.repeat(5 - Math.round(rev.rating || 5));
-        return `
-            <div class="app-card">
-                <div class="info">
-                    <div class="name">${rev.author || 'Anonymous'} <span style="color:var(--gold);">${stars}</span></div>
-                    <div class="meta">On: ${app?.name || 'Unknown App'} • ${formatDate(rev.timestamp)}</div>
-                    <div class="meta" style="margin-top:8px;color:var(--text);">${rev.text || ''}</div>
-                </div>
-                <div class="actions">
-                    <button class="btn danger" onclick="deleteReview('${rev.appId}', '${rev.id}')">🗑️ Delete</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function filterReviews(val) {
-    currentSearchReviews = val.toLowerCase().trim();
-    renderReviews();
-}
-
-async function deleteReview(appId, revId) {
-    if (!confirm('Delete this review?')) return;
-    await db.ref(`reviews/${appId}/${revId}`).remove();
-    // Update count
-    const snap = await db.ref(`reviews/${appId}`).once('value');
-    const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-    await db.ref(`apps/${appId}/reviewCount`).set(count);
-    logActivity('Deleted a review');
-}
-
-// ============================================
-// ACTIVITY LOG
-// ============================================
-function renderActivity() {
-    const container = $('activityList');
-    
-    if (allActivity.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="icon">📝</div><p>No activity yet.</p></div>`;
-        return;
-    }
-    
-    container.innerHTML = allActivity.map(log => `
-        <div class="app-card">
-            <div class="info">
-                <div style="font-size:14px;">${log.action}</div>
-                <div class="meta">${formatDate(log.timestamp)}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function logActivity(action) {
-    if (!adminUser) return;
-    db.ref('activity_log').push({
-        action,
-        adminUid: adminUser.uid,
-        adminEmail: adminUser.email,
-        timestamp: Date.now()
-    });
-}
-
-// ============================================
-// SETTINGS
-// ============================================
-async function saveSettings() {
-    await db.ref('settings/siteAnnouncement').set($('siteAnnouncement').value);
-    alert('Settings saved!');
-    logActivity('Updated site settings');
-}
-
-// ============================================
-// HELPERS
-// ============================================
-function formatDate(ts) {
-    if (!ts) return 'N/A';
-    return new Date(ts).toLocaleString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-// Close modals on outside click
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal')) {
-        e.target.classList.remove('open');
-    }
+// Listen for hero banner changes from admin
+db.ref('settings/heroBanner').on('value', snapshot => {
+  const data = snapshot.val();
+  heroBannerApps = data ? Object.keys(data) : [];
+  if (allApps.length > 0) {
+    const liveApps = allApps.filter(a => a.status === 'live' || a.status === 'approved');
+    initBanner(liveApps);
+  }
 });
 
-console.log('🛡️ Stardust Admin Panel loaded');
-</script>
+// ============================================
+// DEEP LINKING
+// ============================================
+function handleDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const appuid = params.get('appuid');
+  if (appuid) {
+    const checkInterval = setInterval(() => {
+      if (allApps.length > 0) {
+        clearInterval(checkInterval);
+        const app = allApps.find(a => a.id === appuid);
+        if (app && (app.status === 'live' || app.status === 'approved')) {
+          viewAppDetails(appuid);
+        } else {
+          window.history.replaceState({}, '', window.location.pathname);
+          switchPage('home', 'Stardust Store');
+        }
+      }
+    }, 100);
+    setTimeout(() => clearInterval(checkInterval), 3000);
+  }
+}
 
+window.addEventListener('popstate', (event) => {
+  const params = new URLSearchParams(window.location.search);
+  const appuid = params.get('appuid');
+  if (appuid && allApps.length > 0) {
+    const app = allApps.find(a => a.id === appuid);
+    if (app) viewAppDetails(appuid);
+  } else {
+    const activePage = document.querySelector('.page.active');
+    if (activePage && activePage.id === 'page-details') switchPage('home', 'Stardust Store');
+  }
+});
+
+const originalSwitchPage = switchPage;
+switchPage = function(pageId, title) {
+  if (['home', 'search', 'ranking', 'profile'].includes(pageId)) {
+    if (window.location.search.includes('appuid=')) {
+      window.history.pushState({}, '', window.location.pathname);
+    }
+  }
+  originalSwitchPage.call(this, pageId, title);
+};
+
+const originalGoBack = goBack;
+goBack = function() {
+  originalGoBack.call(this);
+  if (!window.location.search.includes('appuid=') && window.history.state && window.history.state.appuid) {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+};
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('stardust_theme');
+  applyTheme(savedTheme === 'dark');
+  wishlist = JSON.parse(localStorage.getItem('stardust_wishlist') || '[]');
+  setReviewRating(5);
+  showLoading(true, 'Loading Stardust Store');
+
+  let deepLinkHandled = false;
+  const deepLinkObserver = setInterval(() => {
+    if (allApps.length > 0 && !deepLinkHandled) {
+      deepLinkHandled = true;
+      clearInterval(deepLinkObserver);
+      handleDeepLink();
+    }
+  }, 200);
+});
+
+console.log('🚀 Stardust Store - Professional Edition');
+console.log('📥 Per-user download tracking enabled');
+console.log('📖 Read More/Less for descriptions');
+console.log('🔐 Permissions from developer console');
+console.log('🔗 Website, Privacy, Support links displayed');
+console.log('⏰ Real-time release dates');
+console.log('🎯 Admin-controlled hero banner');
+console.log('📬 Reviews sent to developer + admin');
+</script>
 </body>
 </html>
